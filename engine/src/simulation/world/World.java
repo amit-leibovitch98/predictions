@@ -12,7 +12,7 @@ public class World {
     private List<EnvironmentVariable> environmentVars;
     private List<Entity> entities;
     private List<Rule> rules;
-    private List<TerminationCond> terminationConds;
+    private TerminationCond terminationConds;
 
     public List<EnvironmentVariable> getEnvironmentVars() {
         return environmentVars;
@@ -23,9 +23,7 @@ public class World {
     public List<Rule> getRules() {
         return rules;
     }
-    public List<TerminationCond> getTerminationConds() {
-        return terminationConds;
-    }
+    public TerminationCond getTerminationConds() { return terminationConds; }
     public void setEnvironmentVars(List<EnvironmentVariable> environmentVars) {
         this.environmentVars = environmentVars;
     }
@@ -35,7 +33,7 @@ public class World {
     public void setRules(List<Rule> rules) {
         this.rules = rules;
     }
-    public void setTerminationConds(List<TerminationCond> terminationConds) {
+    public void setTerminationConds(TerminationCond terminationConds) {
         this.terminationConds = terminationConds;
     }
 

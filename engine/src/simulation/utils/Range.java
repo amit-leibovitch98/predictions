@@ -9,9 +9,13 @@ public class Range {
         this.to = to;
     }
 
-    public double getMin() { return from; }
-    public double getMax() { return to; }
-    public void setMin(int min) { this.from = min; }
-    public void setMax(int max) { this.to = max; }
+    public double getFrom() { return from; }
+    public double getTo() { return to; }
+    public void setFrom(int min) { this.from = min; }
+    public void setTo(int max) { this.to = max; }
+
+    public Object getRandomValue() {
+        return Math.random() * (to - from) + from;
+    }
 }
 

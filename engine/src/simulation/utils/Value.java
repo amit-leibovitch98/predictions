@@ -2,28 +2,24 @@ package simulation.utils;
 
 public class Value {
     private final boolean randomInitialize;
-    private final String init;
-    private String value;
+    private final Object init;
+    private Object value;
 
-    public Value(String init, boolean randomInitialize) {
+    public Value(Object init, boolean randomInitialize, Range range) {
         this.randomInitialize = randomInitialize;
         this.init = init;
-        this.value = init;
+        if (randomInitialize) {
+            this.value = range.getRandomValue();
+        } else {
+            this.value = init;
+
+        }
     }
 
-    public boolean isRandomInitialize() {
-        return randomInitialize;
-    }
-
-    public String getInit() {
-        return init;
-    }
-
-    public String getCurrValue() {
+    public Object getCurrValue() {
         return value;
     }
-
-    public void setValue(String value) {
+    public void setValue(Object value) {
         this.value = value;
     }
 

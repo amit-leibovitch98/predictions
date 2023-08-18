@@ -1,15 +1,15 @@
 package simulation.world.detail.rule.action;
 
-import simulation.utils.Value;
+import simulation.utils.Type;
+import simulation.utils.expression.CondExpression;
 import simulation.world.detail.entity.Entity;
 
-import static java.lang.Double.parseDouble;
-import static java.lang.Double.valueOf;
+
 
 public class Increase extends Action {
-    double by = 0;
+    private CondExpression by;
 
-    public Increase(Entity entity, String propertyName, double by) {
+    public Increase(Entity entity, String propertyName, CondExpression by) {
         super(entity, propertyName);
         this.by = by;
     }
@@ -19,13 +19,14 @@ public class Increase extends Action {
         increase();
     }
     private void increase() {
-        try {
-            double value = parseDouble(property.getValue().getCurrValue());
-            value = value + by;
-            property.setValue(new Value(Double.toString(value), property.getValue().isRandomInitialize()));
-
-        } catch (Exception e) {
-            e.printStackTrace();
+        if (property.getType() == Type.FLOAT) {
+            double value = (double) (property.getValue().getCurrValue());
+            property.getValue().setValue(value + (double) by.resolveExpression());
+        } else if (property.getType() == Type.DECIMAL) {
+            double value = (int) (property.getValue().getCurrValue());
+            property.getValue().setValue(value + (double) by.resolveExpression());
+        } else {
+            throw new RuntimeException("Cannot decrease non-number property");
         }
     }
 }

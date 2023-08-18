@@ -1,13 +1,22 @@
 package facade;
 
+import file.WorldProxy;
+import simulation.world.World;
+
 public class EngineFacade {
-    public void ReadFile() {
-        //TODO: implement
-        System.out.println("ReadFile");
+    WorldProxy worldProxy;
+    World world;
+
+    public void ReadFile(String path) {
+        if(path == null) {
+            throw new IllegalArgumentException("path is null");
+        } else {
+            worldProxy = new WorldProxy(path);
+        }
     }
 
     public void ShowSimulationDetails() {
-        //TODO: implement
+        this.world = worldProxy.getWorld();
         System.out.println("ShowSimulationDetails");
     }
 

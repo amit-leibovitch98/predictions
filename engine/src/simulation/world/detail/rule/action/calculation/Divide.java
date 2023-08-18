@@ -15,7 +15,7 @@ public class Divide extends Calculation {
     public void calculate() {
         try {
             double value = arg1 / arg2;
-            resultProp.setValue(new Value(Double.toString(value), resultProp.getValue().isRandomInitialize()));
+            property.getValue().setValue(Double.toString(value));
 
         } catch (Exception e) {
             e.printStackTrace();
