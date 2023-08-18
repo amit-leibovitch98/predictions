@@ -1,6 +1,7 @@
 package simulation.utils.expression;
 
 public enum ExpressionType {
+    SIMPLE("simple"),
     ENVIROMENT("environment"),
     RANDOM("random"),
     /*EVALUATE("evaluate"),
@@ -14,6 +15,8 @@ public enum ExpressionType {
 
     public static ExpressionType fromString (String string) {
         switch(string) {
+            case "simple":
+                return SIMPLE;
             case "environment":
                 return ENVIROMENT;
             case "random":

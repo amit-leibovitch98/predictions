@@ -19,9 +19,9 @@ public enum CondOp {
                 return EQUALS;
             case "!=":
                 return NOT_EQUALS;
-            case "Bt":
+            case "bt":
                 return BIGGER_THAN;
-            case "Lt":
+            case "lt":
                 return LESSER_THAN;
             default:
                 throw new IllegalArgumentException("Unknown expression type: " + string);
