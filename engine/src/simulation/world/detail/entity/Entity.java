@@ -13,7 +13,12 @@ public class Entity {
         this.population = population;
         this.properties = properties;
     }
-
+    public String getName() {
+        return name;
+    }
+    public int getPopulation() {
+        return population;
+    }
     public EntityProperty getProperty(String name) {
         for (EntityProperty property : properties) {
             if (property.getName().equals(name)) {
@@ -21,5 +26,9 @@ public class Entity {
             }
         }
         return null;
+    }
+
+    public List<EntityProperty> getProperties() {
+        return properties;
     }
 }

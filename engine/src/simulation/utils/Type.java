@@ -19,4 +19,19 @@ public enum Type {
             return null;
         }
     }
+
+    @Override
+    public String toString() {
+        if (this == DECIMAL) {
+            return "decimal";
+        } else if (this == FLOAT) {
+            return "float";
+        } else if (this == BOOLEAN) {
+            return "boolean";
+        } else if (this == STRING) {
+            return "string";
+        } else {
+            return null;
+        }
+    }
 }

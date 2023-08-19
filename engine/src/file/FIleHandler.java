@@ -11,18 +11,21 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 
 public class FIleHandler {
-    private final String path;
+    private PRDWorld prdWorld;
     private InputStream inputStream;
     private final String JAXB_XML_PACKAGE_NAME = "file.schema.generated";
 
     public FIleHandler(String path) {
-        this.path = path;
         try {
             inputStream = new FileInputStream(path);
-            PRDWorld prdWorld = readWorld();
+            this.prdWorld = readWorld();
         } catch (JAXBException | FileNotFoundException e) {
             e.printStackTrace();
         }
+    }
+
+    public PRDWorld getPrdWorld() {
+        return prdWorld;
     }
 
     private PRDWorld readWorld() throws JAXBException {

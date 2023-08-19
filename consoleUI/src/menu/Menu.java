@@ -32,7 +32,7 @@ public class Menu {
             menuOption = MenuOption.fromValue(choice);
             switch (menuOption) {
                 case READ_FILE:
-                    engine.ReadFile();
+                    readFile();
                     break;
                 case SHOW_SIMULATION_DETAILS:
                     engine.ShowSimulationDetails();
@@ -51,5 +51,11 @@ public class Menu {
                     System.out.println(MenuOption.INVALID.getDescription());
             }
         }
+    }
+
+    private void readFile() {
+        System.out.println("Enter file path: ");
+        String path = scanner.nextLine();
+        engine.ReadFile(path);
     }
 }

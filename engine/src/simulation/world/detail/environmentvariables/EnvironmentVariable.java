@@ -7,11 +7,13 @@ public class EnvironmentVariable {
     private final String name;
     private final Range range;
     private final Type type;
+    private Object value;
 
     public EnvironmentVariable(String name, Range range, Type type) {
         this.name = name;
         this.range = range;
         this.type = type;
+        this.value = range.getFrom();
     }
 
     public String getName() {
@@ -24,6 +26,10 @@ public class EnvironmentVariable {
 
     public Type getType() {
         return type;
+    }
+
+    public Object getValue() {
+        return value;
     }
 
 }
