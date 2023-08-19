@@ -15,6 +15,18 @@ public class EntityPropertyWraper {
         return value;
     }
     public void setValue(Object value) {
-        this.value = value;
+        switch (property.getType()) {
+            case FLOAT:
+                this.value = Float.parseFloat(value.toString());
+                break;
+            case DECIMAL:
+                this.value = Integer.parseInt(value.toString());
+                break;
+            case STRING:
+                this.value = value.toString();
+                break;
+            default:
+                throw new RuntimeException("Unknown property type");
+        }
     }
 }

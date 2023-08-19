@@ -25,8 +25,6 @@ public abstract class Condition extends Action implements ICond {
             for (Action thenAction : thenAction) {
                 thenAction.doAction(entityInstance);
             }
-        } else {
-            throw new IllegalArgumentException("thenAction is null");
         }
     }
     public void activateElse(EntityInstance entityInstance) {
@@ -34,8 +32,6 @@ public abstract class Condition extends Action implements ICond {
             for (Action thenAction : elseAction) {
                 thenAction.doAction(entityInstance);
             }
-        } else {
-            throw new IllegalArgumentException("thenAction is null");
         }
     }
 

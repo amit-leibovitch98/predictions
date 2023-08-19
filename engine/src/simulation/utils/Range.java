@@ -1,21 +1,25 @@
 package simulation.utils;
 
 public class Range {
-    private double from;
-    private double to;
+    private float from;
+    private float to;
 
-    public Range(double from, double to) {
-        this.from = from;
-        this.to = to;
+    public Range(Double from, Double to) {
+        this.from = Float.parseFloat(from.toString());
+        this.to = Float.parseFloat(to.toString());
     }
 
-    public double getFrom() { return from; }
-    public double getTo() { return to; }
+    public float getFrom() { return from; }
+    public float getTo() { return to; }
     public void setFrom(int min) { this.from = min; }
     public void setTo(int max) { this.to = max; }
 
-    public Object getRandomValue() {
-        return Math.random() * (to - from) + from;
+    public float getRandomValue() {
+        return (float) (Math.random() * (to - from) + from);
+    }
+
+    public int getRandomIntValue() {
+        return (int) Math.floor(Math.random() * (to - from + 1) + from);
     }
 
     @Override

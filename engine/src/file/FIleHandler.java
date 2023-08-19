@@ -20,7 +20,7 @@ public class FIleHandler {
             inputStream = new FileInputStream(path);
             this.prdWorld = readWorld();
         } catch (JAXBException | FileNotFoundException e) {
-            e.printStackTrace();
+            throw new IllegalArgumentException("File not found");
         }
     }
 

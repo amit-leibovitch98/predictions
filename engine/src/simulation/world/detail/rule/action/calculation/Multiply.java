@@ -8,7 +8,7 @@ import simulation.world.detail.rule.action.Action;
 import static java.lang.Double.parseDouble;
 
 public class Multiply extends Calculation {
-    public Multiply(Entity entity, String propertyName, double arg1, double arg2) {
+    public Multiply(Entity entity, String propertyName, float arg1, float arg2) {
         super(entity, propertyName, arg1, arg2);
     }
 

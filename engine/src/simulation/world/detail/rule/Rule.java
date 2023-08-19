@@ -10,11 +10,13 @@ public class Rule {
     private final Activation activation;
     private final String name;
     private List<Action> actions;
+    int ticksCount;
 
     public Rule(String name, Activation activation, List<Action> actions) {
         this.name = name;
         this.activation = activation;
         this.actions = actions;
+        this.ticksCount = 0;
     }
 
     public Activation getActivation() {
@@ -29,11 +31,13 @@ public class Rule {
         return name;
     }
 
-    public void activateRule(EntityInstance entityInstance) {
-        float activationOdd = (float) Math.random();
-        if(activationOdd <= activation.getProbability()) {
-            for(Action action : actions) {
-                action.doAction(entityInstance);
+    public void activateRule(EntityInstance entityInstance, int ticksCount) {
+        if((ticksCount + 1) % activation.getTicks() == 0) {
+            float activationOdd = (float) Math.random();
+            if (activationOdd <= activation.getProbability()) {
+                for (Action action : actions) {
+                    action.doAction(entityInstance);
+                }
             }
         }
     }

@@ -2,7 +2,7 @@ package simulation.world.detail.rule;
 
 public class Activation {
     private final Integer ticks;
-    private final Double probability;
+    private final Float probability;
 
     public Activation(Integer ticks, Double probability) {
         if (ticks == null) {
@@ -12,16 +12,21 @@ public class Activation {
         if (probability == null) {
             probability = 1.0;
         }
-        this.probability = probability;
+        this.probability = Float.parseFloat(probability.toString());
     }
 
     public Activation() {
         this.ticks = 1;
-        this.probability = 1.0;
+        this.probability = 1f;
     }
-    public double getProbability() {
+    public float getProbability() {
         return probability;
     }
+
+    public Integer getTicks() {
+        return ticks;
+    }
+
     @Override
     public String toString() {
         return "Activation: {" +

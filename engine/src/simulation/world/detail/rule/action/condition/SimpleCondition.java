@@ -27,34 +27,34 @@ public class SimpleCondition extends Condition implements ICond {
         switch (operator) {
             case EQUALS:
                 if (entityInstance.getPropertyVal(propertyName) == value.resolveExpression()) {
-                    activateThen();
+                    super.activateThen(entityInstance);
                     return true;
                 } else {
-                    activateElse();
+                    super.activateElse(entityInstance);
                     return false;
                 }
             case NOT_EQUALS:
                 if (entityInstance.getPropertyVal(propertyName) != value.resolveExpression()) {
-                    activateThen();
+                    super.activateThen(entityInstance);
                     return true;
                 } else {
-                    activateElse();
+                    super.activateElse(entityInstance);
                     return false;
                 }
             case BIGGER_THAN:
-                if (compare(entityInstance.getPropertyVal(propertyName), value.resolveExpression(), property.getType())) {
-                    activateThen();
+                if (compare(entityInstance.getPropertyVal(propertyName), value.resolveExpression())) {
+                    super.activateThen(entityInstance);
                     return true;
                 } else {
-                    activateElse();
+                    super.activateElse(entityInstance);
                     return false;
                 }
             case LESSER_THAN:
-                if (!compare(entityInstance.getPropertyVal(propertyName), value.resolveExpression(), property.getType())) {
-                    activateThen();
+                if (compare(value.resolveExpression(),entityInstance.getPropertyVal(propertyName))) {
+                    super.activateThen(entityInstance);
                     return true;
                 } else {
-                    activateElse();
+                    super.activateElse(entityInstance);
                     return false;
                 }
             default:
@@ -63,23 +63,30 @@ public class SimpleCondition extends Condition implements ICond {
     }
 
 
-    private boolean compare(Object num1, Object num2, Type type) {
-        if(type == Type.DECIMAL) {
-            return (double)num1 > (double)num2;
-        } else if(type == Type.FLOAT) {
-            return (float)num1 > (float)num2;
-        } else {
-            throw new RuntimeException("Cannot compare non-number property with bigger than operator");
+    private boolean compare(Object num1, Object num2) {
+        try {
+            if(num1 instanceof Integer) {
+                if(num2 instanceof Integer) {
+                    return (int)num1 > (int)num2;
+                } else if(num2 instanceof Float) {
+                    return (int)num1 > (float)num2;
+                } else {
+                    throw new IllegalArgumentException("Cannot compare " + num1 + " and " + num2 );
+                }
+            } else if(num1 instanceof Float) {
+                if(num2 instanceof Integer) {
+                    return (float)num1 > (int)num2;
+                } else if(num2 instanceof Float) {
+                    return (float)num1 > (float)num2;
+                } else {
+                    throw new IllegalArgumentException("Cannot compare " + num1 + " and " + num2 );
+                }
+            } else {
+                throw new IllegalArgumentException("Cannot compare " + num1 + " and " + num2 );
+            }
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Cannot compare " + num1 + " and " + num2 );
         }
 
     }
-
-    public void activateThen() {
-        //TODO: activate then
-    }
-
-    public void activateElse() {
-        //TODO: activate else
-    }
-
 }

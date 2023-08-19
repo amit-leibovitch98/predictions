@@ -6,9 +6,10 @@ import java.util.List;
 public class EntityInstance extends Entity {
     boolean isAlive = true;
     private List<EntityPropertyWraper> propertiesWithVals;
-    public EntityInstance(Entity entity, List<EntityProperty> properties) {
+
+    public EntityInstance(Entity entity) {
         super(entity.getName(), entity.getPopulation(), entity.getProperties());
-        initInstanceValues(properties);
+        initInstanceValues(entity.getProperties());
     }
 
     private void initInstanceValues(List<EntityProperty> properties) {
@@ -16,7 +17,7 @@ public class EntityInstance extends Entity {
         for(EntityProperty property : properties) {
             Object initialValue = property.getInitialValue();
             if(initialValue == null) {
-                initialValue = property.getRange().getRandomValue();
+                initialValue = property.getRandomInitValue();
             }
             this.propertiesWithVals.add(new EntityPropertyWraper(property, initialValue));
         }

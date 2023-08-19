@@ -115,7 +115,8 @@ public class WorldProxy {
         List<EntityProperty> properties = new ArrayList<EntityProperty>();
         for (PRDProperty prdProperty : prdProperties.getPRDProperty()) {
             PRDRange prdRange = prdProperty.getPRDRange();
-            PRDValue prdValue = prdProperty.getPRDValue();
+            String prdValue = null;
+            prdValue = prdProperty.getPRDValue().getInit();
             Range range = new Range(prdRange.getFrom(), prdRange.getTo());
             properties.add(new EntityProperty(
                     prdProperty.getPRDName(),
@@ -149,11 +150,11 @@ public class WorldProxy {
     private Calculation createCalculation(PRDAction prdAction, Entity entity){
         Calculation calc = null;
         if(prdAction.getPRDDivide() != null) {
-            calc = new Divide(entity, prdAction.getProperty(), Double.parseDouble(prdAction.getPRDDivide().getArg1()),
-                    Double.parseDouble(prdAction.getPRDDivide().getArg2()));
+            calc = new Divide(entity, prdAction.getProperty(), Float.parseFloat(prdAction.getPRDDivide().getArg1()),
+                    Float.parseFloat(prdAction.getPRDDivide().getArg2()));
         } else if (prdAction.getPRDMultiply() != null) {
-            calc = new Multiply(entity, prdAction.getProperty(), Double.parseDouble(prdAction.getPRDMultiply().getArg1()),
-                    Double.parseDouble(prdAction.getPRDMultiply().getArg2()));
+            calc = new Multiply(entity, prdAction.getProperty(), Float.parseFloat(prdAction.getPRDMultiply().getArg1()),
+                    Float.parseFloat(prdAction.getPRDMultiply().getArg2()));
         } else {
             throw new RuntimeException("Unknown calculation type");
         }

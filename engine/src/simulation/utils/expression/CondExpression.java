@@ -1,24 +1,26 @@
 package simulation.utils.expression;
 
+import simulation.utils.Type;
 import simulation.world.detail.environmentvariables.EnvironmentVariable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
 public class CondExpression {
     private final ExpressionType expressionType;
     private final List<String> args;
-    private final List<EnvironmentVariable> envVars;
+    private static List<EnvironmentVariable> envVars;
 
-    private Double simpleExpressionVale;
+    private Float simpleExpressionVale;
 
     public CondExpression(String fullExpression, List<EnvironmentVariable> envVars) {
         this.envVars = envVars;
         List<String> tempArgs = null;
         ExpressionType tempExpressionType = null;
         try {
-            this.simpleExpressionVale = Double.parseDouble(fullExpression);
+            this.simpleExpressionVale = Float.parseFloat(fullExpression);
             tempExpressionType = ExpressionType.SIMPLE;
             tempArgs = null;
         } catch (NumberFormatException e) {
@@ -83,6 +85,11 @@ public class CondExpression {
     }
 
     private Object random(String max) {
-        return Math.random() * Integer.parseInt(max);
+        Random random = new Random();
+        return random.nextInt(Integer.parseInt(max) + 1);
+    }
+
+    public static void updateEnvVars(List<EnvironmentVariable> envVars) {
+        CondExpression.envVars = envVars;
     }
 }
