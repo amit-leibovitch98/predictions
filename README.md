@@ -1,6 +1,5 @@
 # Submitter information: 
   Amit Leibovitch 
-  id: 318659745
   email: amitle111@gmail.com
 # Desgin review:
   # Module 1: consoleIU contains:
