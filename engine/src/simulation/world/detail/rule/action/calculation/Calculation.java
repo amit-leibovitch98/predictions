@@ -1,6 +1,7 @@
 package simulation.world.detail.rule.action.calculation;
 
 import simulation.world.detail.entity.Entity;
+import simulation.world.detail.entity.EntityInstance;
 import simulation.world.detail.entity.EntityProperty;
 import simulation.world.detail.rule.action.Action;
 
@@ -15,9 +16,9 @@ public abstract class Calculation extends Action {
         this.arg2 = arg2;
     }
 
-    public abstract void calculate();
+    public abstract void calculate(EntityInstance entityInstance);
 
-    public void doAction() {
-        calculate();
+    public void doAction(EntityInstance entityInstance) {
+        calculate(entityInstance);
     }
 }

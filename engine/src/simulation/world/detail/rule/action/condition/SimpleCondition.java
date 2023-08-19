@@ -3,6 +3,7 @@ package simulation.world.detail.rule.action.condition;
 import simulation.utils.Type;
 import simulation.utils.expression.CondExpression;
 import simulation.world.detail.entity.Entity;
+import simulation.world.detail.entity.EntityInstance;
 import simulation.world.detail.environmentvariables.EnvironmentVariable;
 import simulation.world.detail.rule.action.Action;
 
@@ -18,14 +19,14 @@ public class SimpleCondition extends Condition implements ICond {
         this.value = value;
     }
     @Override
-    public void doAction() {
-        evaluateCond();
+    public void doAction(EntityInstance entityInstance) {
+        evaluateCond(entityInstance);
     }
 
-    public boolean evaluateCond() {
+    public boolean evaluateCond(EntityInstance entityInstance) {
         switch (operator) {
             case EQUALS:
-                if (property.getValue().getCurrValue() == value.resolveExpression()) {
+                if (entityInstance.getPropertyVal(propertyName) == value.resolveExpression()) {
                     activateThen();
                     return true;
                 } else {
@@ -33,7 +34,7 @@ public class SimpleCondition extends Condition implements ICond {
                     return false;
                 }
             case NOT_EQUALS:
-                if (property.getValue().getCurrValue() != value.resolveExpression()) {
+                if (entityInstance.getPropertyVal(propertyName) != value.resolveExpression()) {
                     activateThen();
                     return true;
                 } else {
@@ -41,7 +42,7 @@ public class SimpleCondition extends Condition implements ICond {
                     return false;
                 }
             case BIGGER_THAN:
-                if (compare(property.getValue().getCurrValue(), value.resolveExpression(), property.getType())) {
+                if (compare(entityInstance.getPropertyVal(propertyName), value.resolveExpression(), property.getType())) {
                     activateThen();
                     return true;
                 } else {
@@ -49,7 +50,7 @@ public class SimpleCondition extends Condition implements ICond {
                     return false;
                 }
             case LESSER_THAN:
-                if (!compare(property.getValue().getCurrValue(), value.resolveExpression(), property.getType())) {
+                if (!compare(entityInstance.getPropertyVal(propertyName), value.resolveExpression(), property.getType())) {
                     activateThen();
                     return true;
                 } else {

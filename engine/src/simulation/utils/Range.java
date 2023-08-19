@@ -17,5 +17,10 @@ public class Range {
     public Object getRandomValue() {
         return Math.random() * (to - from) + from;
     }
+
+    @Override
+    public String toString() {
+        return "{" + "from=" + from + ", to=" + to + "}";
+    }
 }
 

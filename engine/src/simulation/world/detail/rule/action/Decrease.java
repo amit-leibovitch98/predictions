@@ -1,14 +1,9 @@
 package simulation.world.detail.rule.action;
 
 import simulation.utils.Type;
-import simulation.utils.Value;
 import simulation.utils.expression.CondExpression;
 import simulation.world.detail.entity.Entity;
-
-import java.beans.Expression;
-
-import static java.lang.Double.parseDouble;
-import static java.lang.Double.valueOf;
+import simulation.world.detail.entity.EntityInstance;
 
 public class Decrease extends Action {
     private CondExpression by;
@@ -18,17 +13,16 @@ public class Decrease extends Action {
         this.by = by;
     }
 
-    @Override
-    public void doAction() {
-        decrease();
+    public void doAction(EntityInstance entityInstance) {
+        decrease(entityInstance);
     }
-    public void decrease() {
-        if (property.getType() == Type.FLOAT) {
-            double value = (double) (property.getValue().getCurrValue());
-            property.getValue().setValue(value - (double)by.resolveExpression());
-        } else if (property.getType() == Type.DECIMAL) {
-            double value = (int) (property.getValue().getCurrValue());
-            property.getValue().setValue(value - (double) by.resolveExpression());
+    public void decrease(EntityInstance entityInstance) {
+        if (entityInstance.getProperty(propertyName).getType() == Type.FLOAT) {
+            double value = (double) (entityInstance.getPropertyVal(propertyName));
+            entityInstance.setPropertyVal(propertyName, (value - (double) by.resolveExpression()));
+        } else if (entityInstance.getProperty(propertyName).getType() == Type.DECIMAL) {
+            double value = (int) (entityInstance.getPropertyVal(propertyName));
+            entityInstance.setPropertyVal(propertyName, (value - (double) by.resolveExpression()));
         } else {
             throw new RuntimeException("Cannot decrease non-number property");
         }

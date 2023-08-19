@@ -52,7 +52,8 @@ public class Menu {
             }
         }
     }
-    private void readFile(){
+
+    private void readFile() {
         System.out.println("Enter file path: ");
         String path = scanner.nextLine();
         engine.ReadFile(path);

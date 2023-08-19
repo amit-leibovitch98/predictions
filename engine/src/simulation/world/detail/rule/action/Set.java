@@ -2,6 +2,7 @@ package simulation.world.detail.rule.action;
 
 import simulation.utils.expression.CondExpression;
 import simulation.world.detail.entity.Entity;
+import simulation.world.detail.entity.EntityInstance;
 
 import java.beans.Expression;
 
@@ -13,8 +14,8 @@ public class Set extends Action {
         this.value = value;
     }
     @Override
-    public void doAction() {
-        property.getValue().setValue(value);
+    public void doAction(EntityInstance entityInstance) {
+        entityInstance.setPropertyVal(propertyName, value);
 
     }
 }

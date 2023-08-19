@@ -16,6 +16,10 @@ public class Value {
         }
     }
 
+    public boolean isRandomInitialize() {
+        return randomInitialize;
+    }
+
     public Object getCurrValue() {
         return value;
     }

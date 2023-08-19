@@ -12,4 +12,11 @@ public class TerminationCond {
         this.byTicks = byTicks;
         this.byTime = byTime;
     }
+
+    public Integer getByTicks() {
+        return byTicks;
+    }
+    public Integer getByTime() {
+        return byTime;
+    }
 }

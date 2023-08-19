@@ -89,6 +89,8 @@ public class WorldProxy {
             Activation activation = null;
             if(prdRule.getPRDActivation() != null) {
                 activation = new Activation(prdRule.getPRDActivation().getTicks(), prdRule.getPRDActivation().getProbability());
+            } else {
+                activation = new Activation();
             }
             //create rule
             rules.add(new Rule(prdRule.getName(), activation, actions));
@@ -118,8 +120,8 @@ public class WorldProxy {
             properties.add(new EntityProperty(
                     prdProperty.getPRDName(),
                     range,
-                    new Value(prdValue.getInit(), prdValue.isRandomInitialize(), range),
-                    Type.fromString(prdProperty.getType())
+                    Type.fromString(prdProperty.getType()),
+                    prdValue
             ));
         }
         return properties;

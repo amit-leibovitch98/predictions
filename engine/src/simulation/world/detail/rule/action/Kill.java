@@ -1,6 +1,7 @@
 package simulation.world.detail.rule.action;
 
 import simulation.world.detail.entity.Entity;
+import simulation.world.detail.entity.EntityInstance;
 
 import java.util.List;
 
@@ -10,11 +11,11 @@ public class Kill extends Action{
     }
 
     @Override
-    public void doAction() {
-        kill();
+    public void doAction(EntityInstance entityInstance) {
+        kill(entityInstance);
     }
 
-    private void kill() {
-        //TODO: implement kill
+    private void kill(EntityInstance entityInstance) {
+        entityInstance.kill();
     }
 }

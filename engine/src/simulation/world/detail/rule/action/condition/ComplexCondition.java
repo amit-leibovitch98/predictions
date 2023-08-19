@@ -1,6 +1,7 @@
 package simulation.world.detail.rule.action.condition;
 
 import simulation.world.detail.entity.Entity;
+import simulation.world.detail.entity.EntityInstance;
 import simulation.world.detail.rule.action.Action;
 
 import java.util.List;
@@ -15,28 +16,28 @@ public class ComplexCondition extends Condition implements ICond {
         this.logicOp = ConditionLogicOp.fromString(logicOp);
     }
 
-    public boolean evaluateCond(){
+    public boolean evaluateCond(EntityInstance entityInstance){
         if(logicOp == ConditionLogicOp.AND){
-            return evaluateAnd();
+            return evaluateAnd(entityInstance);
         } else if(logicOp == ConditionLogicOp.OR){
-            return evaluateOr();
+            return evaluateOr(entityInstance);
         } else {
             throw new IllegalArgumentException("Unknown expression type: " + logicOp);
         }
     }
 
-    private boolean evaluateAnd(){
+    private boolean evaluateAnd(EntityInstance entityInstance){
         boolean result = true;
         for(ICond cond : subConditions){
-            result = result && cond.evaluateCond();
+            result = result && cond.evaluateCond(entityInstance);
         }
         return result;
     }
 
-    private boolean evaluateOr(){
+    private boolean evaluateOr(EntityInstance entityInstance) {
         boolean result = false;
         for(ICond cond : subConditions){
-            result = result || cond.evaluateCond();
+            result = result || cond.evaluateCond(entityInstance);
         }
         return result;
     }
