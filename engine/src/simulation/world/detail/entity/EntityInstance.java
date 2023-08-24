@@ -1,11 +1,14 @@
 package simulation.world.detail.entity;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class EntityInstance extends Entity {
     boolean isAlive = true;
-    private List<EntityPropertyWraper> propertiesWithVals;
+    //private List<EntityPropertyWraper> propertiesWithVals;
+    private Map<EntityProperty, Object> propertiesWithVals;
 
     public EntityInstance(Entity entity) {
         super(entity.getName(), entity.getPopulation(), entity.getProperties());
@@ -13,20 +16,20 @@ public class EntityInstance extends Entity {
     }
 
     private void initInstanceValues(List<EntityProperty> properties) {
-        this.propertiesWithVals = new ArrayList<EntityPropertyWraper>();
+        this.propertiesWithVals = new HashMap<>();
         for(EntityProperty property : properties) {
             Object initialValue = property.getInitialValue();
             if(initialValue == null) {
                 initialValue = property.getRandomInitValue();
             }
-            this.propertiesWithVals.add(new EntityPropertyWraper(property, initialValue));
+            this.propertiesWithVals.put(property, initialValue);
         }
     }
 
     public Object getPropertyVal(String propertyName) {
-        for(EntityPropertyWraper property : propertiesWithVals) {
-            if(property.getProperty().getName().equals(propertyName)) {
-                return property.getValue();
+        for(EntityProperty property : propertiesWithVals.keySet()) {
+            if(property.getName().equals(propertyName)) {
+                return propertiesWithVals.get(property);
             }
         }
         return null;
@@ -34,18 +37,18 @@ public class EntityInstance extends Entity {
 
     @Override
     public EntityProperty getProperty(String propertyName) {
-        for(EntityPropertyWraper property : propertiesWithVals) {
-            if(property.getProperty().getName().equals(propertyName)) {
-                return property.getProperty();
+        for(EntityProperty property : propertiesWithVals.keySet()) {
+            if(property.getName().equals(propertyName)) {
+                return property;
             }
         }
         return null;
     }
 
     public void setPropertyVal(String propertyName, Object value) {
-        for(EntityPropertyWraper property : propertiesWithVals) {
-            if(property.getProperty().getName().equals(propertyName)) {
-                property.setValue(value);
+        for(EntityProperty property : propertiesWithVals.keySet()) {
+            if(property.getName().equals(propertyName)) {
+                propertiesWithVals.put(property, value);
             }
         }
     }
