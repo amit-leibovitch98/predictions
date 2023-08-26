@@ -2,8 +2,9 @@ package simulation.world.detail.environmentvariables;
 
 import simulation.utils.Range;
 import simulation.utils.Type;
+import simulation.world.detail.ISimulationComponent;
 
-public class EnvironmentVariable {
+public class EnvironmentVariable implements ISimulationComponent {
     private final String name;
     private final Range range;
     private final Type type;
@@ -112,5 +113,12 @@ public class EnvironmentVariable {
             default:
                 return null;
         }
+    }
+
+    public String getInfo() {
+        return "Environment Variable name: " + name + "\n" +
+                " • Type: " + type.toString() + "\n" +
+                " • Range: " + range.toString() + "\n" +
+                " • Value: " + value.toString();
     }
 }

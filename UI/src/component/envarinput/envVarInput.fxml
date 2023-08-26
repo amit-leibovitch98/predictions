@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+
+<GridPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" stylesheets="@envVatInputs.css" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="component.envarinput.EnvVarInputController">
+  <columnConstraints>
+    <ColumnConstraints hgrow="NEVER" minWidth="10.0" prefWidth="10.0" />
+      <ColumnConstraints hgrow="NEVER" />
+      <ColumnConstraints hgrow="NEVER" minWidth="10.0" prefWidth="100.0" />
+      <ColumnConstraints hgrow="ALWAYS" minWidth="80.0" prefWidth="80.0" />
+    <ColumnConstraints hgrow="NEVER" minWidth="10.0" prefWidth="10.0" />
+  </columnConstraints>
+  <rowConstraints>
+    <RowConstraints minHeight="10.0" prefHeight="10.0" vgrow="NEVER" />
+    <RowConstraints minHeight="50.0" prefHeight="50.0" vgrow="NEVER" />
+    <RowConstraints minHeight="10.0" prefHeight="10.0" vgrow="NEVER" />
+  </rowConstraints>
+   <children>
+      <Label fx:id="envVarNameLabel" text="&lt;EnvVarName&gt;" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+      <TextField fx:id="evVarValueInput" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnIndex="3" GridPane.rowIndex="1">
+         <GridPane.margin>
+            <Insets bottom="1.0" left="2.0" right="2.0" top="1.0" />
+         </GridPane.margin>
+         <padding>
+            <Insets bottom="5.0" left="7.0" right="7.0" top="5.0" />
+         </padding>
+      </TextField>
+      <Label fx:id="envVarTypeLabel" text="(&lt;envVarType&gt;)" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+   </children>
+</GridPane>

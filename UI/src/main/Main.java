@@ -16,6 +16,7 @@ import java.util.Objects;
 public class Main extends Application {
     @Override
     public void start(Stage primeryStage)  throws Exception {
+//        CSSFX.start();
         FXMLLoader loader = new FXMLLoader();
         primeryStage.setTitle("Predictions");
         //Parent load = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/component/main/mainUI.fxml")));
@@ -27,7 +28,7 @@ public class Main extends Application {
         Logic logic = new Logic(mainController);
         mainController.setPrimaryStage(primeryStage);
         mainController.setLogic(logic);
-        Scene scene = new Scene(root, 1200, 750);
+        Scene scene = new Scene(root);
         primeryStage.setScene(scene);
         primeryStage.show();
     }

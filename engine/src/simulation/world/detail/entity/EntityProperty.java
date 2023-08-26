@@ -100,4 +100,12 @@ public class EntityProperty {
         }
         return hostogram;
     }
+
+    public String getInfo() {
+        return "Property name: " + name + "\n" +
+                " • Type:" + type.toString() + "\n" +
+                " • Range: " + range.toString() + "\n" +
+                " • Initial value: " + initialValue.toString() + "\n"
+                ;
+    }
 }

@@ -6,9 +6,14 @@ import file.WorldProxy;
 import simulation.Simulation;
 import simulation.SimulationManager;
 import simulation.world.World;
+import simulation.world.detail.ISimulationComponent;
+import simulation.world.detail.TerminationCond;
 import simulation.world.detail.WorldDataCenter;
+import simulation.world.detail.entity.Entity;
 import simulation.world.detail.environmentvariables.EnvironmentVariable;
+import simulation.world.detail.rule.Rule;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class EngineFacade {
@@ -44,6 +49,26 @@ public class EngineFacade {
             }
         }
         System.out.println("---Printing World Details Finished---");
+    }
+
+    public List<Entity> getEntities() {
+        return this.world.getEntities();
+    }
+
+    public List<Rule> getRules() {
+        return this.world.getRules();
+    }
+    public TerminationCond getTerminationCond() {
+        return this.world.getTerminationCond();
+    }
+    public List<ISimulationComponent> getAllSimulationComponents() {
+        List<ISimulationComponent> simulationComponents = new ArrayList<>();
+        simulationComponents.addAll(this.world.getEntities());
+        simulationComponents.addAll(this.world.getEnvironmentVars());
+        simulationComponents.addAll(this.world.getRules());
+        simulationComponents.add(this.world.getTerminationCond());
+        return simulationComponents;
+
     }
 
     public Simulation startSimulation() {

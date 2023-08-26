@@ -88,4 +88,8 @@ public class World {
         }
         throw new RuntimeException("Environment Variable " + envVarName + " not found");
     }
+
+    public TerminationCond getTerminationCond() {
+        return this.terminationConds;
+    }
 }

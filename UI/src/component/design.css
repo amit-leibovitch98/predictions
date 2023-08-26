@@ -1,0 +1,133 @@
+.root {
+    -fx-background-color: #f5f5f5;
+}
+
+/* Style labels */
+.label {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+#progressPrecantegeLabel {
+    -fx-font-size: 20px;
+    -fx-text-fill: #012b69;
+}
+
+/* Style buttons */
+.button{
+    -fx-background-color: #3498db;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-font-size: 16px;
+}
+
+.button:hover {
+    -fx-background-color: #2980b9;
+}
+
+#startB {
+    -fx-background-color: #20a357;
+}
+
+#startB:hover {
+    -fx-background-color: #1a8b4a;
+}
+
+#clearB {
+    -fx-background-color: #d94a3d;
+}
+
+#clearB:hover {
+    -fx-background-color: #b63b30;
+}
+
+/* Style queueList */
+#queueList {
+    -fx-background-color: white;
+    -fx-border-color: #ccc;
+    -fx-border-width: 1px;
+}
+
+/* Style selected ListItem in queueList */
+#queueList .list-cell:selected {
+    -fx-background-color: #3498db;
+    -fx-text-fill: white;
+}
+
+/* Style focused queueList */
+#queueList:focused {
+    -fx-focus-color: #ccc;
+    -fx-faint-focus-color: #3498db;
+}
+
+
+/* Style componentsTree */
+#componentsTree {
+    -fx-background-color: white;
+    -fx-border-color: #ccc;
+    -fx-border-width: 2px;
+}
+
+/* Style selected TreeItem in componentsTree */
+#componentsTree .tree-cell:selected {
+    -fx-background-color: #3498db;
+    -fx-text-fill: white;
+}
+
+/* Style focused componentsTree */
+#componentsTree:focused {
+    -fx-border-color: #3498db;
+}
+
+/* Style InfoLabel */
+#detailsTab > #infoLabel {
+    -fx-background-color: white;
+    -fx-border-color: #ccc;
+    -fx-font-weight: regular;
+    -fx-border-width: 1px;
+}
+
+/* Style TabPane */
+.tab-pane {
+    -fx-tab-min-height: 40px;
+}
+
+/* Style tabs */
+.tab {
+    -fx-background-color: #f0f0f0;
+    -fx-border-color: #ccc;
+    -fx-border-width: 1px;
+    -fx-border-radius: 5px 5px 0 0;
+}
+
+.tab:selected {
+    -fx-background-color: white;
+    -fx-border-color: #3498db;
+    -fx-border-width: 2px;
+}
+
+.tab:focused {
+    -fx-faint-focus-color: transparent;
+}
+
+/* Style content area in tabs */
+.tab-pane > .tab-content-area {
+    -fx-background-color: white;
+    -fx-border-color: #ccc;
+    -fx-border-width: 1px;
+    -fx-border-radius: 0 0 5px 5px;
+}
+
+/* Style text field */
+.text-field {
+    -fx-background-color: white;
+    -fx-border-color: #ccc;
+    -fx-border-width: 2px;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-border-radius: 5px;
+}
+
+.text-field:focused {
+    -fx-border-color: #3498db;
+}

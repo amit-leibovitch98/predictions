@@ -45,6 +45,11 @@ public class EngineFacade {
         System.out.println("---Printing World Details Finished---");
     }
 
+    public List<List<List<String>>> getSimulationDetails() {
+        WorldDataCenter worldDataCenter = new WorldDataCenter(world);
+        return worldDataCenter.getWorldDeatils();
+    }
+
     public Simulation startSimulation() {
         this.currSimulation = new Simulation(world);
         this.currSimulation.init();

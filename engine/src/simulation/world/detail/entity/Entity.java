@@ -1,9 +1,11 @@
 package simulation.world.detail.entity;
 
 
+import simulation.world.detail.ISimulationComponent;
+
 import java.util.List;
 
-public class Entity {
+public class Entity implements ISimulationComponent {
     private final String name;
     private final int population;
     private final List<EntityProperty> properties;
@@ -30,5 +32,22 @@ public class Entity {
 
     public List<EntityProperty> getProperties() {
         return properties;
+    }
+
+    public String getInfo() {
+        return "Entity name: " + name + "\n" +
+                "Entity population: " + population + "\n" +
+                "Entity properties: \n" + getPropertiesInfo();
+
+    }
+    private String getPropertiesInfo() {
+        StringBuilder propertiesInfo = new StringBuilder();
+        for (EntityProperty property : properties) {
+            propertiesInfo.append("• Property name: ").append(property.getName()).append("\n")
+                    .append("   Property type: ").append(property.getType().toString()).append("\n")
+                    .append("   Property range: ").append(property.getRange().toString()).append("\n")
+                    .append("   Property initial value: ").append(property.getInitialValue()).append("\n");
+        }
+        return propertiesInfo.toString();
     }
 }
