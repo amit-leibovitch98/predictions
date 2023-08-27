@@ -81,13 +81,12 @@ public class MainController {
     private StringProperty progressPrecantege;
 
     public MainController() {
-        System.out.println("MainController created!");
         this.path = new SimpleStringProperty();
         this.isFileUploaded = new SimpleBooleanProperty();
         this.componentDetail = new SimpleStringProperty();
         this.componentDetailLabel = new Label();
         this.progressPrecantege = new SimpleStringProperty();
-
+        this.queueList = new ListView<>();
     }
 
     public void initialize() {
@@ -107,11 +106,11 @@ public class MainController {
                                         100)),
                         " %"));
         aTask.valueProperty().addListener((observable, oldValue, newValue) -> {
-            onTaskFinished(Optional.ofNullable(onFinish));
+            onTaskFinished(onFinish);
         });
     }
 
-    private void onTaskFinished(Optional<Runnable> onFinish) {
+    private void onTaskFinished(Runnable onFinish) {
         //TODO: implement
     }
 
@@ -135,7 +134,7 @@ public class MainController {
         this.path.set(path);
         this.isFileUploaded.set(true);
         try {
-            logic.getEngine().readFile(file.getPath());
+            logic.readFile(file.getPath());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -146,40 +145,14 @@ public class MainController {
 
     private void updateNewExecutionTab() {
         try {
-            addEntityPopulationComponents();
-            addEnvVarsComponents();
+            logic.updateEntitiesAndEnvVars(entitiesPopulationsInputs, envVarsInputs);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
     }
 
-    private void addEntityPopulationComponents() throws IOException {
-        for (Entity entity : logic.getEngine().getEntities()) {
-            FXMLLoader loader = new FXMLLoader();
-            URL url = getClass().getResource("/component/entitypopulationinput/entityPopulationInput.fxml");
-            loader.setLocation(url);
-            Node entityPopulationInputNode = loader.load();
-            EntityPopulationInputController entityPopulationInputController = loader.getController();
-            entityPopulationInputController.setEntityName(entity.getName());
-            entityPopulationInputController.setEntityPopulation(entity.getPopulation());
-            entitiesPopulationsInputs.getChildren().add(entityPopulationInputNode);
-        }
-    }
 
-    private void addEnvVarsComponents() throws IOException {
-        for (EnvironmentVariable envVar : logic.getEngine().getEnvironmentVariables()) {
-            FXMLLoader loader = new FXMLLoader();
-            URL url = getClass().getResource("/component/envarinput/envVarInput.fxml");
-            loader.setLocation(url);
-            Node envVarsInputNode = loader.load();
-            EnvVarInputController envVarInputController = loader.getController();
-            envVarInputController.setEnvVarName(envVar.getName());
-            envVarInputController.setEnvVarType(envVar.getType().toString());
-            envVarInputController.setEnvVarValue(envVar.getValue().toString());
-            envVarsInputs.getChildren().add(envVarsInputNode);
-        }
-    }
 
     @FXML
     void componentTreeItemRequested(MouseEvent event) {
@@ -200,7 +173,10 @@ public class MainController {
 
     @FXML
     void startSimulation(ActionEvent event) {
-        logic.getEngine().startSimulation();
+        logic.startSimulation(
+                logic.retrieveEntitiesPopulationsInputs(entitiesPopulationsInputs),
+                logic.retriveEnvVarsInputs(envVarsInputs)
+        );
     }
 
 }

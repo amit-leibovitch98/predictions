@@ -1,16 +1,18 @@
 package simulation;
 
 import simulation.world.detail.entity.Entity;
+import threads.ThreadQueue;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.locks.Lock;
 
 public class SimulationManager {
     private static SimulationManager instance;
     private static List<Simulation> simulations;
 
-
+    private ThreadQueue threadQueue;
 
     private SimulationManager() {
         this.simulations = new ArrayList<Simulation>();
@@ -23,8 +25,19 @@ public class SimulationManager {
         return instance;
     }
 
+    public void setThreadQueue(int threadQueueSize) {
+        this.threadQueue = new ThreadQueue(threadQueueSize);
+    }
+
+    public ThreadQueue getThreadQueue() {
+        return this.threadQueue;
+    }
+
     public void saveResults(Simulation simulation) {
+        Lock lock = threadQueue.getLock();
+        lock.lock();
         simulations.add(simulation);
+        lock.unlock();
     }
 
     public List<Simulation> showSimulations() {

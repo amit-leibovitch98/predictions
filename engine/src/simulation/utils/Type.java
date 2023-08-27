@@ -1,15 +1,12 @@
 package simulation.utils;
 
 public enum Type {
-    DECIMAL,
     FLOAT,
     BOOLEAN,
     STRING;
 
     public static Type fromString(String type) {
-        if (type.equals("decimal")) {
-            return DECIMAL;
-        } else if (type.equals("float")) {
+        if (type.equals("float")) {
             return FLOAT;
         } else if (type.equals("boolean")) {
             return BOOLEAN;
@@ -22,9 +19,7 @@ public enum Type {
 
     @Override
     public String toString() {
-        if (this == DECIMAL) {
-            return "decimal";
-        } else if (this == FLOAT) {
+       if (this == FLOAT) {
             return "float";
         } else if (this == BOOLEAN) {
             return "boolean";

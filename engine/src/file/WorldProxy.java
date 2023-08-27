@@ -1,6 +1,7 @@
 package file;
 
 import file.schema.generated.*;
+import simulation.SimulationManager;
 import simulation.utils.Range;
 import simulation.utils.Type;
 import simulation.utils.Value;
@@ -34,6 +35,12 @@ public class WorldProxy {
     public WorldProxy(String path) {
         FIleHandler fileHandler = new FIleHandler(path);
         this.prdWorld = fileHandler.getPrdWorld();
+        SimulationManager.getInstance().setThreadQueue(getThreadsNum());
+    }
+
+    private int getThreadsNum() {
+        return 1;
+        //TODO: get from xml
     }
 
     public World getWorld() {

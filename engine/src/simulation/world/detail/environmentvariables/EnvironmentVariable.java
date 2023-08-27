@@ -35,20 +35,14 @@ public class EnvironmentVariable implements ISimulationComponent {
 
     public void setValue(Object value) {
         switch (type) {
-            case DECIMAL:
-                try {
-                    if(value instanceof Float) {
-                        this.value = Math.round((float) value);
-                    } else {
-                        this.value = value;
-                    }
-                } catch (NumberFormatException e) {
-                    throw new IllegalArgumentException("Invalid value for decimal type: " + value);
-                }
-                break;
             case FLOAT:
                 try {
-                    this.value = value;
+                    if(value instanceof String)
+                        this.value = Float.parseFloat((String) value);
+                    else if(value instanceof Float)
+                        this.value = value;
+                    else
+                        throw new IllegalArgumentException("Invalid value for float type: " + value);
                 } catch (NumberFormatException e) {
                     throw new IllegalArgumentException("Invalid value for float type: " + value);
                 }
@@ -58,7 +52,12 @@ public class EnvironmentVariable implements ISimulationComponent {
                 break;
             case BOOLEAN:
                 try {
-                    this.value = (boolean) value;
+                    if (value instanceof String)
+                        this.value = Boolean.parseBoolean((String) value);
+                    else if (value instanceof Boolean)
+                        this.value = value;
+                    else
+                        throw new IllegalArgumentException("Invalid value for boolean type: " + value);
                 } catch (NumberFormatException e) {
                     throw new IllegalArgumentException("Invalid value for boolean type: " + value);
                 }
@@ -69,13 +68,6 @@ public class EnvironmentVariable implements ISimulationComponent {
     public boolean isValid(Object val) {
         if (val != null) {
             switch (type) {
-                case DECIMAL:
-                    try {
-                        int intVal = (int) val;
-                        return intVal >= range.getFrom() && intVal <= range.getTo();
-                    } catch (NumberFormatException e) {
-                        return false;
-                    }
                 case FLOAT:
                     try {
                         float floatVal = (float) val;
@@ -102,8 +94,6 @@ public class EnvironmentVariable implements ISimulationComponent {
 
     public Object initRandomVal() {
         switch (type) {
-            case DECIMAL:
-                return (int) (Math.random() * ((int) range.getTo() - (int) range.getFrom() + 1)) + (int) range.getFrom();
             case FLOAT:
                 return (float) (Math.random() * (range.getTo() - range.getFrom())) + range.getFrom();
             case STRING:

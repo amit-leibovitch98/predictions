@@ -11,7 +11,7 @@ public class EnvVarInputController {
     private Label envVarNameLabel;
 
     @FXML
-    private TextField evVarValueInput;
+    private TextField envVarValueInput;
 
     @FXML
     private Label envVarTypeLabel;
@@ -20,11 +20,11 @@ public class EnvVarInputController {
         return envVarNameLabel.getText();
     }
     public String getEnvVarValue() {
-        return evVarValueInput.getText();
+        return envVarValueInput.getText();
     }
 
     public void setEnvVarValue(String envVarValue) {
-        evVarValueInput.setText(envVarValue);
+        envVarValueInput.setText(envVarValue);
     }
     public void setEnvVarName(String envVarName) {
         envVarNameLabel.setText(envVarName);

@@ -65,28 +65,11 @@ public class SimpleCondition extends Condition implements ICond {
 
     private boolean compare(Object num1, Object num2) {
         try {
-            if(num1 instanceof Integer) {
-                if(num2 instanceof Integer) {
-                    return (int)num1 > (int)num2;
-                } else if(num2 instanceof Float) {
-                    return (int)num1 > (float)num2;
-                } else {
-                    throw new IllegalArgumentException("Cannot compare " + num1 + " and " + num2 );
-                }
-            } else if(num1 instanceof Float) {
-                if(num2 instanceof Integer) {
-                    return (float)num1 > (int)num2;
-                } else if(num2 instanceof Float) {
-                    return (float)num1 > (float)num2;
-                } else {
-                    throw new IllegalArgumentException("Cannot compare " + num1 + " and " + num2 );
-                }
-            } else {
-                throw new IllegalArgumentException("Cannot compare " + num1 + " and " + num2 );
-            }
-        } catch (NumberFormatException e) {
-            throw new IllegalArgumentException("Cannot compare " + num1 + " and " + num2 );
+            float num1Float = (float) num1;
+            float num2Float = (float) num2;
+            return num1Float > num2Float;
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Can't compare " + num1 + " and " + num2);
         }
-
     }
 }

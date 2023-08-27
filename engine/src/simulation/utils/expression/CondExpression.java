@@ -86,7 +86,7 @@ public class CondExpression {
 
     private Object random(String max) {
         Random random = new Random();
-        return random.nextInt(Integer.parseInt(max) + 1);
+        return random.nextFloat() * Float.parseFloat(max);
     }
 
     public static void updateEnvVars(List<EnvironmentVariable> envVars) {

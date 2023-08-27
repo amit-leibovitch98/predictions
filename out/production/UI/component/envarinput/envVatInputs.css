@@ -1,0 +1,4 @@
+#envVarTypeLabel {
+    -fx-font-size: 12px;
+    -fx-font-weight: normal; /* changed from bold */
+}

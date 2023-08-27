@@ -22,9 +22,6 @@ public class EntityProperty {
     private void initialValue(String initialValue) {
         if (initialValue != null) {
             switch (type) {
-                case DECIMAL:
-                    this.initialValue = Integer.parseInt(initialValue);
-                    break;
                 case FLOAT:
                     this.initialValue = Float.parseFloat(initialValue);
                     break;
@@ -60,8 +57,6 @@ public class EntityProperty {
 
     public Object getRandomInitValue() {
         switch (type) {
-            case DECIMAL:
-                return range.getRandomIntValue();
             case FLOAT:
                 return range.getRandomValue();
             case BOOLEAN:

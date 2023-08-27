@@ -15,6 +15,7 @@ import simulation.world.detail.rule.Rule;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class EngineFacade {
     private Simulation currSimulation;
@@ -71,10 +72,10 @@ public class EngineFacade {
 
     }
 
-    public Simulation startSimulation() {
+    public void startSimulation(Map<String, Integer> entitiesPopulation, Map<String, Object> envVarsVals) {
         this.currSimulation = new Simulation(world);
-        this.currSimulation.init();
-        return this.currSimulation.start();
+        this.currSimulation.setRetrivedData(entitiesPopulation, envVarsVals);
+        SimulationManager.getInstance().getThreadQueue().addTask(this.currSimulation);
     }
 
     public List<Simulation> getPastSimulationResult() {

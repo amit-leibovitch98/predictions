@@ -7,7 +7,7 @@ import java.util.List;
 
 public class Entity implements ISimulationComponent {
     private final String name;
-    private final int population;
+    private int population;
     private final List<EntityProperty> properties;
 
     public Entity(String name, int population, List<EntityProperty> properties) {
@@ -49,5 +49,11 @@ public class Entity implements ISimulationComponent {
                     .append("   Property initial value: ").append(property.getInitialValue()).append("\n");
         }
         return propertiesInfo.toString();
+    }
+
+    public void setPopulation(Integer population) {
+        if(population != null) {
+            this.population = population;
+        }
     }
 }
