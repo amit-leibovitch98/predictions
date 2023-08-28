@@ -1,12 +1,12 @@
 package component.main;
 
-import component.entitypopulationinput.EntityPopulationInputController;
-import component.envarinput.EnvVarInputController;
+import component.result.entity.ResultByEntityController;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.event.ActionEvent;
@@ -15,64 +15,44 @@ import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import logic.Logic;
-import simulation.world.detail.entity.Entity;
-import simulation.world.detail.environmentvariables.EnvironmentVariable;
+import simulation.SimulationManager;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.Optional;
+import java.util.Objects;
 
 public class MainController {
     @FXML
-    private Label QueueManagerLabel;
-
-    @FXML
-    private Button StartB;
-
-    @FXML
-    private Button clearB;
-
-    @FXML
     private Label componentDetailLabel;
-
     @FXML
     private TreeView<String> componentsTree;
-
-    @FXML
-    private Tab detailsTab;
-
     @FXML
     private FlowPane entitiesPopulationsInputs;
-
     @FXML
     private Tab newExecTab;
-
     @FXML
     private Label pathLabel;
-
     @FXML
     private Label progressPrecantegeLabel;
-
+    @FXML
+    private ListView<String> simulationGuidsList;
     @FXML
     private ListView<String> queueList;
-
     @FXML
     private Tab resultsTab;
-
     @FXML
     private ProgressBar simulationProccessBar;
-
-    @FXML
-    private Button uploadFileB;
-
     @FXML
     private FlowPane envVarsInputs;
-
-
+    @FXML
+    private Pane resultsPane;
+    @FXML
+    private StringProperty selectedSimulationGUID;
     private StringProperty path;
     private StringProperty componentDetail;
     private BooleanProperty isFileUploaded;
@@ -87,15 +67,29 @@ public class MainController {
         this.componentDetailLabel = new Label();
         this.progressPrecantege = new SimpleStringProperty();
         this.queueList = new ListView<>();
+        this.selectedSimulationGUID = new SimpleStringProperty();
     }
 
     public void initialize() {
-        pathLabel.textProperty().bind(path);
-        componentDetailLabel.textProperty().bind(componentDetail);
-        newExecTab.setDisable(true);
+        this.pathLabel.textProperty().bind(path);
+        this.componentDetailLabel.textProperty().bind(componentDetail);
+        this.newExecTab.disableProperty().bind(isFileUploaded.not());
+        this.resultsTab.disableProperty().bind(SimulationManager.getInstance().getSimulations().emptyProperty());
+        SimulationManager.getInstance().getSimulations().emptyProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != oldValue) {
+                updateSimulationResults();
+            }
+        });
+        //        this.selectedSimulationGUID.bind(simulationGuidsList.getSelectionModel().selectedItemProperty());
+        simulationGuidsList.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            if (!Objects.equals(newValue, oldValue)) {
+                selectedSimulationGUID.set(newValue);
+            }
+        });
+
     }
 
-    public void bindTaskToProgressBar(Task<Boolean> aTask, Runnable onFinish) {
+    public void bindTaskToProgressBar(Task<Boolean> aTask) {
         simulationProccessBar.progressProperty().bind(aTask.progressProperty());
         progressPrecantegeLabel.textProperty().bind(
                 Bindings.concat(
@@ -105,13 +99,6 @@ public class MainController {
                                         aTask.progressProperty(),
                                         100)),
                         " %"));
-        aTask.valueProperty().addListener((observable, oldValue, newValue) -> {
-            onTaskFinished(onFinish);
-        });
-    }
-
-    private void onTaskFinished(Runnable onFinish) {
-        //TODO: implement
     }
 
     public void setLogic(Logic logic) {
@@ -139,7 +126,6 @@ public class MainController {
             e.printStackTrace();
         }
         logic.updateTreeView(componentsTree);
-        newExecTab.setDisable(false);
         updateNewExecutionTab();
     }
 
@@ -151,8 +137,6 @@ public class MainController {
         }
 
     }
-
-
 
     @FXML
     void componentTreeItemRequested(MouseEvent event) {
@@ -177,6 +161,31 @@ public class MainController {
                 logic.retrieveEntitiesPopulationsInputs(entitiesPopulationsInputs),
                 logic.retriveEnvVarsInputs(envVarsInputs)
         );
+    }
+
+    private void updateSimulationResults() {
+        simulationGuidsList.setItems(SimulationManager.getInstance().getSimulationGuids());
+    }
+
+    @FXML
+    void showResultByEntity(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader();
+            URL url = getClass().getResource("/component/result/entity/resultByEntity.fxml");
+            loader.setLocation(url);
+            Node byEntityResult = loader.load();
+            ResultByEntityController resultByEntityController = loader.getController();
+            resultByEntityController.getSimulationGuid().bind(selectedSimulationGUID);
+            logic.setEntityResultComponent(byEntityResult, resultByEntityController);
+            resultsPane.getChildren().add(byEntityResult);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    void ShowResultByHistogram(ActionEvent event) {
+        System.out.println("ShowResultByHistogram");
     }
 
 }

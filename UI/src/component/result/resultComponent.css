@@ -1,0 +1,14 @@
+#descriptionLabel {
+    -fx-font-size: 14px;
+    -fx-font-weight: normal;
+}
+
+.tree-cell:selected, .list-cell:selected {
+    -fx-background-color: #3498db;
+    -fx-text-fill: white;
+}
+
+.split-pane {
+    -fx-border-color: #484848;
+    -fx-border-width: 2px;
+}

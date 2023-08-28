@@ -1,21 +1,29 @@
 package simulation;
 
+import javafx.application.Platform;
+import javafx.beans.property.ListProperty;
+import javafx.beans.property.SimpleListProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import simulation.world.detail.entity.Entity;
 import threads.ThreadQueue;
 
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Observable;
 import java.util.concurrent.locks.Lock;
 
-public class SimulationManager {
+public class SimulationManager extends Observable {
     private static SimulationManager instance;
-    private static List<Simulation> simulations;
-
+    private static SimpleListProperty<Simulation> simulations;
+    private static ObservableList<String> simulationGuids;
     private ThreadQueue threadQueue;
 
     private SimulationManager() {
-        this.simulations = new ArrayList<Simulation>();
+        this.simulations = new SimpleListProperty<>(FXCollections.observableArrayList());
+        this.simulationGuids = new SimpleListProperty<>(FXCollections.observableArrayList());
     }
 
     public static SimulationManager getInstance() {
@@ -37,30 +45,38 @@ public class SimulationManager {
         Lock lock = threadQueue.getLock();
         lock.lock();
         simulations.add(simulation);
+        Platform.runLater(() -> {
+            // Perform UI updates here, such as adding items to the ListView
+            simulationGuids.add(simulation.getGuid());
+        });
         lock.unlock();
     }
 
-    public List<Simulation> showSimulations() {
+    public SimpleListProperty<Simulation> getSimulations() {
         return simulations;
     }
 
+
     private Simulation getSimulationByGuid(String guid) {
-        for(Simulation simulation : simulations) {
-            if(simulation.getGuid().equals(guid)) {
+        for (Simulation simulation : simulations) {
+            if (simulation.getGuid().equals(guid)) {
                 return simulation;
             }
         }
         return null;
     }
 
-    public void getSimulationResultByEntities(String guid) {
+    public String getSimulationResultByEntities(String guid, String entityName) {
         Simulation simulation = getSimulationByGuid(guid);
-        for(Entity entity: simulation.getWorld().getEntities()) {
-            System.out.println("•" + entity.getName() + ":");
-            System.out.println(" population at the begining: " + entity.getPopulation());
-            System.out.println(" population at the end: " + simulation.getWorld().countAliveOfEntity(entity));
+        for (Entity entity : simulation.getWorld().getEntities()) {
+            if (entity.getName().equals(entityName)) {
+                return "Population at the begining: " + entity.getPopulation() + "\n" +
+                        "Population at the end: " + simulation.getWorld().countAliveOfEntity(entity);
+            }
         }
+        return null;
     }
+
     public Map<Object, Integer> getSimulationResultByHistogram(String guid, String entityName, String propertyName) {
         Simulation simulation = getSimulationByGuid(guid);
         try {
@@ -72,6 +88,7 @@ public class SimulationManager {
         }
         return null;
     }
+
     public List<String> getEntitiesNamesForSimulation(String guid) {
         List<String> entitiesNames = new ArrayList<String>();
         Simulation simulation = getSimulationByGuid(guid);
@@ -94,4 +111,8 @@ public class SimulationManager {
         return propertiesNames;
     }
 
+
+    public ObservableList<String> getSimulationGuids() {
+        return simulationGuids;
+    }
 }

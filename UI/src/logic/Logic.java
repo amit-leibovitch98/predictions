@@ -3,6 +3,7 @@ package logic;
 import component.entitypopulationinput.EntityPopulationInputController;
 import component.envarinput.EnvVarInputController;
 import component.main.MainController;
+import component.result.entity.ResultByEntityController;
 import facade.EngineFacade;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -32,6 +33,10 @@ public class Logic {
     public Logic(MainController mainController) {
         this.engine = new EngineFacade();
         this.mainController = mainController;
+    }
+
+    public void readFile(String path) {
+        this.engine.readFile(path);
     }
 
     public void updateTreeView(TreeView<String> componentsTree) {
@@ -198,7 +203,8 @@ public class Logic {
         }
     }
 
-    public void readFile(String path) {
-        this.engine.readFile(path);
+    public void setEntityResultComponent(Node byEntityResult, ResultByEntityController resultByEntityController) {
+        resultByEntityController.setEntitiesList(this.engine.getEntities());
+
     }
 }

@@ -131,3 +131,22 @@
 .text-field:focused {
     -fx-border-color: #3498db;
 }
+
+/* Style radio buttons */
+.radio-button:selected .radio .dot {
+    -fx-background-color: #3498db;
+    -fx-alignment: center;
+}
+
+/* Style SimulationsList */
+#simulationGuidsList {
+    -fx-background-color: white;
+    -fx-border-color: #ccc;
+    -fx-border-width: 2px;
+}
+
+/* Style selected ListItem in SimulationsList */
+#simulationGuidsList .list-cell:selected {
+    -fx-background-color: #3498db;
+    -fx-text-fill: white;
+}

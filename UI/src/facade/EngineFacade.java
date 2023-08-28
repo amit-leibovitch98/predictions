@@ -80,7 +80,7 @@ public class EngineFacade {
 
     public List<Simulation> getPastSimulationResult() {
         SimulationManager simulationManager = SimulationManager.getInstance();
-        return simulationManager.showSimulations();
+        return simulationManager.getSimulations();
     }
 
     public List<EnvironmentVariable> getEnvironmentVariables() {

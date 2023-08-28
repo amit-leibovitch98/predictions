@@ -5,15 +5,19 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.control.TreeView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.RowConstraints?>
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="650.0" prefWidth="1000.0" stylesheets="@../design.css" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="component.main.MainController">
@@ -62,14 +66,15 @@
                           </rowConstraints>
                            <children>
                               <TreeView fx:id="componentsTree" onMouseClicked="#componentTreeItemRequested" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                              <Label fx:id="componentDetailLabel" text="&lt;component details&gt;" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.rowIndex="1" GridPane.valignment="CENTER">
+                              <Label fx:id="componentDetailLabel" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="&lt;component details&gt;" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.rowIndex="1" GridPane.valignment="CENTER">
                                  <GridPane.margin>
                                     <Insets left="50.0" />
                                  </GridPane.margin>
                               </Label>
                            </children>
                         </GridPane>
-                     </children></AnchorPane>
+                     </children>
+                  </AnchorPane>
             </content>
           </Tab>
           <Tab fx:id="newExecTab" text="Start New Execution">
@@ -115,24 +120,80 @@
                                     <Insets left="20.0" />
                                  </GridPane.margin>
                               </Label>
-                              <ScrollPane GridPane.columnIndex="4" GridPane.columnSpan="2" GridPane.rowIndex="2">
+                              <ScrollPane GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="2">
                                  <content>
                                     <FlowPane fx:id="entitiesPopulationsInputs" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
                                  </content>
                               </ScrollPane>
-                              <ScrollPane GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="2">
+                              <ScrollPane GridPane.columnIndex="4" GridPane.columnSpan="2" GridPane.rowIndex="2">
                                  <content>
                                     <FlowPane fx:id="envVarsInputs" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
                                  </content>
                               </ScrollPane>
                            </children>
                         </GridPane>
-                     </children></AnchorPane>
+                     </children>
+                  </AnchorPane>
             </content>
           </Tab>
             <Tab fx:id="resultsTab" text="Results">
                <content>
-                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <GridPane layoutX="61.0" layoutY="29.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                          <columnConstraints>
+                            <ColumnConstraints hgrow="NEVER" minWidth="10.0" prefWidth="10.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                              <ColumnConstraints hgrow="NEVER" minWidth="5.0" prefWidth="5.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                              <ColumnConstraints hgrow="NEVER" />
+                            <ColumnConstraints hgrow="NEVER" minWidth="10.0" prefWidth="10.0" />
+                          </columnConstraints>
+                          <rowConstraints>
+                              <RowConstraints minHeight="10.0" prefHeight="10.0" vgrow="NEVER" />
+                              <RowConstraints minHeight="200.0" prefHeight="200.0" vgrow="NEVER" />
+                            <RowConstraints minHeight="20.0" prefHeight="20.0" vgrow="NEVER" />
+                              <RowConstraints minHeight="30.0" prefHeight="30.0" vgrow="NEVER" />
+                            <RowConstraints vgrow="NEVER" />
+                            <RowConstraints minHeight="10.0" prefHeight="10.0" vgrow="NEVER" />
+                          </rowConstraints>
+                           <children>
+                              <ListView fx:id="simulationGuidsList" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1" GridPane.rowSpan="4" />
+                              <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="&lt;Execution Details&gt;" GridPane.columnIndex="3" GridPane.columnSpan="2" GridPane.rowIndex="1" />
+                              <Button maxHeight="60.0" maxWidth="100.0" minHeight="60.0" minWidth="100.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="100.0" text="Rerun!" GridPane.columnIndex="5" GridPane.halignment="RIGHT" GridPane.rowIndex="1" />
+                              <HBox prefHeight="100.0" prefWidth="200.0" spacing="15.0" GridPane.columnIndex="3" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="CENTER">
+                                 <children>
+                                    <Label text="See results by:" />
+                                    <RadioButton fx:id="entityPopulationRB" mnemonicParsing="false" onAction="#showResultByEntity" text="Entity Population">
+                                       <HBox.margin>
+                                          <Insets />
+                                       </HBox.margin>
+                                       <toggleGroup>
+                                          <ToggleGroup fx:id="showRusltBy" />
+                                       </toggleGroup>
+                                    </RadioButton>
+                                    <RadioButton fx:id="proptyHistogramRB" mnemonicParsing="false" onAction="#ShowResultByHistogram" text="Propery Histogram" toggleGroup="$showRusltBy">
+                                       <HBox.margin>
+                                          <Insets />
+                                       </HBox.margin>
+                                    </RadioButton>
+                                 </children>
+                                 <GridPane.margin>
+                                    <Insets />
+                                 </GridPane.margin>
+                                 <padding>
+                                    <Insets top="5.0" />
+                                 </padding>
+                              </HBox>
+                              <ScrollPane GridPane.columnIndex="3" GridPane.columnSpan="3" GridPane.rowIndex="4">
+                                 <content>
+                                    <Pane fx:id="resultsPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" stylesheets="@../result/resultComponent.css" />
+                                 </content>
+                              </ScrollPane>
+                           </children>
+                        </GridPane>
+                     </children></AnchorPane>
                </content>
             </Tab>
         </tabs>

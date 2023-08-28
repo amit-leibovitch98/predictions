@@ -29,8 +29,16 @@
     -fx-background-color: #20a357;
 }
 
+#startB:hover {
+    -fx-background-color: #1a8b4a;
+}
+
 #clearB {
     -fx-background-color: #d94a3d;
+}
+
+#clearB:hover {
+    -fx-background-color: #b63b30;
 }
 
 /* Style queueList */
@@ -122,4 +130,23 @@
 
 .text-field:focused {
     -fx-border-color: #3498db;
+}
+
+/* Style radio buttons */
+.radio-button:selected .radio .dot {
+    -fx-background-color: #3498db;
+    -fx-alignment: center;
+}
+
+/* Style SimulationsList */
+#simulationGuidsList {
+    -fx-background-color: white;
+    -fx-border-color: #ccc;
+    -fx-border-width: 2px;
+}
+
+/* Style selected ListItem in SimulationsList */
+#simulationGuidsList .list-cell:selected {
+    -fx-background-color: #3498db;
+    -fx-text-fill: white;
 }
