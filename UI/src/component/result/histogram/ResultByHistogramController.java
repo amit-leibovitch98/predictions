@@ -24,14 +24,14 @@ public class ResultByHistogramController extends ResultComponent {
     }
 
     public void setEntitysProperties(List<Entity> entityList) {
-        entityPropertyTree.setRoot(new TreeItem<>("Entities' Properties"));
+        entityPropertyTree.setRoot(new TreeItem<>("Entities:"));
         TreeItem<String> root = entityPropertyTree.getRoot();
         root.setExpanded(true);
         int entityIndx = 0;
         for (Entity entity : entityList) {
-            root.getChildren().get(0).getChildren().add(new TreeItem<>(entity.getName()));
+            root.getChildren().add(new TreeItem<>(entity.getName()));
             for(EntityProperty property: entityList.get(entityIndx).getProperties()) {
-                root.getChildren().get(0).getChildren().get(entityIndx).getChildren()
+                root.getChildren().get(entityIndx).getChildren()
                         .add(new TreeItem<>(property.getName()));
             }
             entityIndx++;
