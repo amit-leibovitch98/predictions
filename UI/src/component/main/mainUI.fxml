@@ -20,7 +20,7 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.RowConstraints?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="650.0" prefWidth="1000.0" stylesheets="@../design.css" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="component.main.MainController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="650.0" prefWidth="1000.0" stylesheets="@../design.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="component.main.MainController">
    <top>
       <GridPane BorderPane.alignment="CENTER">
         <columnConstraints>
@@ -165,7 +165,7 @@
                               <HBox prefHeight="100.0" prefWidth="200.0" spacing="15.0" GridPane.columnIndex="3" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="CENTER">
                                  <children>
                                     <Label text="See results by:" />
-                                    <RadioButton fx:id="entityPopulationRB" mnemonicParsing="false" onAction="#showResultByEntity" text="Entity Population">
+                                    <RadioButton fx:id="entityPopulationRB" mnemonicParsing="false" onAction="#showResultByEntity" selected="true" text="Entity Population">
                                        <HBox.margin>
                                           <Insets />
                                        </HBox.margin>

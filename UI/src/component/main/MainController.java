@@ -86,8 +86,8 @@ public class MainController {
             if (!Objects.equals(newValue, oldValue)) {
                 selectedSimulationGUID.set(newValue);
                 try {
+                    //updateResultByHistogramComponent();
                     updateResultByEntityComponent();
-                    updateResultByHistogramComponent();
                 } catch (IOException e) {
                     e.printStackTrace();
                     System.out.println(e.getMessage());
@@ -178,6 +178,7 @@ public class MainController {
 
     @FXML
     void showResultByEntity(ActionEvent event) throws IOException {
+        resultsPane.getChildren().clear();
         updateResultByEntityComponent();
     }
 
@@ -194,6 +195,7 @@ public class MainController {
 
     @FXML
     void ShowResultByHistogram(ActionEvent event) throws IOException {
+        resultsPane.getChildren().clear();
         updateResultByHistogramComponent();
     }
 

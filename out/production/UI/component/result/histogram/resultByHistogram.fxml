@@ -50,6 +50,6 @@
             </ScrollPane>
         </items>
       </SplitPane>
-      <Label text="Choose The entity's property which you want to see:" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+      <Label text="Choose The entity's property which histogram you want to see:" GridPane.columnIndex="1" GridPane.rowIndex="1" />
    </children>
 </GridPane>
