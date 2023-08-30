@@ -4,6 +4,7 @@ import component.entitypopulationinput.EntityPopulationInputController;
 import component.envarinput.EnvVarInputController;
 import component.main.MainController;
 import component.result.entity.ResultByEntityController;
+import component.result.histogram.ResultByHistogramController;
 import facade.EngineFacade;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -40,7 +41,7 @@ public class Logic {
     }
 
     public void updateTreeView(TreeView<String> componentsTree) {
-        engine.showSimulationDetails();
+        engine.showSimulationDetails(); //TODO: detele before submit
         componentsTree.setRoot(new TreeItem<>("Simulation Details"));
         TreeItem<String> root = componentsTree.getRoot();
         root.setExpanded(true);
@@ -206,5 +207,9 @@ public class Logic {
     public void setEntityResultComponent(Node byEntityResult, ResultByEntityController resultByEntityController) {
         resultByEntityController.setEntitiesList(this.engine.getEntities());
 
+    }
+
+    public void setHistogramResultComponent(Node byHistogramResult, ResultByHistogramController resultByHistogramController) {
+        resultByHistogramController.setEntitysProperties(this.engine.getEntities());
     }
 }

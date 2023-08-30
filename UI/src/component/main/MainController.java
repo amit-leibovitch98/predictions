@@ -1,6 +1,7 @@
 package component.main;
 
 import component.result.entity.ResultByEntityController;
+import component.result.histogram.ResultByHistogramController;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -84,10 +85,18 @@ public class MainController {
         simulationGuidsList.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (!Objects.equals(newValue, oldValue)) {
                 selectedSimulationGUID.set(newValue);
+                try {
+                    updateResultByEntityComponent();
+                    updateResultByHistogramComponent();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    System.out.println(e.getMessage());
+                }
             }
         });
 
     }
+
 
     public void bindTaskToProgressBar(Task<Boolean> aTask) {
         simulationProccessBar.progressProperty().bind(aTask.progressProperty());
@@ -168,24 +177,37 @@ public class MainController {
     }
 
     @FXML
-    void showResultByEntity(ActionEvent event) {
-        try {
-            FXMLLoader loader = new FXMLLoader();
-            URL url = getClass().getResource("/component/result/entity/resultByEntity.fxml");
-            loader.setLocation(url);
-            Node byEntityResult = loader.load();
-            ResultByEntityController resultByEntityController = loader.getController();
-            resultByEntityController.getSimulationGuid().bind(selectedSimulationGUID);
-            logic.setEntityResultComponent(byEntityResult, resultByEntityController);
-            resultsPane.getChildren().add(byEntityResult);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    void showResultByEntity(ActionEvent event) throws IOException {
+        updateResultByEntityComponent();
+    }
+
+    private void updateResultByEntityComponent() throws IOException {
+        FXMLLoader loader = new FXMLLoader();
+        URL url = getClass().getResource("/component/result/entity/resultByEntity.fxml");
+        loader.setLocation(url);
+        Node byEntityResult = loader.load();
+        ResultByEntityController resultByEntityController = loader.getController();
+        resultByEntityController.getSimulationGuid().bind(selectedSimulationGUID);
+        logic.setEntityResultComponent(byEntityResult, resultByEntityController);
+        resultsPane.getChildren().add(byEntityResult);
     }
 
     @FXML
-    void ShowResultByHistogram(ActionEvent event) {
-        System.out.println("ShowResultByHistogram");
+    void ShowResultByHistogram(ActionEvent event) throws IOException {
+        updateResultByHistogramComponent();
     }
+
+    private void updateResultByHistogramComponent() throws IOException {
+        FXMLLoader loader = new FXMLLoader();
+        URL url = getClass().getResource("/component/result/histogram/resultByHistogram.fxml");
+        loader.setLocation(url);
+        Node byHistogramResult = loader.load();
+        ResultByHistogramController resultByHistogramController = loader.getController();
+        resultByHistogramController.getSimulationGuid().bind(selectedSimulationGUID);
+        logic.setHistogramResultComponent(byHistogramResult, resultByHistogramController);
+        resultsPane.getChildren().add(byHistogramResult);
+
+    }
+
 
 }
