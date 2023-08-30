@@ -11,7 +11,7 @@ import simulation.world.detail.entity.EntityProperty;
 
 import java.util.List;
 
-public abstract class ResultByHistogramController extends ResultComponent {
+public class ResultByHistogramController extends ResultComponent {
 
     @FXML
     private TreeView<String> entityPropertyTree;
