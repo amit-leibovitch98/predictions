@@ -105,8 +105,9 @@ public class WorldProxy {
     }
 
     private TerminationCond getTerminationList() {
+        boolean isInteractive = false;
         Integer ticks = null, seconds = null;
-        List<Object> termList = prdWorld.getPRDTermination().getPRDByTicksOrPRDBySecond();
+        List<Object> termList = prdWorld.getPRDTermination().getPRDBySecondOrPRDByTicks();
         for(Object prdBySecond : termList) {
             if (prdBySecond.getClass() == PRDByTicks.class) {
                 ticks = ((PRDByTicks)(prdBySecond)).getCount();
@@ -114,7 +115,10 @@ public class WorldProxy {
                 seconds = ((PRDBySecond)(prdBySecond)).getCount();
             }
         }
-        return new TerminationCond(ticks, seconds);
+        if(prdWorld.getPRDTermination().getPRDByUser() != null) {
+            isInteractive = true;
+        }
+        return new TerminationCond(ticks, seconds, isInteractive);
     }
 
     private List<EntityProperty> getEntityProperties(PRDProperties prdProperties) {

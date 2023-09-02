@@ -84,6 +84,7 @@ public class MainController {
         this.resultsTab.disableProperty().bind(SimulationManager.getInstance().getSimulations().emptyProperty());
         this.proptyHistogramRB.disableProperty().bind(simulationGuidsList.getSelectionModel().selectedItemProperty().isNull());
         this.entityPopulationRB.disableProperty().bind(simulationGuidsList.getSelectionModel().selectedItemProperty().isNull());
+        //TODO: implement start/pause/resume button and bind their disable property to worldDef 's isInteractive
         //set rusults tab when the first simulation is added
         SimulationManager.getInstance().getSimulations().emptyProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != oldValue) {

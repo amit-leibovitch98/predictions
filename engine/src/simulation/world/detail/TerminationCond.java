@@ -7,10 +7,12 @@ import java.util.Optional;
 public class TerminationCond implements ISimulationComponent {
     private Integer byTicks;
     private Integer byTime;
+    private boolean isInteractive;
 
-    public TerminationCond(Integer byTicks, Integer byTime) {
+    public TerminationCond(Integer byTicks, Integer byTime, boolean isInteractive) {
         this.byTicks = byTicks;
         this.byTime = byTime;
+        this.isInteractive = isInteractive;
     }
 
     public Integer getByTicks() {
@@ -25,5 +27,8 @@ public class TerminationCond implements ISimulationComponent {
     }
     public String getName() {
         return "Termination Condition";
+    }
+    public boolean isInteractive() {
+        return isInteractive;
     }
 }
