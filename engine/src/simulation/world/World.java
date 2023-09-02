@@ -2,7 +2,6 @@ package simulation.world;
 
 import simulation.world.detail.entity.Entity;
 import simulation.world.detail.entity.EntityInstance;
-import simulation.world.detail.entity.EntityProperty;
 import simulation.world.detail.rule.Rule;
 import simulation.world.detail.TerminationCond;
 import simulation.world.detail.environmentvariables.EnvironmentVariable;
@@ -11,12 +10,24 @@ import simulation.world.detail.environmentvariables.EnvironmentVariable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class World {
+public class World extends WorldDef {
     private List<EnvironmentVariable> environmentVars;
     private List<Entity> entities;
-    private List<Rule> rules;
-    private TerminationCond terminationConds;
     private List<EntityInstance> entityInstances;
+
+    protected World(List<EnvironmentVariable> environmentVars, List<Entity> entities, List<Rule> rules, TerminationCond terminationCond) {
+        super(environmentVars, entities);
+        this.environmentVars = new ArrayList<>();
+        for(EnvironmentVariable envVar : environmentVars) {
+            this.environmentVars.add(new EnvironmentVariable(envVar.getName(), envVar.getRange(), envVar.getType()));
+        }
+        this.entities = new ArrayList<>();
+        for(Entity entity : entities) {
+            this.entities.add(new Entity(entity.getName(), entity.getPopulation(), entity.getProperties()));
+        }
+        this.terminationConds = terminationCond;
+        this.rules = rules;
+    }
 
     public List<EnvironmentVariable> getEnvironmentVars() {
         return environmentVars;
@@ -24,21 +35,12 @@ public class World {
     public List<Entity> getEntities() {
         return entities;
     }
-    public List<Rule> getRules() {
-        return rules;
-    }
-    public TerminationCond getTerminationConds() { return terminationConds; }
+
     public void setEnvironmentVars(List<EnvironmentVariable> environmentVars) {
         this.environmentVars = environmentVars;
     }
     public void setEntities(List<Entity> entities) {
         this.entities = entities;
-    }
-    public void setRules(List<Rule> rules) {
-        this.rules = rules;
-    }
-    public void setTerminationConds(TerminationCond terminationConds) {
-        this.terminationConds = terminationConds;
     }
 
     public EnvironmentVariable getEnvironmentVar(String name) {
@@ -87,9 +89,5 @@ public class World {
             }
         }
         throw new RuntimeException("Environment Variable " + envVarName + " not found");
-    }
-
-    public TerminationCond getTerminationCond() {
-        return this.terminationConds;
     }
 }

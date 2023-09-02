@@ -9,10 +9,7 @@ import simulation.world.detail.entity.EntityInstance;
 import simulation.world.detail.environmentvariables.EnvironmentVariable;
 import simulation.world.detail.rule.Rule;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -33,17 +30,25 @@ public class Simulation implements Runnable {
         this.retrivedEnvVarsValues = null;
     }
 
+    public Map<String, Integer> getRetrivedEntitiesPopulation() {
+        return retrivedEntitiesPopulation;
+    }
+
+    public Map<String, Object> getRetrivedEnvVarsValues() {
+        return retrivedEnvVarsValues;
+    }
+
     public void init() {
-        if(retrivedEntitiesPopulation == null || retrivedEnvVarsValues == null) {
+        if (retrivedEntitiesPopulation == null || retrivedEnvVarsValues == null) {
             throw new IllegalStateException("can't init- retrievedEntitiesPopulation or retrievedEnvVarsValues is null");
         }
         //init envVars
-        for(EnvironmentVariable envVar: world.getEnvironmentVars()) {
+        for (EnvironmentVariable envVar : world.getEnvironmentVars()) {
             envVar.setValue(retrivedEnvVarsValues.get(envVar.getName()));
         }
 
         //init entities
-        for(Entity entity: world.getEntities()) {
+        for (Entity entity : world.getEntities()) {
             entity.setPopulation(retrivedEntitiesPopulation.get(entity.getName()));
         }
 

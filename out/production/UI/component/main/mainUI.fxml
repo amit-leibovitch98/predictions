@@ -20,7 +20,7 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.RowConstraints?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="650.0" prefWidth="1000.0" stylesheets="@../design.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="component.main.MainController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="650.0" prefWidth="1000.0" stylesheets="@../design.css" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="component.main.MainController">
    <top>
       <GridPane BorderPane.alignment="CENTER">
         <columnConstraints>
@@ -143,7 +143,7 @@
                         <GridPane layoutX="61.0" layoutY="29.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                           <columnConstraints>
                             <ColumnConstraints hgrow="NEVER" minWidth="10.0" prefWidth="10.0" />
-                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                              <ColumnConstraints hgrow="NEVER" minWidth="-Infinity" />
                               <ColumnConstraints hgrow="NEVER" minWidth="5.0" prefWidth="5.0" />
                               <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                               <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -155,13 +155,13 @@
                               <RowConstraints minHeight="200.0" prefHeight="200.0" vgrow="NEVER" />
                             <RowConstraints minHeight="20.0" prefHeight="20.0" vgrow="NEVER" />
                               <RowConstraints minHeight="30.0" prefHeight="30.0" vgrow="NEVER" />
-                            <RowConstraints vgrow="NEVER" />
+                            <RowConstraints maxHeight="1.7976931348623157E308" vgrow="SOMETIMES" />
                             <RowConstraints minHeight="10.0" prefHeight="10.0" vgrow="NEVER" />
                           </rowConstraints>
                            <children>
                               <ListView fx:id="simulationGuidsList" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1" GridPane.rowSpan="4" />
                               <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="&lt;Execution Details&gt;" GridPane.columnIndex="3" GridPane.columnSpan="2" GridPane.rowIndex="1" />
-                              <Button maxHeight="60.0" maxWidth="100.0" minHeight="60.0" minWidth="100.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="100.0" text="Rerun!" GridPane.columnIndex="5" GridPane.halignment="RIGHT" GridPane.rowIndex="1" />
+                              <Button fx:id="rerunB" maxHeight="60.0" maxWidth="100.0" minHeight="60.0" minWidth="100.0" mnemonicParsing="false" onAction="#rerunSimulation" prefHeight="60.0" prefWidth="100.0" text="Rerun!" GridPane.columnIndex="5" GridPane.halignment="RIGHT" GridPane.rowIndex="1" />
                               <HBox prefHeight="100.0" prefWidth="200.0" spacing="15.0" GridPane.columnIndex="3" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="CENTER">
                                  <children>
                                     <Label text="See results by:" />

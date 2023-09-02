@@ -25,11 +25,11 @@
     -fx-background-color: #2980b9;
 }
 
-#startB {
+#startB, #rerunB {
     -fx-background-color: #20a357;
 }
 
-#startB:hover {
+#startB:hover, #rerunB:hover {
     -fx-background-color: #1a8b4a;
 }
 

@@ -6,6 +6,7 @@ import simulation.utils.Range;
 import simulation.utils.Type;
 import simulation.utils.Value;
 import simulation.world.World;
+import simulation.world.WorldDef;
 import simulation.world.detail.entity.Entity;
 import simulation.world.detail.environmentvariables.EnvironmentVariable;
 import simulation.world.detail.rule.Activation;
@@ -43,14 +44,12 @@ public class WorldProxy {
         //TODO: get from xml
     }
 
-    public World getWorld() {
-        World world = new World();
+    public WorldDef getWorld() {
+        WorldDef worldDef = new WorldDef(getEnvironmentVariableList(), getEntityList());
         this.envVars = getEnvironmentVariableList();
-        world.setEnvironmentVars(this.envVars);
-        world.setEntities(getEntityList());
-        world.setRules(getRuleList(world.getEntities().get(0)));  //Fixme: for ex2 well have more than 1 entity
-        world.setTerminationConds(getTerminationList());
-        return world;
+        worldDef.setRules(getRuleList(worldDef.getEntities().get(0)));  //Fixme: for ex2 well have more than 1 entity
+        worldDef.setTerminationConds(getTerminationList());
+        return worldDef;
     }
 
     private List<EnvironmentVariable> getEnvironmentVariableList() {

@@ -57,7 +57,7 @@ public class SimulationManager extends Observable {
     }
 
 
-    private Simulation getSimulationByGuid(String guid) {
+    public Simulation getSimulationByGuid(String guid) {
         for (Simulation simulation : simulations) {
             if (simulation.getGuid().equals(guid)) {
                 return simulation;
@@ -115,4 +115,5 @@ public class SimulationManager extends Observable {
     public ObservableList<String> getSimulationGuids() {
         return simulationGuids;
     }
+
 }

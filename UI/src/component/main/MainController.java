@@ -7,7 +7,6 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.event.ActionEvent;
@@ -16,6 +15,7 @@ import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -53,6 +53,12 @@ public class MainController {
     @FXML
     private Pane resultsPane;
     @FXML
+    private RadioButton proptyHistogramRB;
+    @FXML
+    private RadioButton entityPopulationRB;
+    @FXML
+    private Button rerunB;
+    @FXML
     private StringProperty selectedSimulationGUID;
     private StringProperty path;
     private StringProperty componentDetail;
@@ -76,12 +82,15 @@ public class MainController {
         this.componentDetailLabel.textProperty().bind(componentDetail);
         this.newExecTab.disableProperty().bind(isFileUploaded.not());
         this.resultsTab.disableProperty().bind(SimulationManager.getInstance().getSimulations().emptyProperty());
+        this.proptyHistogramRB.disableProperty().bind(simulationGuidsList.getSelectionModel().selectedItemProperty().isNull());
+        this.entityPopulationRB.disableProperty().bind(simulationGuidsList.getSelectionModel().selectedItemProperty().isNull());
+        //set rusults tab when the first simulation is added
         SimulationManager.getInstance().getSimulations().emptyProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != oldValue) {
-                updateSimulationResults();
+                updateSimulationResultsTab();
             }
         });
-        //        this.selectedSimulationGUID.bind(simulationGuidsList.getSelectionModel().selectedItemProperty());
+        //change result tab when selecting a new simulation
         simulationGuidsList.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (!Objects.equals(newValue, oldValue)) {
                 selectedSimulationGUID.set(newValue);
@@ -94,9 +103,7 @@ public class MainController {
                 }
             }
         });
-
     }
-
 
     public void bindTaskToProgressBar(Task<Boolean> aTask) {
         simulationProccessBar.progressProperty().bind(aTask.progressProperty());
@@ -108,10 +115,6 @@ public class MainController {
                                         aTask.progressProperty(),
                                         100)),
                         " %"));
-    }
-
-    public void setLogic(Logic logic) {
-        this.logic = logic;
     }
 
     public void setPrimaryStage(Stage primaryStage) {
@@ -155,13 +158,30 @@ public class MainController {
             if (str != null)
                 componentDetail.set(str);
             else
-                componentDetail.set("No details available");
+                componentDetail.set("Please select a component");
+
         }
     }
 
     @FXML
     void clearInputs(ActionEvent event) {
-        //TODO: implement
+        GridPane grid;
+        for(Node entitiesPopulationsInput: entitiesPopulationsInputs.getChildren()) {
+            grid = (GridPane) entitiesPopulationsInput;
+            for (Node node : grid.getChildren()) {
+                if (node instanceof TextField) {
+                    ((TextField) node).setText("");
+                }
+            }
+        }
+        for(Node entitiesPopulationsInput: envVarsInputs.getChildren()) {
+            grid = (GridPane) entitiesPopulationsInput;
+            for (Node node : grid.getChildren()) {
+                if (node instanceof TextField) {
+                    ((TextField) node).setText("");
+                }
+            }
+        }
     }
 
     @FXML
@@ -172,44 +192,53 @@ public class MainController {
         );
     }
 
-    private void updateSimulationResults() {
+    @FXML
+    void rerunSimulation(ActionEvent event) {
+        logic.rerunSimulation(selectedSimulationGUID.getValue());
+    }
+
+    private void updateSimulationResultsTab() {
         simulationGuidsList.setItems(SimulationManager.getInstance().getSimulationGuids());
     }
 
     @FXML
     void showResultByEntity(ActionEvent event) throws IOException {
-        resultsPane.getChildren().clear();
         updateResultByEntityComponent();
     }
 
     private void updateResultByEntityComponent() throws IOException {
+        resultsPane.getChildren().clear();
         FXMLLoader loader = new FXMLLoader();
         URL url = getClass().getResource("/component/result/entity/resultByEntity.fxml");
         loader.setLocation(url);
         Node byEntityResult = loader.load();
         ResultByEntityController resultByEntityController = loader.getController();
         resultByEntityController.getSimulationGuid().bind(selectedSimulationGUID);
-        logic.setEntityResultComponent(byEntityResult, resultByEntityController);
+        logic.setEntityResultComponent(resultByEntityController);
+        resultByEntityController.setLogic(logic);
         resultsPane.getChildren().add(byEntityResult);
     }
 
     @FXML
     void ShowResultByHistogram(ActionEvent event) throws IOException {
-        resultsPane.getChildren().clear();
         updateResultByHistogramComponent();
     }
 
     private void updateResultByHistogramComponent() throws IOException {
+        resultsPane.getChildren().clear();
         FXMLLoader loader = new FXMLLoader();
         URL url = getClass().getResource("/component/result/histogram/resultByHistogram.fxml");
         loader.setLocation(url);
         Node byHistogramResult = loader.load();
         ResultByHistogramController resultByHistogramController = loader.getController();
         resultByHistogramController.getSimulationGuid().bind(selectedSimulationGUID);
-        logic.setHistogramResultComponent(byHistogramResult, resultByHistogramController);
+        logic.setHistogramResultComponent(resultByHistogramController);
+        resultByHistogramController.setLogic(logic);
         resultsPane.getChildren().add(byHistogramResult);
 
     }
 
-
+    public void setLogic(Logic logic) {
+        this.logic = logic;
+    }
 }

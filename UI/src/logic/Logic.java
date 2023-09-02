@@ -6,6 +6,9 @@ import component.main.MainController;
 import component.result.entity.ResultByEntityController;
 import component.result.histogram.ResultByHistogramController;
 import facade.EngineFacade;
+import javafx.beans.property.SimpleListProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
@@ -14,7 +17,7 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
-import simulation.Simulation;
+import simulation.SimulationManager;
 import simulation.world.detail.ISimulationComponent;
 import simulation.world.detail.entity.Entity;
 import simulation.world.detail.environmentvariables.EnvironmentVariable;
@@ -26,6 +29,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class Logic {
     private MainController mainController;
@@ -41,7 +45,6 @@ public class Logic {
     }
 
     public void updateTreeView(TreeView<String> componentsTree) {
-        engine.showSimulationDetails(); //TODO: detele before submit
         componentsTree.setRoot(new TreeItem<>("Simulation Details"));
         TreeItem<String> root = componentsTree.getRoot();
         root.setExpanded(true);
@@ -50,6 +53,9 @@ public class Logic {
         addRulesToTreeView(componentsTree);
         addGridToTreeView(componentsTree);
         addTerminationConditionsToTreeView(componentsTree);
+        for (int i = 0; i < 5; i++) {
+            root.getChildren().get(i).setExpanded(true);
+        }
     }
 
     private void addEntitiesToTreeView(TreeView<String> componentsTree) {
@@ -143,7 +149,6 @@ public class Logic {
     }
 
 
-
     public Map<String, Object> retriveEnvVarsInputs(FlowPane envVarsInputs) {
         Map<String, Object> envVarsMap = new HashMap<>();
 
@@ -204,12 +209,25 @@ public class Logic {
         }
     }
 
-    public void setEntityResultComponent(Node byEntityResult, ResultByEntityController resultByEntityController) {
-        resultByEntityController.setEntitiesList(this.engine.getEntities());
-
+    public void setEntityResultComponent(ResultByEntityController resultByEntityController) {
+        resultByEntityController.setEntitiesList();
     }
 
-    public void setHistogramResultComponent(Node byHistogramResult, ResultByHistogramController resultByHistogramController) {
-        resultByHistogramController.setEntitysProperties(this.engine.getEntities());
+    public void setHistogramResultComponent(ResultByHistogramController resultByHistogramController) {
+        resultByHistogramController.setEntitiesProperties();
+    }
+
+    public ObservableList<String> getPropertyHistogram(String simulationGuid, String entityName, String propertyName) {
+        Map<Object, Integer> histogram = SimulationManager.getInstance().getSimulationResultByHistogram(
+                simulationGuid, entityName, propertyName);
+        ObservableList<String> res = new SimpleListProperty<>(FXCollections.observableArrayList());
+        for (Map.Entry<Object, Integer> entry : histogram.entrySet()) {
+            res.add(entry.getKey() + ": " + entry.getValue());
+        }
+        return res;
+    }
+
+    public void rerunSimulation(String guid) {
+        engine.rerunSimulation(guid);
     }
 }
