@@ -16,6 +16,7 @@ import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -60,12 +61,15 @@ public class MainController {
     private Button rerunB;
     @FXML
     private StringProperty selectedSimulationGUID;
+    @FXML
+    private HBox simulationContreollers;
     private StringProperty path;
     private StringProperty componentDetail;
     private BooleanProperty isFileUploaded;
     private Logic logic;
     private Stage primaryStage;
     private StringProperty progressPrecantege;
+    private BooleanProperty isSimulationRunning;
 
     public MainController() {
         this.path = new SimpleStringProperty();
@@ -75,6 +79,7 @@ public class MainController {
         this.progressPrecantege = new SimpleStringProperty();
         this.queueList = new ListView<>();
         this.selectedSimulationGUID = new SimpleStringProperty();
+        this.isSimulationRunning = new SimpleBooleanProperty();
     }
 
     public void initialize() {
@@ -84,6 +89,7 @@ public class MainController {
         this.resultsTab.disableProperty().bind(SimulationManager.getInstance().getSimulations().emptyProperty());
         this.proptyHistogramRB.disableProperty().bind(simulationGuidsList.getSelectionModel().selectedItemProperty().isNull());
         this.entityPopulationRB.disableProperty().bind(simulationGuidsList.getSelectionModel().selectedItemProperty().isNull());
+        this.simulationContreollers.disableProperty().bind(isSimulationRunning);
         //TODO: implement start/pause/resume button and bind their disable property to worldDef 's isInteractive
         //set rusults tab when the first simulation is added
         SimulationManager.getInstance().getSimulations().emptyProperty().addListener((observable, oldValue, newValue) -> {
@@ -120,6 +126,9 @@ public class MainController {
 
     public void setPrimaryStage(Stage primaryStage) {
         this.primaryStage = primaryStage;
+    }
+    public void setSimulationStatus( boolean status) {
+        this.isSimulationRunning.set(status);
     }
 
     @FXML
@@ -187,10 +196,12 @@ public class MainController {
 
     @FXML
     void startSimulation(ActionEvent event) {
+        isSimulationRunning.set(true);
         logic.startSimulation(
                 logic.retrieveEntitiesPopulationsInputs(entitiesPopulationsInputs),
                 logic.retriveEnvVarsInputs(envVarsInputs)
         );
+        isSimulationRunning.set(false); //fixme: this is probably not good
     }
 
     @FXML
