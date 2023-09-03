@@ -253,4 +253,22 @@ public class MainController {
     public void setLogic(Logic logic) {
         this.logic = logic;
     }
+
+    @FXML
+    void pauseSimulation(ActionEvent event) {
+        System.out.println("pause");
+        //implement
+    }
+
+    @FXML
+    void resumeSimulation(ActionEvent event) {
+        System.out.println("resume");
+        //implement
+    }
+
+    @FXML
+    void stopSimulation(ActionEvent event) {
+        System.out.println("stop");
+        //implement
+    }
 }

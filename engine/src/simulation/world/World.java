@@ -70,7 +70,7 @@ public class World extends WorldDef {
         for (int i = 0; i < entities.get(0).getPopulation(); i++) {
             this.primeryEntityInstances.add(new EntityInstance(entities.get(0), simulation.getTick(), grid));
         }
-        this.seconderyEntityInstances = new ArrayList<EntityInstance>();
+        this.seconderyEntityInstances = new ArrayList<>();
         for (int i = 0; i < entities.get(1).getPopulation(); i++) {
             this.seconderyEntityInstances.add(new EntityInstance(entities.get(1), simulation.getTick(), grid));
         }

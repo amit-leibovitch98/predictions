@@ -34,15 +34,15 @@ public class Grid implements ISimulationComponent {
     }
 
     public Entity getEntityInLoc(Location loc) {
-        return grid[loc.getRow()][loc.getCol()];
+        return grid[loc.getRow() - 1][loc.getCol() - 1];
     }
 
     public Location getEmptyRandLoc() {
         int randRow, randCol;
         Location loc;
         do {
-            randRow = (int) (Math.random() * rows);
-            randCol = (int) (Math.random() * cols);
+            randRow = (int) (Math.random() * rows) + 1;
+            randCol = (int) (Math.random() * cols) + 1;
             loc = new Location(randRow, randCol);
 
         } while (getEntityInLoc(loc) != null);
@@ -78,7 +78,7 @@ public class Grid implements ISimulationComponent {
         if (getEntityInLoc(loc) != null) {
             throw new RuntimeException("Location is already occupied");
         } else {
-            grid[loc.getRow()][loc.getCol()] = entity;
+            grid[loc.getRow() - 1][loc.getCol() - 1] = entity;
         }
     }
 

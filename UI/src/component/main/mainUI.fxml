@@ -140,7 +140,7 @@
                                        <graphic>
                                           <ImageView fitHeight="19.0" fitWidth="209.0" pickOnBounds="true" preserveRatio="true">
                                              <image>
-                                                <Image url="@../../../../../../Downloads/pause-icon-18-256.png" />
+                                                <Image url="@../../../resources/pause-icon-18-256.png" />
                                              </image>
                                              <viewport>
                                                 <Rectangle2D />
@@ -161,7 +161,7 @@
                                        <graphic>
                                           <ImageView fitHeight="15.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                              <image>
-                                                <Image url="@../../../../../../Downloads/media-play-pause-resume-inv.png" />
+                                                <Image url="@../../../resources/media-play-pause-resume-inv.png" />
                                              </image>
                                              <viewport>
                                                 <Rectangle2D />
@@ -182,7 +182,7 @@
                                        <graphic>
                                           <ImageView fitHeight="11.0" fitWidth="12.0" pickOnBounds="true" preserveRatio="true">
                                              <image>
-                                                <Image url="@../../../../../../Downloads/images.png" />
+                                                <Image url="@../../../resources/images.png" />
                                              </image>
                                              <viewport>
                                                 <Rectangle2D />

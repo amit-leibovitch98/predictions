@@ -60,22 +60,24 @@ public class Simulation implements Runnable {
         long startTimeNano = System.nanoTime(), elapsedTimeNano = 0;
         float elapsedTimeSecs = 0;
         int maxTicks = world.getTerminationConds().getByTicks();
+        maxTicks = 100; //TODO: remove this line
         int maxTime = world.getTerminationConds().getByTime();
         while (tick.getValue() < maxTicks /*&& elapsedTimeSecs < maxTime*/) {
-            moveOneTick();
+            moveOneTick(world.getPrimeryEntityInstances());
+            moveOneTick(world.getSeconderyEntityInstances());
             tick.setValue(tick.getValue() + 1);
             elapsedTimeNano = System.nanoTime() - startTimeNano;
             elapsedTimeSecs = elapsedTimeNano / 1000000000f;
         }
     }
-    private void moveOneTick() {
-        for (EntityInstance entityInstance : world.getPrimeryEntityInstances()) {
-            entityInstance.move(world.getGrid());
-            if (entityInstance.isAlive()) {
+    private void moveOneTick(List<EntityInstance> entityInstances) {
+        for (EntityInstance primeryEntityInstance : entityInstances) {
+            primeryEntityInstance.move(world.getGrid());
+            if (primeryEntityInstance.isAlive()) {
                 try {
                     for (Rule rule : world.getRules()) {
                         try {
-                            rule.activateRule(entityInstance, tick.getValue());
+                            rule.activateRule(primeryEntityInstance, tick.getValue(), world.getSeconderyEntityInstances());
                         } catch (Exception e) {
                             System.out.println("Rule " + rule.getName() + " failed to activate: " + e.getMessage() + " --> Simulation failed.");
                             break;
@@ -87,6 +89,7 @@ public class Simulation implements Runnable {
             }
         }
     }
+
 
     public String getGuid() {
         return guid;
@@ -110,4 +113,6 @@ public class Simulation implements Runnable {
     public IntegerProperty getTick() {
         return tick;
     }
+
+
 }

@@ -20,7 +20,7 @@ public class EntityInstance extends Entity {
     public EntityInstance(Entity entity, IntegerProperty tick, Grid grid) {
         super(entity.getName(), entity.getProperties());
         initInstanceValues(entity.getProperties(), grid);
-        tick.bind(tick);
+        this.tick.bind(tick);
     }
 
     private void initInstanceValues(List<EntityProperty> properties, Grid grid) {
