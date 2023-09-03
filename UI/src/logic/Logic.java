@@ -85,26 +85,36 @@ public class Logic {
     private void addGridToTreeView(TreeView<String> componentsTree) {
         TreeItem<String> root = componentsTree.getRoot();
         root.getChildren().add(new TreeItem<>("Grid"));
-        //TODO: add grid to system whatever that means
     }
 
     private void addTerminationConditionsToTreeView(TreeView<String> componentsTree) {
         TreeItem<String> root = componentsTree.getRoot();
         root.getChildren().add(new TreeItem<>("Termination Conditions"));
-        if (engine.getTerminationCond().getByTicks() != null)
-            root.getChildren().get(4).getChildren().add(new TreeItem<>("Ticks"));
-        if (engine.getTerminationCond().getByTime() != null)
-            root.getChildren().get(4).getChildren().add(new TreeItem<>("Time"));
-        //TODO: add user interaction if relevant
     }
 
     public String getComponentInfo(String componentName, String componentParent) {
-        if (componentParent.equals("Termination Conditions")) {
-            String str = this.engine.getTerminationCond().getInfo();
-            if (componentName.equals("Ticks")) {
-                return str.substring(0, str.indexOf("\n"));
-            } else if (componentName.equals("Time")) {
-                return str.substring(str.indexOf("\n") + 1);
+        if (componentName.equals("Termination Conditions")) {
+            return this.engine.getTerminationCond().getInfo();
+        } else if (componentName.equals("Grid")) {
+            return this.engine.getGrid().getInfo();
+        } else if (componentParent.equals("Entities")) {
+            for (Entity entity : this.engine.getEntities()) {
+                if (entity.getName().equals(componentName)) {
+                    return entity.getInfo();
+                }
+            }
+        } else if (componentParent.equals("Environment Variables")) {
+            for (EnvironmentVariable envVar : this.engine.getEnvironmentVariables()) {
+                if (envVar.getName().equals(componentName)) {
+                    return envVar.getInfo();
+                }
+            }
+        } else if (componentParent.equals("Rules")) {
+            List<Rule> rules = this.engine.getRules();
+            for (Rule rule : rules) {
+                if (rule.getName().equals(componentName)) {
+                    return rule.getInfo();
+                }
             }
         } else {
             List<ISimulationComponent> components = this.engine.getAllSimulationComponents();
@@ -190,7 +200,6 @@ public class Logic {
             Node entityPopulationInputNode = loader.load();
             EntityPopulationInputController entityPopulationInputController = loader.getController();
             entityPopulationInputController.setEntityName(entity.getName());
-            entityPopulationInputController.setEntityPopulation(entity.getPopulation());
             entitiesPopulationsInputs.getChildren().add(entityPopulationInputNode);
         }
     }
@@ -204,7 +213,7 @@ public class Logic {
             EnvVarInputController envVarInputController = loader.getController();
             envVarInputController.setEnvVarName(envVar.getName());
             envVarInputController.setEnvVarType(envVar.getType().toString());
-            envVarInputController.setEnvVarValue(envVar.getValue().toString());
+            //envVarInputController.setEnvVarValue(envVar.getValue().toString());
             envVarsInputs.getChildren().add(envVarsInputNode);
         }
     }

@@ -13,7 +13,10 @@ public class Increase extends Action {
         super(entity, propertyName);
         this.by = by;
     }
-
+    @Override
+    public void doAction(EntityInstance sourceEntityInstance, EntityInstance targetEntityInstance) {
+        throw new UnsupportedOperationException("Set action doesn't support doAction with two entity instances");
+    }
     @Override
     public void doAction(EntityInstance entityInstance) {
         increase(entityInstance);
@@ -21,7 +24,7 @@ public class Increase extends Action {
 
     private void increase(EntityInstance entityInstance) {
         Object newValue = null;
-        Object byValue = by.resolveExpression();
+        Object byValue = by.resolveExpression(entityInstance);
         Object ptopValue = entityInstance.getPropertyVal(propertyName);
         if (ptopValue instanceof Float) {
             newValue = (Float) ptopValue + (Float) byValue;

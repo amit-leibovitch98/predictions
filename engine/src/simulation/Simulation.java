@@ -1,6 +1,9 @@
 package simulation;
 
 
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.value.ObservableValue;
 import jdk.nashorn.internal.ir.Block;
 import simulation.utils.expression.CondExpression;
 import simulation.world.World;
@@ -15,7 +18,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class Simulation implements Runnable {
     private World world;
-    private int tick;
+    private IntegerProperty tick;
     private final String guid;
 
     private Map<String, Integer> retrivedEntitiesPopulation;
@@ -25,17 +28,9 @@ public class Simulation implements Runnable {
     public Simulation(World world) {
         this.world = world;
         this.guid = UUID.randomUUID().toString().substring(0, 8);
-        this.tick = 0;
+        this.tick = new SimpleIntegerProperty(0);
         this.retrivedEntitiesPopulation = null;
         this.retrivedEnvVarsValues = null;
-    }
-
-    public Map<String, Integer> getRetrivedEntitiesPopulation() {
-        return retrivedEntitiesPopulation;
-    }
-
-    public Map<String, Object> getRetrivedEnvVarsValues() {
-        return retrivedEnvVarsValues;
     }
 
     public void init() {
@@ -55,7 +50,7 @@ public class Simulation implements Runnable {
         //update condExpressions
         CondExpression.updateEnvVars(world.getEnvironmentVars());
         //create entity instances
-        world.initPopulation();
+        world.initPopulation(this);
 
     }
 
@@ -66,26 +61,30 @@ public class Simulation implements Runnable {
         float elapsedTimeSecs = 0;
         int maxTicks = world.getTerminationConds().getByTicks();
         int maxTime = world.getTerminationConds().getByTime();
-        while (tick < maxTicks /*&& elapsedTimeSecs < maxTime*/) {
-            for (EntityInstance entityInstance : world.getEntityInstances()) {
-                if (entityInstance.isAlive()) {
-                    try {
-                        for (Rule rule : world.getRules()) {
-                            try {
-                                rule.activateRule(entityInstance, tick);
-                            } catch (Exception e) {
-                                System.out.println("Rule " + rule.getName() + " failed to activate: " + e.getMessage() + " --> Simulation failed.");
-                                break;
-                            }
-                        }
-                    } catch (Exception e) {
-                        break;
-                    }
-                }
-            }
-            tick++;
+        while (tick.getValue() < maxTicks /*&& elapsedTimeSecs < maxTime*/) {
+            moveOneTick();
+            tick.setValue(tick.getValue() + 1);
             elapsedTimeNano = System.nanoTime() - startTimeNano;
             elapsedTimeSecs = elapsedTimeNano / 1000000000f;
+        }
+    }
+    private void moveOneTick() {
+        for (EntityInstance entityInstance : world.getPrimeryEntityInstances()) {
+            entityInstance.move(world.getGrid());
+            if (entityInstance.isAlive()) {
+                try {
+                    for (Rule rule : world.getRules()) {
+                        try {
+                            rule.activateRule(entityInstance, tick.getValue());
+                        } catch (Exception e) {
+                            System.out.println("Rule " + rule.getName() + " failed to activate: " + e.getMessage() + " --> Simulation failed.");
+                            break;
+                        }
+                    }
+                } catch (Exception e) {
+                    break;
+                }
+            }
         }
     }
 
@@ -106,5 +105,9 @@ public class Simulation implements Runnable {
     public void setRetrivedData(Map<String, Integer> entitiesPopulation, Map<String, Object> envVarsVals) {
         this.retrivedEntitiesPopulation = entitiesPopulation;
         this.retrivedEnvVarsValues = envVarsVals;
+    }
+
+    public IntegerProperty getTick() {
+        return tick;
     }
 }

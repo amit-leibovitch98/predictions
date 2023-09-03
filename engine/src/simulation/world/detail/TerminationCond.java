@@ -18,16 +18,36 @@ public class TerminationCond implements ISimulationComponent {
     public Integer getByTicks() {
         return byTicks;
     }
+
     public Integer getByTime() {
         return byTime;
     }
+
     public String getInfo() {
-        return "The Simulation will terminate after " + byTicks + " ticks.\n" +
-                "The Simulation will terminate after " + byTime + " seconds.";
+        StringBuilder description = new StringBuilder();
+
+        description.append("The Simulation will terminate after: ");
+        if (byTicks != null) {
+            description.append("The Simulation will terminate after ").append(byTicks).append(" ticks.\n");
+        } else {
+            description.append("Termination by ticks number is not applicable\n");
+        }
+
+        if (byTime != null) {
+            description.append("The Simulation will terminate after ").append(byTime).append(" seconds.\n");
+        } else {
+            description.append("Termination by time number is not applicable\n");
+        }
+
+        description.append(isInteractive ? "Interactive mode is enabled." : "Interactive mode is disabled.");
+
+        return description.toString();
     }
+
     public String getName() {
         return "Termination Condition";
     }
+
     public boolean isInteractive() {
         return isInteractive;
     }

@@ -16,6 +16,9 @@ public class Set extends Action {
     @Override
     public void doAction(EntityInstance entityInstance) {
         entityInstance.setPropertyVal(propertyName, value);
-
+    }
+    @Override
+    public void doAction(EntityInstance sourceEntityInstance, EntityInstance targetEntityInstance) {
+        throw new UnsupportedOperationException("Set action doesn't support doAction with two entity instances");
     }
 }

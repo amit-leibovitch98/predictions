@@ -1,5 +1,6 @@
 package simulation.world.detail.rule.action.condition;
 
+import simulation.world.World;
 import simulation.world.detail.entity.Entity;
 import simulation.world.detail.entity.EntityInstance;
 import simulation.world.detail.rule.action.Action;
@@ -10,8 +11,8 @@ public class ComplexCondition extends Condition implements ICond {
     List<ICond> subConditions;
     ConditionLogicOp logicOp;
 
-    public ComplexCondition(List<ICond> simpleConditions, String logicOp, Entity entity, String propertyName) {
-        super(entity, propertyName);
+    public ComplexCondition(List<ICond> simpleConditions, String logicOp) {
+        super(null, null);
         this.subConditions = simpleConditions;
         this.logicOp = ConditionLogicOp.fromString(logicOp);
     }
@@ -41,4 +42,6 @@ public class ComplexCondition extends Condition implements ICond {
         }
         return result;
     }
+
+
 }

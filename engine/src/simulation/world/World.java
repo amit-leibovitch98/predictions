@@ -1,10 +1,13 @@
 package simulation.world;
 
+import simulation.Simulation;
+import simulation.utils.Grid;
 import simulation.world.detail.entity.Entity;
 import simulation.world.detail.entity.EntityInstance;
 import simulation.world.detail.rule.Rule;
 import simulation.world.detail.TerminationCond;
 import simulation.world.detail.environmentvariables.EnvironmentVariable;
+import simulation.world.detail.rule.action.Action;
 
 
 import java.util.ArrayList;
@@ -13,20 +16,31 @@ import java.util.List;
 public class World extends WorldDef {
     private List<EnvironmentVariable> environmentVars;
     private List<Entity> entities;
-    private List<EntityInstance> entityInstances;
+    private List<EntityInstance> primeryEntityInstances;
+    private List<EntityInstance> seconderyEntityInstances;
+    private Grid grid;
 
-    protected World(List<EnvironmentVariable> environmentVars, List<Entity> entities, List<Rule> rules, TerminationCond terminationCond) {
-        super(environmentVars, entities);
+    protected World(List<EnvironmentVariable> environmentVars, List<Entity> entities, List<Rule> rules,
+                    TerminationCond terminationCond, Grid grid, List<Action> actions) {
+        super(environmentVars, entities, grid, actions);
+
         this.environmentVars = new ArrayList<>();
+        this.terminationConds = terminationCond;
+        this.rules = rules;
+        this.grid = new Grid(grid);
+
         for(EnvironmentVariable envVar : environmentVars) {
             this.environmentVars.add(new EnvironmentVariable(envVar.getName(), envVar.getRange(), envVar.getType()));
         }
+
         this.entities = new ArrayList<>();
         for(Entity entity : entities) {
-            this.entities.add(new Entity(entity.getName(), entity.getPopulation(), entity.getProperties()));
+            this.entities.add(new Entity(entity.getName(), entity.getProperties()));
         }
-        this.terminationConds = terminationCond;
-        this.rules = rules;
+
+        for (Action action : actions) {
+            action.setWorld(this);
+        }
     }
 
     public List<EnvironmentVariable> getEnvironmentVars() {
@@ -51,21 +65,28 @@ public class World extends WorldDef {
         }
         return null;
     }
-    public void initPopulation() { //fix for ex2
-        this.entityInstances = new ArrayList<EntityInstance>();
+    public void initPopulation(Simulation simulation) {
+        this.primeryEntityInstances = new ArrayList<>();
         for (int i = 0; i < entities.get(0).getPopulation(); i++) {
-            this.entityInstances.add(new EntityInstance(entities.get(0)));
+            this.primeryEntityInstances.add(new EntityInstance(entities.get(0), simulation.getTick(), grid));
+        }
+        this.seconderyEntityInstances = new ArrayList<EntityInstance>();
+        for (int i = 0; i < entities.get(1).getPopulation(); i++) {
+            this.seconderyEntityInstances.add(new EntityInstance(entities.get(1), simulation.getTick(), grid));
         }
     }
 
-    public List<EntityInstance> getEntityInstances() {
-        return entityInstances;
+    public List<EntityInstance> getPrimeryEntityInstances() {
+        return primeryEntityInstances;
+    }
+    public List<EntityInstance> getSeconderyEntityInstances() {
+        return seconderyEntityInstances;
     }
 
 
     public String countAliveOfEntity(Entity entity) {
         int alive = 0;
-        for (EntityInstance entityInstance : entityInstances) {
+        for (EntityInstance entityInstance : primeryEntityInstances) {
             if (entityInstance.isAlive()) {
                 alive++;
             }
@@ -89,5 +110,15 @@ public class World extends WorldDef {
             }
         }
         throw new RuntimeException("Environment Variable " + envVarName + " not found");
+    }
+
+    public List<EntityInstance> getEntityInstancesByName(String entityName) {
+        if(entities.get(0).getName().equals(entityName)) {
+            return primeryEntityInstances;
+        } else if(entities.get(1).getName().equals(entityName)) {
+            return seconderyEntityInstances;
+        } else {
+            throw new RuntimeException("Entity " + entityName + " not found");
+        }
     }
 }

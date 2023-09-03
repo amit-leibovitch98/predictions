@@ -21,4 +21,9 @@ public abstract class Calculation extends Action {
     public void doAction(EntityInstance entityInstance) {
         calculate(entityInstance);
     }
+    @Override
+    public void doAction(EntityInstance sourceEntityInstance, EntityInstance targetEntityInstance) {
+        throw new UnsupportedOperationException("Set action doesn't support doAction with two entity instances");
+    }
+
 }

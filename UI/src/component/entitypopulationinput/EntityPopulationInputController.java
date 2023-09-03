@@ -18,11 +18,6 @@ public class EntityPopulationInputController {
     public String getEntityPopulation() {
         return entityPopulationInput.getText();
     }
-    public void setEntityPopulation(Integer entityPopulation) {
-        if(entityPopulation != null) {
-            entityPopulationInput.setText(entityPopulation.toString());
-        }
-    }
     public void setEntityName(String entityName) {
         entityNameLabel.setText(entityName + "'s population");
     }

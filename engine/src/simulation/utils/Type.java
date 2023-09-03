@@ -6,14 +6,16 @@ public enum Type {
     STRING;
 
     public static Type fromString(String type) {
-        if (type.equals("float")) {
-            return FLOAT;
-        } else if (type.equals("boolean")) {
-            return BOOLEAN;
-        } else if (type.equals("string")) {
-            return STRING;
-        } else {
-            return null;
+        switch (type) {
+            case "float":
+            case "decimal":
+                return FLOAT;
+            case "boolean":
+                return BOOLEAN;
+            case "string":
+                return STRING;
+            default:
+                return null;
         }
     }
 

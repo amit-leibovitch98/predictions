@@ -81,7 +81,7 @@ public class SimulationManager extends Observable {
         Simulation simulation = getSimulationByGuid(guid);
         try {
             Entity entity = simulation.getWorld().getEntityByName(entityName);
-            Map<Object, Integer> histogram = entity.getProperty(propertyName).getHistogram(simulation.getWorld().getEntityInstances());
+            Map<Object, Integer> histogram = entity.getProperty(propertyName).getHistogram(simulation.getWorld().getEntityInstancesByName(entityName));
             return histogram;
         } catch (Exception e) {
             System.out.println(e.getMessage());

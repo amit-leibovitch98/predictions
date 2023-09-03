@@ -14,7 +14,9 @@ public class EnvironmentVariable implements ISimulationComponent {
         this.name = name;
         this.range = range;
         this.type = type;
-        setValue(range.getFrom());
+        if (range != null) {
+            setValue(range.getFrom());
+        }
     }
 
     public String getName() {
@@ -37,9 +39,9 @@ public class EnvironmentVariable implements ISimulationComponent {
         switch (type) {
             case FLOAT:
                 try {
-                    if(value instanceof String)
+                    if (value instanceof String)
                         this.value = Float.parseFloat((String) value);
-                    else if(value instanceof Float)
+                    else if (value instanceof Float)
                         this.value = value;
                     else
                         throw new IllegalArgumentException("Invalid value for float type: " + value);
@@ -106,9 +108,18 @@ public class EnvironmentVariable implements ISimulationComponent {
     }
 
     public String getInfo() {
-        return "Environment Variable name: " + name + "\n" +
-                " • Type: " + type.toString() + "\n" +
-                " • Range: " + range.toString() + "\n" +
-                " • Value: " + value.toString();
+        StringBuilder description = new StringBuilder("Environment Variable name: " + name + "\n");
+        description.append(" • Type: ").append(type.toString()).append("\n");
+        if (range != null) {
+            description.append(" • Range: ").append(range).append("\n");
+        } else {
+            description.append(" • Range: no range\n");
+        }
+        if (value != null) {
+            description.append(" • Value: ").append(value);
+        } else {
+            description.append(" • Value: no initial value");
+        }
+        return description.toString();
     }
 }

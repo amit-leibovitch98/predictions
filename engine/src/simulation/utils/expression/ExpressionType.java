@@ -4,9 +4,10 @@ public enum ExpressionType {
     SIMPLE("simple"),
     ENVIROMENT("environment"),
     RANDOM("random"),
-    /*EVALUATE("evaluate"),
+    EVALUATE("evaluate"),
     PRECENTAGE("precentage"),
-    TICKS("ticks")*/;
+    TICKS("ticks");
+
     private final String name;
 
     ExpressionType(String name) {
@@ -21,12 +22,12 @@ public enum ExpressionType {
                 return ENVIROMENT;
             case "random":
                 return RANDOM;
-            /*case "evaluate":
+            case "evaluate":
                 return EVALUATE;
             case "precentage":
                 return PRECENTAGE;
             case "ticks":
-                return TICKS;*/
+                return TICKS;
             default:
                 throw new IllegalArgumentException("Unknown expression type: " + string);
         }

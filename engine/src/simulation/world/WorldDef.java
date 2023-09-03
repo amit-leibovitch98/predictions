@@ -1,9 +1,11 @@
 package simulation.world;
 
+import simulation.utils.Grid;
 import simulation.world.detail.entity.Entity;
 import simulation.world.detail.environmentvariables.EnvironmentVariable;
 import simulation.world.detail.rule.Rule;
 import simulation.world.detail.TerminationCond;
+import simulation.world.detail.rule.action.Action;
 
 
 import java.util.ArrayList;
@@ -14,10 +16,14 @@ public class WorldDef {
     protected TerminationCond terminationConds;
     private final List<Entity> entities;
     private final List<EnvironmentVariable> environmentVars;
+    private final Grid grid;
+    private final List<Action> actions;
 
-    public WorldDef(List<EnvironmentVariable> environmentVariableList, List<Entity> entityList) {
+    public WorldDef(List<EnvironmentVariable> environmentVariableList, List<Entity> entityList, Grid grid, List<Action> action) {
         this.environmentVars = environmentVariableList;
         this.entities = entityList;
+        this.grid = grid;
+        this.actions = action;
     }
 
     public List<Rule> getRules() {
@@ -39,7 +45,10 @@ public class WorldDef {
     public List<Entity> getEntities() {
         return entities;
     }
+    public Grid getGrid() {
+        return grid;
+    }
     public World createWorld() {
-        return new World(this.environmentVars, this.entities, this.rules, this.terminationConds);
+        return new World(this.environmentVars, this.entities, this.rules, this.terminationConds, this.grid, this.actions);
     }
 }

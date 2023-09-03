@@ -12,11 +12,13 @@ import java.util.List;
 public class SimpleCondition extends Condition implements ICond {
     CondOp operator;
     CondExpression value;
+    CondExpression propertyExpression;
 
-    public SimpleCondition(Entity entity, String propertyName, CondOp operator, CondExpression value) {
-        super(entity, propertyName);
+    public SimpleCondition(Entity entity, CondExpression propertyExpression, CondOp operator, CondExpression value) {
+        super(entity, null);
         this.operator = operator;
         this.value = value;
+        this.propertyExpression = propertyExpression;
     }
     @Override
     public void doAction(EntityInstance entityInstance) {
@@ -26,7 +28,7 @@ public class SimpleCondition extends Condition implements ICond {
     public boolean evaluateCond(EntityInstance entityInstance) {
         switch (operator) {
             case EQUALS:
-                if (entityInstance.getPropertyVal(propertyName) == value.resolveExpression()) {
+                if (propertyExpression.resolveExpression(entityInstance) == value.resolveExpression(entityInstance)) {
                     super.activateThen(entityInstance);
                     return true;
                 } else {
@@ -34,7 +36,7 @@ public class SimpleCondition extends Condition implements ICond {
                     return false;
                 }
             case NOT_EQUALS:
-                if (entityInstance.getPropertyVal(propertyName) != value.resolveExpression()) {
+                if (propertyExpression.resolveExpression(entityInstance) != value.resolveExpression(entityInstance)) {
                     super.activateThen(entityInstance);
                     return true;
                 } else {
@@ -42,7 +44,7 @@ public class SimpleCondition extends Condition implements ICond {
                     return false;
                 }
             case BIGGER_THAN:
-                if (compare(entityInstance.getPropertyVal(propertyName), value.resolveExpression())) {
+                if (compare(propertyExpression.resolveExpression(entityInstance), value.resolveExpression(entityInstance))) {
                     super.activateThen(entityInstance);
                     return true;
                 } else {
@@ -50,7 +52,7 @@ public class SimpleCondition extends Condition implements ICond {
                     return false;
                 }
             case LESSER_THAN:
-                if (compare(value.resolveExpression(),entityInstance.getPropertyVal(propertyName))) {
+                if (compare(value.resolveExpression(entityInstance),propertyExpression.resolveExpression(entityInstance))) {
                     super.activateThen(entityInstance);
                     return true;
                 } else {

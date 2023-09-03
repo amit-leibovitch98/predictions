@@ -5,6 +5,7 @@ package facade;
 import file.WorldProxy;
 import simulation.Simulation;
 import simulation.SimulationManager;
+import simulation.utils.Grid;
 import simulation.world.World;
 import simulation.world.WorldDef;
 import simulation.world.detail.ISimulationComponent;
@@ -69,5 +70,9 @@ public class EngineFacade {
 
     public List<EnvironmentVariable> getEnvironmentVariables() {
         return this.worldDef.getEnvironmentVars();
+    }
+
+    public Grid getGrid() {
+        return this.worldDef.getGrid();
     }
 }
