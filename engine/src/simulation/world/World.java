@@ -27,14 +27,14 @@ public class World extends WorldDef {
         this.environmentVars = new ArrayList<>();
         this.terminationConds = terminationCond;
         this.rules = rules;
-        this.grid = new Grid(grid);
+        this.grid = new Grid(grid.getRows(), grid.getCols());
 
-        for(EnvironmentVariable envVar : environmentVars) {
+        for (EnvironmentVariable envVar : environmentVars) {
             this.environmentVars.add(new EnvironmentVariable(envVar.getName(), envVar.getRange(), envVar.getType()));
         }
 
         this.entities = new ArrayList<>();
-        for(Entity entity : entities) {
+        for (Entity entity : entities) {
             this.entities.add(new Entity(entity.getName(), entity.getProperties()));
         }
 
@@ -43,9 +43,15 @@ public class World extends WorldDef {
         }
     }
 
+    @Override
+    public Grid getGrid() {
+        return grid;
+    }
+
     public List<EnvironmentVariable> getEnvironmentVars() {
         return environmentVars;
     }
+
     public List<Entity> getEntities() {
         return entities;
     }
@@ -53,6 +59,7 @@ public class World extends WorldDef {
     public void setEnvironmentVars(List<EnvironmentVariable> environmentVars) {
         this.environmentVars = environmentVars;
     }
+
     public void setEntities(List<Entity> entities) {
         this.entities = entities;
     }
@@ -65,20 +72,22 @@ public class World extends WorldDef {
         }
         return null;
     }
+
     public void initPopulation(Simulation simulation) {
         this.primeryEntityInstances = new ArrayList<>();
         for (int i = 0; i < entities.get(0).getPopulation(); i++) {
-            this.primeryEntityInstances.add(new EntityInstance(entities.get(0), simulation.getTick(), grid));
+            this.primeryEntityInstances.add(new EntityInstance(entities.get(0), simulation.getTick(), this.grid));
         }
         this.seconderyEntityInstances = new ArrayList<>();
         for (int i = 0; i < entities.get(1).getPopulation(); i++) {
-            this.seconderyEntityInstances.add(new EntityInstance(entities.get(1), simulation.getTick(), grid));
+            this.seconderyEntityInstances.add(new EntityInstance(entities.get(1), simulation.getTick(), this.grid));
         }
     }
 
     public List<EntityInstance> getPrimeryEntityInstances() {
         return primeryEntityInstances;
     }
+
     public List<EntityInstance> getSeconderyEntityInstances() {
         return seconderyEntityInstances;
     }
@@ -113,9 +122,9 @@ public class World extends WorldDef {
     }
 
     public List<EntityInstance> getEntityInstancesByName(String entityName) {
-        if(entities.get(0).getName().equals(entityName)) {
+        if (entities.get(0).getName().equals(entityName)) {
             return primeryEntityInstances;
-        } else if(entities.get(1).getName().equals(entityName)) {
+        } else if (entities.get(1).getName().equals(entityName)) {
             return seconderyEntityInstances;
         } else {
             throw new RuntimeException("Entity " + entityName + " not found");

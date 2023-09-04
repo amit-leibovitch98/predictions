@@ -24,7 +24,7 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.RowConstraints?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="650.0" prefWidth="1000.0" stylesheets="@../design.css" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="component.main.MainController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="650.0" prefWidth="1000.0" stylesheets="@../design.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="component.main.MainController">
    <top>
       <GridPane BorderPane.alignment="CENTER">
         <columnConstraints>
@@ -39,7 +39,22 @@
           <RowConstraints minHeight="5.0" prefHeight="5.0" vgrow="NEVER" />
         </rowConstraints>
          <children>
-            <Label fx:id="QueueManagerLabel" text="Queue Manager:" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+            <HBox GridPane.columnIndex="2" GridPane.rowIndex="1">
+               <children>
+                  <Label fx:id="QueueManagerLabel" text="Queue Manager:" />
+                  <Label fx:id="threadsNumLabel" text="(&lt;MaxThreads&gt;)">
+                     <padding>
+                        <Insets left="3.0" />
+                     </padding>
+                     <HBox.margin>
+                        <Insets />
+                     </HBox.margin>
+                  </Label>
+               </children>
+               <padding>
+                  <Insets top="5.0" />
+               </padding>
+            </HBox>
             <ListView fx:id="queueList" prefHeight="200.0" prefWidth="500.0" GridPane.columnIndex="2" GridPane.rowIndex="2">
                <GridPane.margin>
                   <Insets right="10.0" />
@@ -139,15 +154,15 @@
                                     <Button fx:id="pauseB" maxHeight="20.0" maxWidth="20.0" minHeight="20.0" minWidth="20.0" mnemonicParsing="false" onAction="#pauseSimulation" prefHeight="20.0" prefWidth="20.0" text="pause" HBox.hgrow="NEVER">
                                        <graphic>
                                           <ImageView fitHeight="19.0" fitWidth="209.0" pickOnBounds="true" preserveRatio="true">
-                                             <image>
-                                                <Image url="@../../../resources/pause-icon-18-256.png" />
-                                             </image>
                                              <viewport>
                                                 <Rectangle2D />
                                              </viewport>
                                              <rotationAxis>
                                                 <Point3D />
                                              </rotationAxis>
+                                             <image>
+                                                <Image url="/resources/pause.png" />
+                                             </image>
                                           </ImageView>
                                        </graphic>
                                        <padding>
@@ -160,15 +175,15 @@
                                     <Button fx:id="resumeB" maxHeight="20.0" maxWidth="20.0" minHeight="20.0" minWidth="20.0" mnemonicParsing="false" onAction="#resumeSimulation" prefHeight="20.0" prefWidth="20.0" text="resume">
                                        <graphic>
                                           <ImageView fitHeight="15.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                             <image>
-                                                <Image url="@../../../resources/media-play-pause-resume-inv.png" />
-                                             </image>
                                              <viewport>
                                                 <Rectangle2D />
                                              </viewport>
                                              <rotationAxis>
                                                 <Point3D />
                                              </rotationAxis>
+                                             <image>
+                                                <Image url="@../../resources/resume.png" />
+                                             </image>
                                           </ImageView>
                                        </graphic>
                                        <padding>
@@ -182,7 +197,7 @@
                                        <graphic>
                                           <ImageView fitHeight="11.0" fitWidth="12.0" pickOnBounds="true" preserveRatio="true">
                                              <image>
-                                                <Image url="@../../../resources/images.png" />
+                                                <Image url="@/resources/stop.png" />
                                              </image>
                                              <viewport>
                                                 <Rectangle2D />

@@ -57,11 +57,15 @@ public class Simulation implements Runnable {
 
     public void start() {
         init();
+        int maxTicks, maxTime;
         long startTimeNano = System.nanoTime(), elapsedTimeNano = 0;
         float elapsedTimeSecs = 0;
-        int maxTicks = world.getTerminationConds().getByTicks();
-        maxTicks = 100; //TODO: remove this line
-        int maxTime = world.getTerminationConds().getByTime();
+        try {
+            maxTicks = world.getTerminationConds().getByTicks();
+            maxTime = world.getTerminationConds().getByTime();
+        } catch (Exception e) {
+            maxTicks = 100; //fixme: fix while condition
+        }
         while (tick.getValue() < maxTicks /*&& elapsedTimeSecs < maxTime*/) {
             moveOneTick(world.getPrimeryEntityInstances());
             moveOneTick(world.getSeconderyEntityInstances());
@@ -70,9 +74,18 @@ public class Simulation implements Runnable {
             elapsedTimeSecs = elapsedTimeNano / 1000000000f;
         }
     }
+
     private void moveOneTick(List<EntityInstance> entityInstances) {
+        //Move all instances
+        for (EntityInstance currEntityInstance : this.world.getPrimeryEntityInstances()) {
+            currEntityInstance.move(world.getGrid());
+        }
+        for(EntityInstance currEntityInstance : this.world.getSeconderyEntityInstances()) {
+            currEntityInstance.move(world.getGrid());
+        }
+
+        //Apply relevant rules on the chosen entity
         for (EntityInstance primeryEntityInstance : entityInstances) {
-            primeryEntityInstance.move(world.getGrid());
             if (primeryEntityInstance.isAlive()) {
                 try {
                     for (Rule rule : world.getRules()) {

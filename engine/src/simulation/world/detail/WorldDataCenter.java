@@ -21,12 +21,12 @@ public class WorldDataCenter {
         for (int i = 1; i < entities.size() + 1; i++) {
             entitiesDetails.add(new ArrayList<String>());
             entitiesDetails.get(i).add(" " + i + ". " + entities.get(i - 1).getName());
-            entitiesDetails.get(i).add("    population:" + Integer.toString(+ entities.get(i - 1).getPopulation()));
+            entitiesDetails.get(i).add("    population:" + entities.get(i - 1).getPopulation());
             for(EntityProperty property : entities.get(i - 1).getProperties()) {
                 entitiesDetails.get(i).add("    •property name: " + property.getName());
                 entitiesDetails.get(i).add("      -property type: " + property.getType().toString());
                 entitiesDetails.get(i).add("      -property range: " + property.getRange().toString());
-                entitiesDetails.get(i).add("      -is property randomly initialized: " + Boolean.toString(property.getInitialValue() == null));
+                entitiesDetails.get(i).add("      -is property randomly initialized: " + (property.getInitialValue() == null));
             }
         }
         return entitiesDetails;

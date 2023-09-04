@@ -42,6 +42,7 @@ public class Logic {
 
     public void readFile(String path) {
         this.engine.readFile(path);
+        mainController.setMaxThreadsNum(SimulationManager.getInstance().getThreadQueue().getMaxThearsNum());
     }
 
     public void updateTreeView(TreeView<String> componentsTree) {

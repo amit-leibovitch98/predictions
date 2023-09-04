@@ -3,10 +3,8 @@ package component.main;
 import component.result.entity.ResultByEntityController;
 import component.result.histogram.ResultByHistogramController;
 import javafx.beans.binding.Bindings;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+import javafx.beans.property.*;
+import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.event.ActionEvent;
@@ -21,6 +19,7 @@ import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import logic.Logic;
+import simulation.Simulation;
 import simulation.SimulationManager;
 
 import java.io.File;
@@ -46,6 +45,8 @@ public class MainController {
     @FXML
     private ListView<String> queueList;
     @FXML
+    private Label threadsNumLabel;
+    @FXML
     private Tab resultsTab;
     @FXML
     private ProgressBar simulationProccessBar;
@@ -70,6 +71,7 @@ public class MainController {
     private Stage primaryStage;
     private StringProperty progressPrecantege;
     private BooleanProperty isSimulationRunning;
+    private IntegerProperty maxThreadsNum;
 
     public MainController() {
         this.path = new SimpleStringProperty();
@@ -80,6 +82,7 @@ public class MainController {
         this.queueList = new ListView<>();
         this.selectedSimulationGUID = new SimpleStringProperty();
         this.isSimulationRunning = new SimpleBooleanProperty();
+        this.maxThreadsNum = new SimpleIntegerProperty();
     }
 
     public void initialize() {
@@ -90,8 +93,9 @@ public class MainController {
         this.proptyHistogramRB.disableProperty().bind(simulationGuidsList.getSelectionModel().selectedItemProperty().isNull());
         this.entityPopulationRB.disableProperty().bind(simulationGuidsList.getSelectionModel().selectedItemProperty().isNull());
         this.simulationContreollers.disableProperty().bind(isSimulationRunning);
+        this.threadsNumLabel.textProperty().bind(this.maxThreadsNum.asString());
         //TODO: implement start/pause/resume button and bind their disable property to worldDef 's isInteractive
-        //set rusults tab when the first simulation is added
+        //set results tab when the first simulation is added
         SimulationManager.getInstance().getSimulations().emptyProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != oldValue) {
                 updateSimulationResultsTab();
@@ -129,6 +133,10 @@ public class MainController {
     }
     public void setSimulationStatus( boolean status) {
         this.isSimulationRunning.set(status);
+    }
+
+    public void setMaxThreadsNum(int maxThreadsNum) {
+        this.maxThreadsNum.set(maxThreadsNum);
     }
 
     @FXML

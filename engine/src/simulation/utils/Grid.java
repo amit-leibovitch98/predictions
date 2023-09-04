@@ -4,6 +4,8 @@ import simulation.world.detail.ISimulationComponent;
 import simulation.world.detail.entity.Entity;
 import simulation.world.detail.entity.EntityInstance;
 
+import java.util.Random;
+
 public class Grid implements ISimulationComponent {
     private final int rows;
     private final int cols;
@@ -12,13 +14,7 @@ public class Grid implements ISimulationComponent {
     public Grid(int rows, int cols) {
         this.rows = rows;
         this.cols = cols;
-        this.grid = new Entity[rows][cols];
-    }
-
-    public Grid(Grid grid) {
-        this.rows = grid.getRows();
-        this.cols = grid.getCols();
-        this.grid = new Entity[rows][cols];
+        this.grid = new EntityInstance[rows + 1][cols + 1];
     }
 
     public int getCols() {
@@ -34,80 +30,90 @@ public class Grid implements ISimulationComponent {
     }
 
     public Entity getEntityInLoc(Location loc) {
-        return grid[loc.getRow() - 1][loc.getCol() - 1];
+        return grid[loc.getRow()][loc.getCol()];
     }
 
     public Location getEmptyRandLoc() {
         int randRow, randCol;
         Location loc;
         do {
-            randRow = (int) (Math.random() * rows) + 1;
-            randCol = (int) (Math.random() * cols) + 1;
+            Random random = new Random();
+            randRow = random.nextInt(this.rows) + 1;
+            randCol = random.nextInt(this.cols) + 1;
             loc = new Location(randRow, randCol);
 
         } while (getEntityInLoc(loc) != null);
         return new Location(randRow, randCol);
     }
 
+    private void doMove(EntityInstance entityInstance, Location oldLoc, Location newLoc) {
+        setLocAsEmpty(oldLoc);
+        putEntityInLoc(entityInstance, newLoc);
+    }
+
     public Location move(EntityInstance entityInstance) {
-        Location loc = entityInstance.getLocation();
-        loc = getLocToRight(loc);
-        if(isLocEmpty(loc)) {
-            putEntityInLoc(entityInstance, loc);
-            return loc;
+        Location currLoc = entityInstance.getLocation();
+        Location newLoc = getLocToRight(currLoc);
+        if(isLocEmpty(newLoc)) {
+            doMove(entityInstance, currLoc, newLoc);
+            return newLoc;
         }
-        loc = getLocToLeft(loc);
-        if(isLocEmpty(loc)) {
-            putEntityInLoc(entityInstance, loc);
-            return loc;
+        newLoc = getLocToLeft(currLoc);
+        if(isLocEmpty(newLoc)) {
+            doMove(entityInstance, currLoc, newLoc);
+            return newLoc;
         }
-        loc = getLocToUp(loc);
-        if(isLocEmpty(loc)) {
-            putEntityInLoc(entityInstance, loc);
-            return loc;
+        newLoc = getLocToUp(currLoc);
+        if(isLocEmpty(newLoc)) {
+            doMove(entityInstance, currLoc, newLoc);
+            return newLoc;
         }
-        loc = getLocToDown(loc);
-        if(isLocEmpty(loc)) {
-            putEntityInLoc(entityInstance, loc);
-            return loc;
+        newLoc = getLocToDown(currLoc);
+        if(isLocEmpty(newLoc)) {
+            doMove(entityInstance, currLoc, newLoc);
+            return newLoc;
         }
         return entityInstance.getLocation();
     }
 
-    public void putEntityInLoc(Entity entity, Location loc) {
+    public void setLocAsEmpty(Location loc) {
+        grid[loc.getRow()][loc.getCol()] = null;
+    }
+
+    public void putEntityInLoc(EntityInstance entityInstance, Location loc) {
         if (getEntityInLoc(loc) != null) {
             throw new RuntimeException("Location is already occupied");
         } else {
-            grid[loc.getRow() - 1][loc.getCol() - 1] = entity;
+            grid[loc.getRow()][loc.getCol()] = entityInstance;
         }
     }
 
     private Location getLocToRight(Location loc) {
-        if (loc.getCol() == this.cols - 1) {
-            return new Location(loc.getRow(), 0);
+        if (loc.getCol() == this.cols) {
+            return new Location(loc.getRow(), 1);
         } else {
             return new Location(loc.getRow(), loc.getCol() + 1);
         }
     }
 
     private Location getLocToLeft(Location loc) {
-        if (loc.getCol() == 0) {
-            return new Location(loc.getRow(), this.cols - 1);
+        if (loc.getCol() == 1) {
+            return new Location(loc.getRow(), this.cols);
         } else {
             return new Location(loc.getRow(), loc.getCol() - 1);
         }
     }
 
     private Location getLocToUp(Location loc) {
-        if (loc.getRow() == 0) {
-            return new Location(this.rows - 1, loc.getCol());
+        if (loc.getRow() == 1) {
+            return new Location(this.rows, loc.getCol());
         } else {
             return new Location(loc.getRow() - 1, loc.getCol());
         }
     }
 
     private Location getLocToDown(Location loc) {
-        if (loc.getRow() == this.rows - 1) {
+        if (loc.getRow() == this.rows) {
             return new Location(0, loc.getCol());
         } else {
             return new Location(loc.getRow() + 1, loc.getCol());

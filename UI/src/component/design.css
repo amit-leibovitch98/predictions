@@ -8,6 +8,11 @@
     -fx-font-weight: bold;
 }
 
+#threadsNumLabel {
+    -fx-font-style: italic;
+    -fx-text-fill: DARKGREY;
+}
+
 #progressPrecantegeLabel {
     -fx-font-size: 20px;
     -fx-text-fill: #012b69;

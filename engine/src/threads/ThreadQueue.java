@@ -10,12 +10,14 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class ThreadQueue {
-    List<Simulation> tasksList;
-    ExecutorService threadPool;
-    Lock lock;
+    private List<Simulation> tasksList;
+    private ExecutorService threadPool;
+    private Lock lock;
+    private final int maxThearsNum;
 
 
     public ThreadQueue(int queueSize) {
+        this.maxThearsNum = queueSize;
         this.tasksList = new ArrayList<Simulation>();
         this.lock = new ReentrantLock();
         this.threadPool = Executors.newFixedThreadPool(queueSize);
@@ -32,5 +34,9 @@ public class ThreadQueue {
 
     public void stop() {
         this.threadPool.shutdown();
+    }
+
+    public int getMaxThearsNum() {
+        return maxThearsNum;
     }
 }
