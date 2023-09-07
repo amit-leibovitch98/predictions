@@ -2,9 +2,8 @@ package simulation.world.detail.environmentvariables;
 
 import simulation.utils.Range;
 import simulation.utils.Type;
-import simulation.world.detail.ISimulationComponent;
 
-public class EnvironmentVariable implements ISimulationComponent {
+public class EnvironmentVariable {
     private final String name;
     private final Range range;
     private final Type type;
@@ -16,6 +15,8 @@ public class EnvironmentVariable implements ISimulationComponent {
         this.type = type;
         if (range != null) {
             setValue(range.getFrom());
+        } else {
+            setValue(null);
         }
     }
 
@@ -37,29 +38,44 @@ public class EnvironmentVariable implements ISimulationComponent {
 
     public void setValue(Object value) {
         switch (type) {
+            case DECIMAL:
+                try {
+                    if (value instanceof Float) {
+                        this.value = Math.round((float) value);
+                    } else {
+                        this.value = value;
+                    }
+                } catch (NumberFormatException e) {
+                    throw new IllegalArgumentException("Invalid value for decimal type: " + value);
+                }
+                break;
             case FLOAT:
                 try {
-                    if (value instanceof String)
-                        this.value = Float.parseFloat((String) value);
-                    else if (value instanceof Float)
-                        this.value = value;
-                    else
-                        throw new IllegalArgumentException("Invalid value for float type: " + value);
+                    this.value = value;
                 } catch (NumberFormatException e) {
                     throw new IllegalArgumentException("Invalid value for float type: " + value);
                 }
                 break;
             case STRING:
-                this.value = value.toString();
+                if (value != null) {
+                    this.value = value.toString();
+                } else {
+                    value = "";
+                }
                 break;
             case BOOLEAN:
                 try {
-                    if (value instanceof String)
-                        this.value = Boolean.parseBoolean((String) value);
-                    else if (value instanceof Boolean)
-                        this.value = value;
-                    else
-                        throw new IllegalArgumentException("Invalid value for boolean type: " + value);
+                    if (value != null) {
+                        if(value.equals("false")) {
+                            this.value = false;
+                        } else if(value.equals("true")) {
+                            this.value = true;
+                        } else {
+                            throw new IllegalArgumentException("Invalid value for boolean type: " + value);
+                        }
+                    } else {
+                        value = false;
+                    }
                 } catch (NumberFormatException e) {
                     throw new IllegalArgumentException("Invalid value for boolean type: " + value);
                 }
@@ -67,12 +83,19 @@ public class EnvironmentVariable implements ISimulationComponent {
         }
     }
 
-    public boolean isValid(Object val) {
+    public boolean isValid(String val) {
         if (val != null) {
             switch (type) {
+                case DECIMAL:
+                    try {
+                        int intVal = Integer.parseInt(val);
+                        return intVal >= range.getFrom() && intVal <= range.getTo();
+                    } catch (NumberFormatException e) {
+                        return false;
+                    }
                 case FLOAT:
                     try {
-                        float floatVal = (float) val;
+                        float floatVal = Float.parseFloat(val);
                         return floatVal >= range.getFrom() && floatVal <= range.getTo();
                     } catch (NumberFormatException e) {
                         return false;
@@ -80,11 +103,12 @@ public class EnvironmentVariable implements ISimulationComponent {
                 case STRING:
                     return val instanceof String;
                 case BOOLEAN:
-                    try {
-                        Boolean.parseBoolean(val.toString());
+                    if (val.equals("true")) {
                         return true;
-                    } catch (NumberFormatException e) {
-                        return false;
+                    } else if (val.equals("false")) {
+                        return true;
+                    } else {
+                        throw new IllegalArgumentException("Invalid value for boolean type: " + val);
                     }
                 default:
                     return false;
@@ -96,6 +120,8 @@ public class EnvironmentVariable implements ISimulationComponent {
 
     public Object initRandomVal() {
         switch (type) {
+            case DECIMAL:
+                return (int) (Math.random() * ((int) range.getTo() - (int) range.getFrom() + 1)) + (int) range.getFrom();
             case FLOAT:
                 return (float) (Math.random() * (range.getTo() - range.getFrom())) + range.getFrom();
             case STRING:
@@ -105,21 +131,5 @@ public class EnvironmentVariable implements ISimulationComponent {
             default:
                 return null;
         }
-    }
-
-    public String getInfo() {
-        StringBuilder description = new StringBuilder("Environment Variable name: " + name + "\n");
-        description.append(" • Type: ").append(type.toString()).append("\n");
-        if (range != null) {
-            description.append(" • Range: ").append(range).append("\n");
-        } else {
-            description.append(" • Range: no range\n");
-        }
-        if (value != null) {
-            description.append(" • Value: ").append(value);
-        } else {
-            description.append(" • Value: no initial value");
-        }
-        return description.toString();
     }
 }

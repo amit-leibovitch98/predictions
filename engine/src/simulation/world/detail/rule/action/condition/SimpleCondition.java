@@ -12,13 +12,11 @@ import java.util.List;
 public class SimpleCondition extends Condition implements ICond {
     CondOp operator;
     CondExpression value;
-    CondExpression propertyExpression;
 
-    public SimpleCondition(Entity entity, CondExpression propertyExpression, CondOp operator, CondExpression value) {
-        super(entity, null);
+    public SimpleCondition(Entity entity, String propertyName, CondOp operator, CondExpression value) {
+        super(entity, propertyName);
         this.operator = operator;
         this.value = value;
-        this.propertyExpression = propertyExpression;
     }
     @Override
     public void doAction(EntityInstance entityInstance) {
@@ -28,7 +26,7 @@ public class SimpleCondition extends Condition implements ICond {
     public boolean evaluateCond(EntityInstance entityInstance) {
         switch (operator) {
             case EQUALS:
-                if (propertyExpression.resolveExpression(entityInstance) == value.resolveExpression(entityInstance)) {
+                if (entityInstance.getPropertyVal(propertyName) == value.resolveExpression(entityInstance)) {
                     super.activateThen(entityInstance);
                     return true;
                 } else {
@@ -36,7 +34,7 @@ public class SimpleCondition extends Condition implements ICond {
                     return false;
                 }
             case NOT_EQUALS:
-                if (propertyExpression.resolveExpression(entityInstance) != value.resolveExpression(entityInstance)) {
+                if (entityInstance.getPropertyVal(propertyName) != value.resolveExpression(entityInstance)) {
                     super.activateThen(entityInstance);
                     return true;
                 } else {
@@ -44,7 +42,7 @@ public class SimpleCondition extends Condition implements ICond {
                     return false;
                 }
             case BIGGER_THAN:
-                if (compare(propertyExpression.resolveExpression(entityInstance), value.resolveExpression(entityInstance))) {
+                if (compare(entityInstance.getPropertyVal(propertyName), value.resolveExpression(entityInstance))) {
                     super.activateThen(entityInstance);
                     return true;
                 } else {
@@ -52,7 +50,7 @@ public class SimpleCondition extends Condition implements ICond {
                     return false;
                 }
             case LESSER_THAN:
-                if (compare(value.resolveExpression(entityInstance),propertyExpression.resolveExpression(entityInstance))) {
+                if (compare(value.resolveExpression(entityInstance),entityInstance.getPropertyVal(propertyName))) {
                     super.activateThen(entityInstance);
                     return true;
                 } else {
@@ -67,11 +65,28 @@ public class SimpleCondition extends Condition implements ICond {
 
     private boolean compare(Object num1, Object num2) {
         try {
-            float num1Float = (float) num1;
-            float num2Float = (float) num2;
-            return num1Float > num2Float;
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Can't compare " + num1 + " and " + num2);
+            if(num1 instanceof Integer) {
+                if(num2 instanceof Integer) {
+                    return (int)num1 > (int)num2;
+                } else if(num2 instanceof Float) {
+                    return (int)num1 > (float)num2;
+                } else {
+                    throw new IllegalArgumentException("Cannot compare " + num1 + " and " + num2 );
+                }
+            } else if(num1 instanceof Float) {
+                if(num2 instanceof Integer) {
+                    return (float)num1 > (int)num2;
+                } else if(num2 instanceof Float) {
+                    return (float)num1 > (float)num2;
+                } else {
+                    throw new IllegalArgumentException("Cannot compare " + num1 + " and " + num2 );
+                }
+            } else {
+                throw new IllegalArgumentException("Cannot compare " + num1 + " and " + num2 );
+            }
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Cannot compare " + num1 + " and " + num2 );
         }
+
     }
 }

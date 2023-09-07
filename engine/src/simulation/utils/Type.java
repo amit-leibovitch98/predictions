@@ -1,5 +1,8 @@
 package simulation.utils;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public enum Type {
     FLOAT,
     BOOLEAN,
@@ -30,5 +33,17 @@ public enum Type {
         } else {
             return null;
         }
+    }
+
+    public static boolean isInteger(String inputStr) {
+        Pattern pattern = Pattern.compile("^[-+]?\\d+$");
+        Matcher matcher = pattern.matcher(inputStr);
+        return matcher.matches();
+    }
+
+    public static boolean isFloat(String inputStr) {
+        Pattern pattern = Pattern.compile("^[-+]?\\d*\\.?\\d+(?:[eE][-+]?\\d+)?$");
+        Matcher matcher = pattern.matcher(inputStr);
+        return matcher.matches();
     }
 }
