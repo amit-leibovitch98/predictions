@@ -28,7 +28,7 @@ public class Simulation {
         float elapsedTimeSecs = 0;
         int maxTicks = world.getTerminationConds().getByTicks();
         int maxTime = world.getTerminationConds().getByTime();
-        while(tick < maxTicks /*&& elapsedTimeSecs < maxTime*/) {
+        while(tick < maxTicks && elapsedTimeSecs < maxTime) {
             for(EntityInstance entityInstance : world.getEntityInstances()) {
                 if (entityInstance.isAlive()) {
                     try {
