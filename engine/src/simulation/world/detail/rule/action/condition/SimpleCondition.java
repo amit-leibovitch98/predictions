@@ -26,7 +26,7 @@ public class SimpleCondition extends Condition implements ICond {
     public boolean evaluateCond(EntityInstance entityInstance) {
         switch (operator) {
             case EQUALS:
-                if (entityInstance.getPropertyVal(propertyName) == value.resolveExpression()) {
+                if (entityInstance.getPropertyVal(propertyName) == value.resolveExpression(entityInstance)) {
                     super.activateThen(entityInstance);
                     return true;
                 } else {
@@ -34,7 +34,7 @@ public class SimpleCondition extends Condition implements ICond {
                     return false;
                 }
             case NOT_EQUALS:
-                if (entityInstance.getPropertyVal(propertyName) != value.resolveExpression()) {
+                if (entityInstance.getPropertyVal(propertyName) != value.resolveExpression(entityInstance)) {
                     super.activateThen(entityInstance);
                     return true;
                 } else {
@@ -42,7 +42,7 @@ public class SimpleCondition extends Condition implements ICond {
                     return false;
                 }
             case BIGGER_THAN:
-                if (compare(entityInstance.getPropertyVal(propertyName), value.resolveExpression())) {
+                if (compare(entityInstance.getPropertyVal(propertyName), value.resolveExpression(entityInstance))) {
                     super.activateThen(entityInstance);
                     return true;
                 } else {
@@ -50,7 +50,7 @@ public class SimpleCondition extends Condition implements ICond {
                     return false;
                 }
             case LESSER_THAN:
-                if (compare(value.resolveExpression(),entityInstance.getPropertyVal(propertyName))) {
+                if (compare(value.resolveExpression(entityInstance),entityInstance.getPropertyVal(propertyName))) {
                     super.activateThen(entityInstance);
                     return true;
                 } else {

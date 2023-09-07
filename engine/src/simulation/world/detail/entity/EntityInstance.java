@@ -1,5 +1,8 @@
 package simulation.world.detail.entity;
 
+import simulation.utils.expression.CondExpression;
+import simulation.utils.expression.ExpressionType;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -46,11 +49,13 @@ public class EntityInstance extends Entity {
     }
 
     public void setPropertyVal(String propertyName, Object value) {
-        for(EntityProperty property : propertiesWithVals.keySet()) {
-            if(property.getName().equals(propertyName)) {
-                propertiesWithVals.put(property, value);
-            }
+        if(this.getProperty(propertyName) == null) {
+            throw new IllegalArgumentException("Property " + propertyName + " does not exist");
         }
+        if(value instanceof CondExpression) {
+            value = ((CondExpression) value).resolveExpression(this);
+        }
+        propertiesWithVals.put(getProperty(propertyName), value);
     }
     public boolean isAlive() {
         return isAlive;

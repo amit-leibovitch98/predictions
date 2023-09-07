@@ -25,7 +25,9 @@ public class WorldDataCenter {
             for(EntityProperty property : entities.get(i - 1).getProperties()) {
                 entitiesDetails.get(i).add("    •property name: " + property.getName());
                 entitiesDetails.get(i).add("      -property type: " + property.getType().toString());
-                entitiesDetails.get(i).add("      -property range: " + property.getRange().toString());
+                if(property.getRange() != null) {
+                    entitiesDetails.get(i).add("      -property range: " + property.getRange().toString());
+                }
                 entitiesDetails.get(i).add("      -is property randomly initialized: " + Boolean.toString(property.getInitialValue() == null));
             }
         }

@@ -37,6 +37,8 @@ public class Simulation {
                                 rule.activateRule(entityInstance, tick);
                             } catch (Exception e) {
                                 System.out.println("Rule " + rule.getName() + " failed to activate: " + e.getMessage() + " --> Simulation failed.");
+                                System.out.println(e.getMessage());
+                                System.exit(1);
                                 break;
                             }
                         }

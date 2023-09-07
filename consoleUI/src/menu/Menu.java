@@ -71,7 +71,7 @@ public class Menu {
             try {
                 engine.readFile(path);
             } catch (Exception e) {
-                System.out.println("Invalid file path, please try again.");
+                System.out.println(e.getMessage());
             }
         }
     }
@@ -105,7 +105,7 @@ public class Menu {
         System.out.println("Enter the numbe of the environment variable number you want to update: ");
         for (int i = 1; i <= engine.getEnvironmentVariables().size(); i++) {
             envVar = engine.getEnvironmentVariables().get(i - 1);
-            System.out.println(i + "." + envVar.getName() + " (" + envVar.getType().toString() + ")" + ":");
+            System.out.println(i + "." + envVar.getName() + " (" + envVar.getType().toString() + ")");
         }
         int userChoice = scanner.nextInt();
         while (userChoice < 1 || userChoice > engine.getEnvironmentVariables().size()) {
@@ -113,10 +113,12 @@ public class Menu {
             return;
         }
         System.out.println("Enter new value: ");
-        Object newValue = scanner.nextInt();
+        scanner.nextLine();
+        String newValue = scanner.nextLine();
+
         while(!engine.getEnvironmentVariables().get(userChoice - 1).isValid(newValue)) {
             System.out.println("Invalid input");
-            newValue = scanner.nextInt();
+            newValue = scanner.nextLine();
         }
         engine.getEnvironmentVariables().get(userChoice - 1).setValue(newValue);
     }

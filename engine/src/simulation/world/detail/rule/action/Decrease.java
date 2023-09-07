@@ -1,5 +1,6 @@
 package simulation.world.detail.rule.action;
 
+import simulation.utils.Range;
 import simulation.utils.Type;
 import simulation.utils.expression.CondExpression;
 import simulation.world.detail.entity.Entity;
@@ -17,8 +18,9 @@ public class Decrease extends Action {
         decrease(entityInstance);
     }
     private void decrease(EntityInstance entityInstance) {
+        Range propRange = entityInstance.getProperty(propertyName).getRange();
         Object newValue = null;
-        Object byValue = by.resolveExpression();
+        Object byValue = by.resolveExpression(entityInstance);
         Object ptopValue = entityInstance.getPropertyVal(propertyName);
         if (entityInstance.getProperty(propertyName).getType() == Type.DECIMAL) {
             if(byValue instanceof Integer) {
@@ -28,7 +30,7 @@ public class Decrease extends Action {
             } else {
                 throw new IllegalArgumentException("Cannot increase decimal property by non-number value");
             }
-            if((int) newValue > entityInstance.getProperty(propertyName).getRange().getTo()) {
+            if(propRange == null || (int) newValue >= propRange.getFrom()) {
                 newValue = Math.round(entityInstance.getProperty(propertyName).getRange().getTo());
             }
         } else if (entityInstance.getProperty(propertyName).getType() == Type.FLOAT) {
@@ -39,7 +41,7 @@ public class Decrease extends Action {
             } else {
                 throw new IllegalArgumentException("Cannot increase float property by non-number value");
             }
-            if((float) newValue < entityInstance.getProperty(propertyName).getRange().getFrom()) {
+            if(propRange == null || (float) newValue >= propRange.getFrom()) {
                 newValue = entityInstance.getProperty(propertyName).getRange().getFrom();
             }
         }

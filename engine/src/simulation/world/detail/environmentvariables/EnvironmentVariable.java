@@ -13,7 +13,11 @@ public class EnvironmentVariable {
         this.name = name;
         this.range = range;
         this.type = type;
-        setValue(range.getFrom());
+        if (range != null) {
+            setValue(range.getFrom());
+        } else {
+            setValue(null);
+        }
     }
 
     public String getName() {
@@ -36,7 +40,7 @@ public class EnvironmentVariable {
         switch (type) {
             case DECIMAL:
                 try {
-                    if(value instanceof Float) {
+                    if (value instanceof Float) {
                         this.value = Math.round((float) value);
                     } else {
                         this.value = value;
@@ -53,11 +57,25 @@ public class EnvironmentVariable {
                 }
                 break;
             case STRING:
-                this.value = value.toString();
+                if (value != null) {
+                    this.value = value.toString();
+                } else {
+                    value = "";
+                }
                 break;
             case BOOLEAN:
                 try {
-                    this.value = (boolean) value;
+                    if (value != null) {
+                        if(value.equals("false")) {
+                            this.value = false;
+                        } else if(value.equals("true")) {
+                            this.value = true;
+                        } else {
+                            throw new IllegalArgumentException("Invalid value for boolean type: " + value);
+                        }
+                    } else {
+                        value = false;
+                    }
                 } catch (NumberFormatException e) {
                     throw new IllegalArgumentException("Invalid value for boolean type: " + value);
                 }
@@ -65,19 +83,19 @@ public class EnvironmentVariable {
         }
     }
 
-    public boolean isValid(Object val) {
+    public boolean isValid(String val) {
         if (val != null) {
             switch (type) {
                 case DECIMAL:
                     try {
-                        int intVal = (int) val;
+                        int intVal = Integer.parseInt(val);
                         return intVal >= range.getFrom() && intVal <= range.getTo();
                     } catch (NumberFormatException e) {
                         return false;
                     }
                 case FLOAT:
                     try {
-                        float floatVal = (float) val;
+                        float floatVal = Float.parseFloat(val);
                         return floatVal >= range.getFrom() && floatVal <= range.getTo();
                     } catch (NumberFormatException e) {
                         return false;
@@ -85,11 +103,12 @@ public class EnvironmentVariable {
                 case STRING:
                     return val instanceof String;
                 case BOOLEAN:
-                    try {
-                        Boolean.parseBoolean(val.toString());
+                    if (val.equals("true")) {
                         return true;
-                    } catch (NumberFormatException e) {
-                        return false;
+                    } else if (val.equals("false")) {
+                        return true;
+                    } else {
+                        throw new IllegalArgumentException("Invalid value for boolean type: " + val);
                     }
                 default:
                     return false;

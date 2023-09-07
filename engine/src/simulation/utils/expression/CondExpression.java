@@ -1,6 +1,9 @@
 package simulation.utils.expression;
 
 import simulation.utils.Type;
+import simulation.world.detail.entity.Entity;
+import simulation.world.detail.entity.EntityInstance;
+import simulation.world.detail.entity.EntityProperty;
 import simulation.world.detail.environmentvariables.EnvironmentVariable;
 
 import java.util.ArrayList;
@@ -12,21 +15,29 @@ public class CondExpression {
     private final ExpressionType expressionType;
     private final List<String> args;
     private static List<EnvironmentVariable> envVars;
+    private String simpleExpressionVale;
 
-    private Float simpleExpressionVale;
-
-    public CondExpression(String fullExpression, List<EnvironmentVariable> envVars) {
+    public CondExpression(String fullExpression, List<EnvironmentVariable> envVars, List<Entity> entities) {
         this.envVars = envVars;
         List<String> tempArgs = null;
         ExpressionType tempExpressionType = null;
+        for(Entity entity : entities) {
+            for(EntityProperty prop: entity.getProperties()) {
+                if(prop.getName().equals(fullExpression)) {
+                    this.expressionType = ExpressionType.PROPERTY;
+                    this.args = Arrays.asList(fullExpression);
+                    return;
+                }
+            }
+        }
         try {
-            this.simpleExpressionVale = Float.parseFloat(fullExpression);
-            tempExpressionType = ExpressionType.SIMPLE;
-            tempArgs = null;
-        } catch (NumberFormatException e) {
             List<String> expressionAsList = splitExpression(fullExpression);
             tempExpressionType = ExpressionType.fromString(expressionAsList.get(0));
             tempArgs = expressionAsList.subList(1, expressionAsList.size());
+        } catch (IllegalArgumentException e) {
+            this.simpleExpressionVale = fullExpression;
+            tempExpressionType = ExpressionType.SIMPLE;
+            tempArgs = null;
         }
         finally {
             this.expressionType = tempExpressionType;
@@ -34,23 +45,32 @@ public class CondExpression {
         }
     }
 
-    public Object resolveExpression() {
+    public Object resolveExpression(EntityInstance entityInstance) {
         if(expressionType == ExpressionType.SIMPLE) {
-            return simpleExpressionVale;
-        }
-        switch(expressionType) {
-            case ENVIROMENT:
-                return environment(args.get(0));
-            case RANDOM:
-                return random(args.get(0));
+            if(Type.isInteger(simpleExpressionVale)) {
+                return Integer.parseInt(simpleExpressionVale);
+            } else if(Type.isFloat(simpleExpressionVale)) {
+                return Float.parseFloat(simpleExpressionVale);
+            } else {
+                    return simpleExpressionVale;
+                }
+        } else if (expressionType == ExpressionType.PROPERTY) {
+            return entityInstance.getPropertyVal(args.get(0));
+        } else {
+            switch (expressionType) {
+                case ENVIROMENT:
+                    return environment(args.get(0));
+                case RANDOM:
+                    return random(args.get(0));
             /*case EVALUATE:
                 break;
             case PRECENTAGE:
                 break;
             case TICKS:
                 break;*/
-            default:
-                throw new IllegalArgumentException("Unknown expression type: " + expressionType);
+                default:
+                    throw new IllegalArgumentException("Unknown expression type: " + expressionType);
+            }
         }
     }
 

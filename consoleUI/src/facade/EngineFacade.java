@@ -60,18 +60,7 @@ public class EngineFacade {
         return this.world.getEnvironmentVars();
     }
 
-    public boolean checkEnvVars(List<Object> envVarsVals) {
-        int i = 0;
-        for(EnvironmentVariable envVar : this.world.getEnvironmentVars()) {
-            if(!envVar.isValid(envVarsVals.get(i))) {
-                return false;
-            }
-            i++;
-        }
-        return true;
-    }
-
-    public void updateEnvVar(String envVarName, Object value) {
+    public void updateEnvVar(String envVarName, String value) {
         if (this.world.getEnvironmentVar(envVarName).isValid(value)) {
             this.world.getEnvironmentVar(envVarName).setValue(value);
         }
