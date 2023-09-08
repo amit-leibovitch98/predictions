@@ -26,8 +26,15 @@ public class Simulation {
     public Simulation start(){
         long startTimeNano = System.nanoTime(), elapsedTimeNano = 0;
         float elapsedTimeSecs = 0;
-        int maxTicks = world.getTerminationConds().getByTicks();
-        int maxTime = world.getTerminationConds().getByTime();
+        Integer maxTicks = world.getTerminationConds().getByTicks();
+        Integer maxTime = world.getTerminationConds().getByTime();
+        if(maxTicks == null && maxTime == null) {
+            throw new IllegalArgumentException("No termination condition was set --> Simulation failed.");
+        } else if (maxTicks == null) {
+            maxTicks = Integer.MAX_VALUE;
+        } else if (maxTime == null) {
+            maxTime = Integer.MAX_VALUE;
+        }
         while(tick < maxTicks && elapsedTimeSecs < maxTime) {
             for(EntityInstance entityInstance : world.getEntityInstances()) {
                 if (entityInstance.isAlive()) {

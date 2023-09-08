@@ -61,7 +61,7 @@ public class WorldDataCenter {
             terminationCondsStrings.get(0).add(" •Ticks: " + Integer.toString(terminationConds.getByTicks()));
         }
         if (terminationConds.getByTime() != null) {
-            terminationCondsStrings.get(0).add(" •Population: " + Integer.toString(terminationConds.getByTime()));
+            terminationCondsStrings.get(0).add(" •Time: " + Integer.toString(terminationConds.getByTime()));
         }
         return terminationCondsStrings;
     }
