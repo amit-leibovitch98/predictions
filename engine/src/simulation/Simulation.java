@@ -30,7 +30,7 @@ public class Simulation {
         Integer maxTime = world.getTerminationConds().getByTime();
         if(maxTicks == null && maxTime == null) {
             throw new IllegalArgumentException("No termination condition was set --> Simulation failed.");
-        } else if (maxTicks == null) {
+        } else if (maxTicks == null) {f
             maxTicks = Integer.MAX_VALUE;
         } else if (maxTime == null) {
             maxTime = Integer.MAX_VALUE;

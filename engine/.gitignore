@@ -1,5 +1,5 @@
 ### IntelliJ IDEA ###
-out/
+out/predictions
 !**/src/main/**/out/
 !**/src/test/**/out/
 
