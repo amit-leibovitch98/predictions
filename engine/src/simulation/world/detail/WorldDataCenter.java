@@ -10,9 +10,11 @@ import java.util.List;
 
 public class WorldDataCenter {
     private World world;
+
     public WorldDataCenter(World world) {
         this.world = world;
     }
+
     private List<List<String>> getEntitiesDetails() {
         List<Entity> entities = world.getEntities();
         List<List<String>> entitiesDetails = new ArrayList<List<String>>();
@@ -21,12 +23,14 @@ public class WorldDataCenter {
         for (int i = 1; i < entities.size() + 1; i++) {
             entitiesDetails.add(new ArrayList<String>());
             entitiesDetails.get(i).add(" " + i + ". " + entities.get(i - 1).getName());
-            entitiesDetails.get(i).add("    population:" + Integer.toString(+ entities.get(i - 1).getPopulation()));
-            for(EntityProperty property : entities.get(i - 1).getProperties()) {
+            entitiesDetails.get(i).add("    population:" + Integer.toString(+entities.get(i - 1).getPopulation()));
+            for (EntityProperty property : entities.get(i - 1).getProperties()) {
                 entitiesDetails.get(i).add("    •property name: " + property.getName());
                 entitiesDetails.get(i).add("      -property type: " + property.getType().toString());
-                if(property.getRange() != null) {
-                    entitiesDetails.get(i).add("      -property range: " + property.getRange().toString());
+                if (property.getRange() != null) {
+                    if (property.getRange() != null) {
+                        entitiesDetails.get(i).add("      -property range: " + property.getRange().toString());
+                    }
                 }
                 entitiesDetails.get(i).add("      -is property randomly initialized: " + Boolean.toString(property.getInitialValue() == null));
             }
@@ -34,7 +38,7 @@ public class WorldDataCenter {
         return entitiesDetails;
     }
 
-    private List<List<String>> getRulesDetails(){
+    private List<List<String>> getRulesDetails() {
         List<Rule> rules = world.getRules();
         List<List<String>> rulesDetails = new ArrayList<List<String>>();
         rulesDetails.add(new ArrayList<String>());
@@ -53,12 +57,16 @@ public class WorldDataCenter {
         List<List<String>> terminationCondsStrings = new ArrayList<List<String>>();
         terminationCondsStrings.add(new ArrayList<String>());
         terminationCondsStrings.get(0).add("Termination Conditions:");
-        terminationCondsStrings.get(0).add(" •Ticks: " + Integer.toString(terminationConds.getByTicks()));
-        terminationCondsStrings.get(0).add(" •Time: " + Integer.toString(terminationConds.getByTime()));
+        if (terminationConds.getByTicks() != null) {
+            terminationCondsStrings.get(0).add(" •Ticks: " + Integer.toString(terminationConds.getByTicks()));
+        }
+        if (terminationConds.getByTime() != null) {
+            terminationCondsStrings.get(0).add(" •Population: " + Integer.toString(terminationConds.getByTime()));
+        }
         return terminationCondsStrings;
     }
 
-    public List<List<List<String>>> getWorldDeatils(){
+    public List<List<List<String>>> getWorldDeatils() {
         List<List<List<String>>> worldDetails = new ArrayList<List<List<String>>>();
         worldDetails.add(getEntitiesDetails());
         worldDetails.add(getRulesDetails());
