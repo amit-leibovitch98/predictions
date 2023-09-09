@@ -1,5 +1,6 @@
 package component.main;
 
+import component.errormodal.ErrorModalController;
 import component.result.entity.ResultByEntityController;
 import component.result.histogram.ResultByHistogramController;
 import javafx.beans.binding.Bindings;
@@ -10,6 +11,8 @@ import javafx.fxml.FXML;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
@@ -17,6 +20,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import logic.Logic;
 import simulation.Simulation;
@@ -48,8 +52,6 @@ public class MainController {
     private Label threadsNumLabel;
     @FXML
     private Tab resultsTab;
-    @FXML
-    private ProgressBar simulationProccessBar;
     @FXML
     private FlowPane envVarsInputs;
     @FXML
@@ -106,8 +108,11 @@ public class MainController {
             if (!Objects.equals(newValue, oldValue)) {
                 selectedSimulationGUID.set(newValue);
                 try {
-                    //updateResultByHistogramComponent();
-                    updateResultByEntityComponent();
+                    if(entityPopulationRB.isSelected()) {
+                        updateResultByEntityComponent();
+                    } else if(proptyHistogramRB.isSelected()) {
+                        updateResultByHistogramComponent();
+                    }
                 } catch (IOException e) {
                     e.printStackTrace();
                     System.out.println(e.getMessage());
@@ -116,22 +121,11 @@ public class MainController {
         });
     }
 
-    public void bindTaskToProgressBar(Task<Boolean> aTask) {
-        simulationProccessBar.progressProperty().bind(aTask.progressProperty());
-        progressPrecantegeLabel.textProperty().bind(
-                Bindings.concat(
-                        Bindings.format(
-                                "%.0f",
-                                Bindings.multiply(
-                                        aTask.progressProperty(),
-                                        100)),
-                        " %"));
-    }
-
     public void setPrimaryStage(Stage primaryStage) {
         this.primaryStage = primaryStage;
     }
-    public void setSimulationStatus( boolean status) {
+
+    public void setSimulationStatus(boolean status) {
         this.isSimulationRunning.set(status);
     }
 
@@ -184,7 +178,7 @@ public class MainController {
     @FXML
     void clearInputs(ActionEvent event) {
         GridPane grid;
-        for(Node entitiesPopulationsInput: entitiesPopulationsInputs.getChildren()) {
+        for (Node entitiesPopulationsInput : entitiesPopulationsInputs.getChildren()) {
             grid = (GridPane) entitiesPopulationsInput;
             for (Node node : grid.getChildren()) {
                 if (node instanceof TextField) {
@@ -192,7 +186,7 @@ public class MainController {
                 }
             }
         }
-        for(Node entitiesPopulationsInput: envVarsInputs.getChildren()) {
+        for (Node entitiesPopulationsInput : envVarsInputs.getChildren()) {
             grid = (GridPane) entitiesPopulationsInput;
             for (Node node : grid.getChildren()) {
                 if (node instanceof TextField) {
@@ -205,11 +199,38 @@ public class MainController {
     @FXML
     void startSimulation(ActionEvent event) {
         isSimulationRunning.set(true);
-        logic.startSimulation(
-                logic.retrieveEntitiesPopulationsInputs(entitiesPopulationsInputs),
-                logic.retriveEnvVarsInputs(envVarsInputs)
-        );
+        try {
+            logic.startSimulation(
+                    logic.retrieveEntitiesPopulationsInputs(entitiesPopulationsInputs),
+                    logic.retriveEnvVarsInputs(envVarsInputs)
+            );
+        } catch (IllegalArgumentException e) {
+            raiseErrorModal(e.getMessage());
+        }
         isSimulationRunning.set(false); //fixme: this is probably not good
+    }
+
+    private void raiseErrorModal(String massege) {
+        try {
+            FXMLLoader loader = new FXMLLoader();
+            URL url = getClass().getResource("/component/errormodal/errorModal.fxml");
+            loader.setLocation(url);
+            Parent root = loader.load();
+            ErrorModalController errorModalController = loader.getController();
+
+            Stage errorStage = new Stage();
+            errorStage.setTitle("Error!");
+            errorStage.setAlwaysOnTop(true);
+            errorModalController.setErrorMessage(massege);
+            Scene scene = new Scene(root);
+            errorStage.initModality(Modality.APPLICATION_MODAL);
+            errorStage.setResizable(false);
+            errorStage.setScene(scene);
+            errorStage.showAndWait();
+            errorStage.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML

@@ -14,7 +14,7 @@ public abstract class Action implements IAction {
     public Action(Entity entity, String propertyName) {
         this.entity = entity;
         this.propertyName = propertyName;
-        if (propertyName != null) {
+        if ( entity != null && propertyName != null) {
             this.property = entity.getProperty(propertyName);
         }
     }
@@ -23,11 +23,15 @@ public abstract class Action implements IAction {
         return entity;
     }
 
-    public abstract void doAction(EntityInstance entityInstance);
-    public abstract void doAction(EntityInstance sourceEntityInstance, EntityInstance targetEntityInstance);
+    public abstract boolean doAction(EntityInstance entityInstance);
+    public abstract boolean doAction(EntityInstance sourceEntityInstance, EntityInstance targetEntityInstance);
 
 
     public void setWorld(World world) {
         this.world = world;
+    }
+
+    public String getType() {
+        return this.getClass().getSimpleName();
     }
 }

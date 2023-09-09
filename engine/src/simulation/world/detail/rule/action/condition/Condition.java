@@ -37,16 +37,18 @@ public abstract class Condition extends Action implements ICond {
 
 
     @Override
-    public void doAction(EntityInstance entityInstance) {
+    public boolean doAction(EntityInstance entityInstance) {
         if(evaluateCond(entityInstance)){
             activateThen(entityInstance);
+            return true;
         } else {
             activateElse(entityInstance);
+            return false;
         }
     }
 
     @Override
-    public void doAction(EntityInstance sourceEntityInstance, EntityInstance targetEntityInstance) {
+    public boolean doAction(EntityInstance sourceEntityInstance, EntityInstance targetEntityInstance) {
         throw new UnsupportedOperationException("Set action doesn't support doAction with two entity instances");
     }
 

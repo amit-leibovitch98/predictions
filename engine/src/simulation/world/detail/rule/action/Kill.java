@@ -11,15 +11,16 @@ public class Kill extends Action{
     }
 
     @Override
-    public void doAction(EntityInstance sourceEntityInstance, EntityInstance targetEntityInstance) {
+    public boolean doAction(EntityInstance sourceEntityInstance, EntityInstance targetEntityInstance) {
         throw new UnsupportedOperationException("Set action doesn't support doAction with two entity instances");
     }
     @Override
-    public void doAction(EntityInstance entityInstance) {
+    public boolean doAction(EntityInstance entityInstance) {
         kill(entityInstance);
+        return true;
     }
 
     private void kill(EntityInstance entityInstance) {
-        entityInstance.kill();
+        entityInstance.kill(world.getGrid());
     }
 }

@@ -12,18 +12,10 @@ public class Divide extends Calculation {
 
     @Override
     public void calculate(EntityInstance entityInstance) {
-        float arg1, arg2;
         try {
-            if (this.arg1.resolveExpression(entityInstance) instanceof Integer) {
-                arg1 = ((int) this.arg1.resolveExpression(entityInstance));
-            } else {
-                arg1 = (float) (this.arg1.resolveExpression(entityInstance));
-            }
-            if (this.arg2.resolveExpression(entityInstance) instanceof Integer) {
-                arg2 = ((int) this.arg2.resolveExpression(entityInstance));
-            } else {
-                arg2 = (float) (this.arg2.resolveExpression(entityInstance));
-            }
+            float arg1 = getArgInFloat(entityInstance, this.arg1);
+            float arg2 = getArgInFloat(entityInstance, this.arg2);
+
             float value = arg1 / arg2;
             if (resultProp.getType() == Type.DECIMAL) {
                 entityInstance.setPropertyVal(resultProp.getName(), Math.round(value));

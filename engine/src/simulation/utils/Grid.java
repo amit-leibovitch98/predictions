@@ -25,12 +25,14 @@ public class Grid implements ISimulationComponent {
         return rows;
     }
 
-    public Entity[][] getEntityArray() {
-        return grid;
-    }
-
     public Entity getEntityInLoc(Location loc) {
-        return grid[loc.getRow()][loc.getCol()];
+        try {
+            return grid[loc.getRow()][loc.getCol()];
+        } catch (ArrayIndexOutOfBoundsException e) {
+            System.out.println("Location " + loc + " is out of bounds");
+            System.exit(1);
+            return null;
+        }
     }
 
     public Location getEmptyRandLoc() {
@@ -54,22 +56,25 @@ public class Grid implements ISimulationComponent {
     public Location move(EntityInstance entityInstance) {
         Location currLoc = entityInstance.getLocation();
         Location newLoc = getLocToRight(currLoc);
-        if(isLocEmpty(newLoc)) {
+        if (currLoc.getRow() == 0) {
+            System.out.println("currLoc: " + currLoc);
+        }
+        if (isLocEmpty(newLoc)) {
             doMove(entityInstance, currLoc, newLoc);
             return newLoc;
         }
         newLoc = getLocToLeft(currLoc);
-        if(isLocEmpty(newLoc)) {
+        if (isLocEmpty(newLoc)) {
             doMove(entityInstance, currLoc, newLoc);
             return newLoc;
         }
         newLoc = getLocToUp(currLoc);
-        if(isLocEmpty(newLoc)) {
+        if (isLocEmpty(newLoc)) {
             doMove(entityInstance, currLoc, newLoc);
             return newLoc;
         }
         newLoc = getLocToDown(currLoc);
-        if(isLocEmpty(newLoc)) {
+        if (isLocEmpty(newLoc)) {
             doMove(entityInstance, currLoc, newLoc);
             return newLoc;
         }
@@ -83,6 +88,8 @@ public class Grid implements ISimulationComponent {
     public void putEntityInLoc(EntityInstance entityInstance, Location loc) {
         if (getEntityInLoc(loc) != null) {
             throw new RuntimeException("Location is already occupied");
+        } else if (loc.getRow() < 1 || loc.getCol() < 1 || loc.getRow() > this.rows || loc.getCol() > this.cols) {
+            throw new RuntimeException("Location is out of bounds");
         } else {
             grid[loc.getRow()][loc.getCol()] = entityInstance;
         }
@@ -114,7 +121,7 @@ public class Grid implements ISimulationComponent {
 
     private Location getLocToDown(Location loc) {
         if (loc.getRow() == this.rows) {
-            return new Location(0, loc.getCol());
+            return new Location(1, loc.getCol());
         } else {
             return new Location(loc.getRow() + 1, loc.getCol());
         }

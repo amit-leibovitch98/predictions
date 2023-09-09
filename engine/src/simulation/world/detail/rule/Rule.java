@@ -35,23 +35,34 @@ public class Rule implements ISimulationComponent {
     }
 
     public void activateRule(EntityInstance primeryEntityInstance, int ticksCount, List<EntityInstance> secoderyEntityInstances) {
-        if((ticksCount + 1) % activation.getTicks() == 0) {
+        if ((ticksCount + 1) % activation.getTicks() == 0) {
             float activationOdd = (float) Math.random();
             if (activationOdd <= activation.getProbability()) {
                 for (Action action : actions) {
-                    if(action.getEntity().getName().equals(primeryEntityInstance.getName())) {
-                        if (action instanceof Replace || action instanceof Proximity) {
-                            for (EntityInstance secoderyEntityInstance : secoderyEntityInstances) {
-                                action.doAction(primeryEntityInstance, secoderyEntityInstance);
+                    if (action.getEntity() == null || action.getEntity().getName().equals(primeryEntityInstance.getName())) {
+                        try {
+                            if (action instanceof Replace || action instanceof Proximity) {
+                                for (EntityInstance secoderyEntityInstance : secoderyEntityInstances) {
+                                    if(secoderyEntityInstance.isAlive()) {
+                                        if (action.doAction(primeryEntityInstance, secoderyEntityInstance)) { //action has actually been done
+                                            break;
+                                        }
+                                    }
+                                }
+                            } else {
+                                action.doAction(primeryEntityInstance);
                             }
-                        } else {
-                            action.doAction(primeryEntityInstance);
+                        } catch (Exception e) {
+                            System.out.println("Rule: " + name + " failed to activate action: " + action.getType() + ": "
+                                            + e.getMessage() + " --> Simulation failed.");
+                            System.exit(1);
                         }
                     }
                 }
             }
         }
     }
+
     public String getInfo() {
         return "Rule name: " + name + "\n" +
                 "Rule activation: " + activation.toString() + "\n" +

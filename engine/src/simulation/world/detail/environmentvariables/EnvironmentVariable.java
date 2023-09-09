@@ -2,8 +2,9 @@ package simulation.world.detail.environmentvariables;
 
 import simulation.utils.Range;
 import simulation.utils.Type;
+import simulation.world.detail.ISimulationComponent;
 
-public class EnvironmentVariable {
+public class EnvironmentVariable implements ISimulationComponent {
     private final String name;
     private final Range range;
     private final Type type;
@@ -37,49 +38,47 @@ public class EnvironmentVariable {
     }
 
     public void setValue(Object value) {
-        switch (type) {
-            case DECIMAL:
-                try {
-                    if (value instanceof Float) {
-                        this.value = Math.round((float) value);
-                    } else {
-                        this.value = value;
+        if(value != null) {
+            switch (type) {
+                case DECIMAL:
+                    try {
+                        this.value = Integer.parseInt(value.toString());
+                    } catch (NumberFormatException e) {
+                        throw new IllegalArgumentException("Invalid value for decimal type: " + value);
                     }
-                } catch (NumberFormatException e) {
-                    throw new IllegalArgumentException("Invalid value for decimal type: " + value);
-                }
-                break;
-            case FLOAT:
-                try {
-                    this.value = value;
-                } catch (NumberFormatException e) {
-                    throw new IllegalArgumentException("Invalid value for float type: " + value);
-                }
-                break;
-            case STRING:
-                if (value != null) {
-                    this.value = value.toString();
-                } else {
-                    value = "";
-                }
-                break;
-            case BOOLEAN:
-                try {
+                    break;
+                case FLOAT:
+                    try {
+                        this.value = Float.parseFloat(value.toString());
+                    } catch (NumberFormatException e) {
+                        throw new IllegalArgumentException("Invalid value for float type: " + value);
+                    }
+                    break;
+                case STRING:
                     if (value != null) {
-                        if(value.equals("false")) {
-                            this.value = false;
-                        } else if(value.equals("true")) {
-                            this.value = true;
-                        } else {
-                            throw new IllegalArgumentException("Invalid value for boolean type: " + value);
-                        }
+                        this.value = value.toString();
                     } else {
-                        value = false;
+                        value = "";
                     }
-                } catch (NumberFormatException e) {
-                    throw new IllegalArgumentException("Invalid value for boolean type: " + value);
-                }
-                break;
+                    break;
+                case BOOLEAN:
+                    try {
+                        if (value != null) {
+                            if (value.equals("false")) {
+                                this.value = false;
+                            } else if (value.equals("true")) {
+                                this.value = true;
+                            } else {
+                                throw new IllegalArgumentException("Invalid value for boolean type: " + value);
+                            }
+                        } else {
+                            value = false;
+                        }
+                    } catch (NumberFormatException e) {
+                        throw new IllegalArgumentException("Invalid value for boolean type: " + value);
+                    }
+                    break;
+            }
         }
     }
 
@@ -131,5 +130,21 @@ public class EnvironmentVariable {
             default:
                 return null;
         }
+    }
+
+    public String getInfo() {
+        StringBuilder description = new StringBuilder("Environment Variable name: " + name + "\n");
+        description.append(" • Type: ").append(type.toString()).append("\n");
+        if (range != null) {
+            description.append(" • Range: ").append(range).append("\n");
+        } else {
+            description.append(" • Range: no range\n");
+        }
+        if (value != null) {
+            description.append(" • Value: ").append(value);
+        } else {
+            description.append(" • Value: no initial value");
+        }
+        return description.toString();
     }
 }

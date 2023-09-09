@@ -15,10 +15,12 @@ public class CondExpression {
     private final ExpressionType expressionType;
     private final List<String> args;
     private static List<EnvironmentVariable> envVars;
+    private static List<Entity> entities;
     private String simpleExpressionVale;
 
     public CondExpression(String fullExpression, List<EnvironmentVariable> envVars, List<Entity> entities) {
         this.envVars = envVars;
+        this.entities = entities;
         List<String> tempArgs = null;
         ExpressionType tempExpressionType = null;
         for(Entity entity : entities) {
@@ -51,6 +53,12 @@ public class CondExpression {
                 return Integer.parseInt(simpleExpressionVale);
             } else if(Type.isFloat(simpleExpressionVale)) {
                 return Float.parseFloat(simpleExpressionVale);
+            } else if(Type.isBoolean(simpleExpressionVale)) {
+                if(simpleExpressionVale.equals("true")) {
+                    return true;
+                } else {
+                    return false;
+                }
             } else {
                     return simpleExpressionVale;
                 }
@@ -62,15 +70,52 @@ public class CondExpression {
                     return environment(args.get(0));
                 case RANDOM:
                     return random(args.get(0));
-            /*case EVALUATE:
-                break;
-            case PRECENTAGE:
-                break;
-            case TICKS:
-                break;*/
+                case EVALUATE:
+                    return evaluate(entityInstance, args.get(0), args.get(1));
+                case PRECENTAGE:
+                    return precantage(args.get(0), args.get(1));
+                case TICKS:
+                    return ticks(entityInstance, args.get(0), args.get(1));
                 default:
                     throw new IllegalArgumentException("Unknown expression type: " + expressionType);
             }
+        }
+    }
+
+    private Integer ticks(EntityInstance entityInstance, String entityName, String propertyName) {
+        if (entityInstance.getName().equals(entityName)) {
+            Integer res = entityInstance.getPropertyLastUpdatedTick(propertyName);
+            if (res != null) {
+                return res;
+            } else {
+                throw new IllegalArgumentException("Unknown property: " + propertyName);
+            }
+        } else {
+            throw new IllegalArgumentException("Wrong entity: " + entityName);
+        }
+    }
+
+    private Object evaluate(EntityInstance entityInstance, String entityName, String propertyName) {
+        if (entityInstance.getName().equals(entityName)) {
+            Object res = entityInstance.getPropertyVal(propertyName);
+            if (res != null) {
+                return res;
+            } else {
+                throw new IllegalArgumentException("Unknown property: " + propertyName);
+            }
+        } else {
+            throw new IllegalArgumentException("Wrong entity: " + entityName);
+        }
+    }
+
+    private Object precantage(String whole, String part) {
+        CondExpression wholeExpression = new CondExpression(whole, envVars, entities);
+        CondExpression partExpression = new CondExpression(part, envVars, entities);
+        if( wholeExpression.resolveExpression(null) instanceof Float && partExpression.resolveExpression(null) instanceof Float) {
+            return Math.round((Float) wholeExpression.resolveExpression(null) *
+                    (Float) partExpression.resolveExpression(null) / 100);
+        } else {
+            throw new IllegalArgumentException("Whole and part must be of type numeric");
         }
     }
 
@@ -94,7 +139,7 @@ public class CondExpression {
             String argumentsString = expression.substring(openingParenthesis + 1, closingParenthesis);
 
             result.add(functionName);
-            String[] argArray = argumentsString.split(",");
+            String[] argArray = argumentsString.split("[,.]");
             for (String arg : argArray) {
                 result.add(arg.trim());
             }

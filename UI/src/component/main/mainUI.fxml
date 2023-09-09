@@ -6,14 +6,12 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
-<?import javafx.scene.control.ProgressBar?>
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.control.TreeView?>
-<?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
@@ -24,7 +22,7 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.RowConstraints?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="650.0" prefWidth="1000.0" stylesheets="@../design.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="component.main.MainController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="650.0" prefWidth="1000.0" stylesheets="@../design.css" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="component.main.MainController">
    <top>
       <GridPane BorderPane.alignment="CENTER">
         <columnConstraints>
@@ -119,11 +117,6 @@
                               <RowConstraints minHeight="10.0" prefHeight="10.0" vgrow="NEVER" />
                            </rowConstraints>
                            <children>
-                              <ProgressBar fx:id="simulationProccessBar" maxWidth="1.7976931348623157E308" progress="0.0" GridPane.columnIndex="2" GridPane.columnSpan="3" GridPane.rowIndex="1" GridPane.valignment="CENTER">
-                                 <GridPane.margin>
-                                    <Insets left="2.0" />
-                                 </GridPane.margin>
-                              </ProgressBar>
                               <Button fx:id="clearB" maxHeight="1.7976931348623157E308" minWidth="80.0" mnemonicParsing="false" onAction="#clearInputs" prefWidth="80.0" text="Clear" GridPane.columnIndex="1" GridPane.rowIndex="4" GridPane.valignment="CENTER">
                                  <GridPane.margin>
                                     <Insets />
@@ -134,11 +127,6 @@
                                     <Insets />
                                  </GridPane.margin>
                               </Button>
-                              <Label fx:id="progressPrecantegeLabel" text="Label" GridPane.columnIndex="5" GridPane.halignment="LEFT" GridPane.rowIndex="1" GridPane.valignment="CENTER">
-                                 <GridPane.margin>
-                                    <Insets left="20.0" />
-                                 </GridPane.margin>
-                              </Label>
                               <ScrollPane GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="2">
                                  <content>
                                     <FlowPane fx:id="entitiesPopulationsInputs" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
@@ -160,9 +148,9 @@
                                              <rotationAxis>
                                                 <Point3D />
                                              </rotationAxis>
-                                             <image>
-                                                <Image url="/resources/pause.png" />
-                                             </image>
+<!--                                             <image>-->
+<!--                                                <Image url="/resources/pause.png" />-->
+<!--                                             </image>-->
                                           </ImageView>
                                        </graphic>
                                        <padding>
@@ -181,9 +169,9 @@
                                              <rotationAxis>
                                                 <Point3D />
                                              </rotationAxis>
-                                             <image>
-                                                <Image url="@../../resources/resume.png" />
-                                             </image>
+<!--                                             <image>-->
+<!--                                                <Image url="@../../resources/resume.png" />-->
+<!--                                             </image>-->
                                           </ImageView>
                                        </graphic>
                                        <padding>
@@ -196,9 +184,9 @@
                                     <Button fx:id="stopB" maxHeight="20.0" maxWidth="20.0" minHeight="20.0" minWidth="20.0" mnemonicParsing="false" onAction="#stopSimulation" prefHeight="20.0" prefWidth="20.0" text="stop">
                                        <graphic>
                                           <ImageView fitHeight="11.0" fitWidth="12.0" pickOnBounds="true" preserveRatio="true">
-                                             <image>
-                                                <Image url="@/resources/stop.png" />
-                                             </image>
+<!--                                             <image>-->
+<!--                                                <Image url="@/resources/stop.png" />-->
+<!--                                             </image>-->
                                              <viewport>
                                                 <Rectangle2D />
                                              </viewport>

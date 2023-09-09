@@ -1,7 +1,6 @@
 package simulation.world.detail.rule.action.calculation;
 
 import simulation.utils.Type;
-import simulation.utils.Value;
 import simulation.utils.expression.CondExpression;
 import simulation.world.detail.entity.Entity;
 import simulation.world.detail.entity.EntityInstance;

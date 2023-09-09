@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+
+<GridPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" stylesheets="@errorModal.css" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/20.0.1" fx:controller="component.errormodal.ErrorModalController">
+  <columnConstraints>
+    <ColumnConstraints hgrow="NEVER" minWidth="15.0" prefWidth="15.0" />
+    <ColumnConstraints hgrow="ALWAYS" />
+      <ColumnConstraints hgrow="NEVER" minWidth="100.0" prefWidth="100.0" />
+      <ColumnConstraints hgrow="NEVER" minWidth="15.0" prefWidth="15.0" />
+  </columnConstraints>
+  <rowConstraints>
+    <RowConstraints minHeight="5.0" prefHeight="5.0" vgrow="NEVER" />
+      <RowConstraints minHeight="75.0" prefHeight="75.0" vgrow="NEVER" />
+    <RowConstraints minHeight="40.0" prefHeight="40.0" vgrow="NEVER" />
+    <RowConstraints minHeight="5.0" prefHeight="5.0" vgrow="NEVER" />
+  </rowConstraints>
+   <children>
+      <Label fx:id="errorMassegeLabel" text="&lt;ErrorMassege&gt;" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="1" />
+      <Button fx:id="okB" mnemonicParsing="false" onAction="#closeModal" text="OK" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER">
+         <padding>
+            <Insets bottom="3.0" left="20.0" right="20.0" top="3.0" />
+         </padding>
+      </Button>
+   </children>
+</GridPane>

@@ -26,7 +26,6 @@ public class TerminationCond implements ISimulationComponent {
     public String getInfo() {
         StringBuilder description = new StringBuilder();
 
-        description.append("The Simulation will terminate after: ");
         if (byTicks != null) {
             description.append("The Simulation will terminate after ").append(byTicks).append(" ticks.\n");
         } else {

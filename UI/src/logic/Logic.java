@@ -134,6 +134,7 @@ public class Logic {
 
     public Map<String, Integer> retrieveEntitiesPopulationsInputs(FlowPane entitiesPopulationsInputs) {
         Map<String, Integer> entityPopulationsMap = new HashMap<>();
+        int populationSum = 0;
 
         for (Node node : entitiesPopulationsInputs.getChildren()) {
             if (node instanceof GridPane) {
@@ -146,6 +147,11 @@ public class Logic {
                         entityNameLabel = (Label) gridChild;
                     } else if (gridChild instanceof TextField && "entityPopulationInput".equals(gridChild.getId())) {
                         entityPopulationInput = (TextField) gridChild;
+                        try {
+                            Integer.parseInt(entityPopulationInput.getText());
+                        } catch (NumberFormatException e) {
+                            throw new IllegalArgumentException("The population of " + entityNameLabel.getText() + " must be an integer");
+                        }
                     }
                 }
 
@@ -153,8 +159,15 @@ public class Logic {
                     String entityName = entityNameLabel.getText().substring(0, entityNameLabel.getText().indexOf("'"));
                     Integer entityPopulation = Integer.parseInt(entityPopulationInput.getText());
                     entityPopulationsMap.put(entityName, entityPopulation);
+                    populationSum += entityPopulation;
                 }
             }
+        }
+        int gridSize = engine.getGrid().getRows() * engine.getGrid().getCols();
+        if (populationSum > gridSize) {
+            throw new IllegalArgumentException("The sum of the populations (" + populationSum + ") \n" +
+                    "must be lesser than the number of cells in the grid (" +
+                    engine.getGrid().getRows() + "X" + engine.getGrid().getRows() + "=" + engine.getGrid().getRows() * engine.getGrid().getCols() + ")");
         }
         return entityPopulationsMap;
     }
@@ -180,6 +193,30 @@ public class Logic {
                 if (envVarNameLabel != null && envVarValueInput != null) {
                     String envVarName = envVarNameLabel.getText();
                     Object envVarValue = envVarValueInput.getText();
+                    for (EnvironmentVariable envVar : engine.getEnvironmentVariables()) {
+                        try {
+                            switch (envVar.getType()) {
+                                case DECIMAL:
+                                    envVarValue = Integer.parseInt(envVarValue.toString());
+                                    if (!envVar.getRange().isInRange((int) envVarValue))
+                                        throw new IllegalArgumentException("The value of " + envVarName + " must be in range " + envVar.getRange());
+                                    break;
+                                case FLOAT:
+                                    envVarValue = Float.parseFloat(envVarValue.toString());
+                                    if (!envVar.getRange().isInRange((float) envVarValue))
+                                        throw new IllegalArgumentException("The value of " + envVarName + " must be in range " + envVar.getRange());
+                                    break;
+                                case STRING:
+                                    envVarValue = envVarValue.toString();
+                                    break;
+                                case BOOLEAN:
+                                    envVarValue = Boolean.parseBoolean(envVarValue.toString());
+                                    break;
+                            }
+                        } catch (NumberFormatException e) {
+                            throw new IllegalArgumentException("The value of " + envVarName + " must be a " + envVar.getType());
+                        }
+                    }
                     envVarsMap.put(envVarName, envVarValue);
                 }
             }

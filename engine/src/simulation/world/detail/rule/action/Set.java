@@ -14,11 +14,12 @@ public class Set extends Action {
         this.value = value;
     }
     @Override
-    public void doAction(EntityInstance entityInstance) {
+    public boolean doAction(EntityInstance entityInstance) {
         entityInstance.setPropertyVal(propertyName, value);
+        return true;
     }
     @Override
-    public void doAction(EntityInstance sourceEntityInstance, EntityInstance targetEntityInstance) {
+    public boolean doAction(EntityInstance sourceEntityInstance, EntityInstance targetEntityInstance) {
         throw new UnsupportedOperationException("Set action doesn't support doAction with two entity instances");
     }
 }

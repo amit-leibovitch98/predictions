@@ -11,8 +11,8 @@ public class ComplexCondition extends Condition implements ICond {
     List<ICond> subConditions;
     ConditionLogicOp logicOp;
 
-    public ComplexCondition(List<ICond> simpleConditions, String logicOp) {
-        super(null, null);
+    public ComplexCondition(List<ICond> simpleConditions, Entity entity, String logicOp) {
+        super(entity, null);
         this.subConditions = simpleConditions;
         this.logicOp = ConditionLogicOp.fromString(logicOp);
     }

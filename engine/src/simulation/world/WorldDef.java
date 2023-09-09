@@ -51,4 +51,10 @@ public class WorldDef {
     public World createWorld() {
         return new World(this.environmentVars, this.entities, this.rules, this.terminationConds, this.grid, this.actions);
     }
+
+    public void updateActions(World world) {
+        for (Action action : actions) {
+            action.setWorld(world);
+        }
+    }
 }

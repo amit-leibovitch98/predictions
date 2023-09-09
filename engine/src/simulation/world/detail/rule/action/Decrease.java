@@ -14,10 +14,15 @@ public class Decrease extends Action {
         this.by = by;
     }
 
-    public void doAction(EntityInstance entityInstance) {
-        decrease(entityInstance);
+    @Override
+    public boolean doAction(EntityInstance sourceEntityInstance, EntityInstance targetEntityInstance) {
+        throw new UnsupportedOperationException("Set action doesn't support doAction with two entity instances");
     }
-    private void decrease(EntityInstance entityInstance) {
+    public boolean doAction(EntityInstance entityInstance) {
+        return decrease(entityInstance);
+    }
+    private boolean decrease(EntityInstance entityInstance) {
+        boolean res = true;
         Range propRange = entityInstance.getProperty(propertyName).getRange();
         Object newValue = null;
         Object byValue = by.resolveExpression(entityInstance);
@@ -32,6 +37,7 @@ public class Decrease extends Action {
             }
             if(propRange == null || (int) newValue >= propRange.getFrom()) {
                 newValue = Math.round(entityInstance.getProperty(propertyName).getRange().getTo());
+                res = false; //value didn't change
             }
         } else if (entityInstance.getProperty(propertyName).getType() == Type.FLOAT) {
             if(byValue instanceof Integer) {
@@ -43,8 +49,10 @@ public class Decrease extends Action {
             }
             if(propRange == null || (float) newValue >= propRange.getFrom()) {
                 newValue = entityInstance.getProperty(propertyName).getRange().getFrom();
+                res = false; //value didn't change
             }
         }
         entityInstance.setPropertyVal(propertyName, newValue);
+        return res;
     }
 }

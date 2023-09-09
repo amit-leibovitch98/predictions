@@ -1,10 +1,11 @@
 package file;
 
 import file.schema.generated.*;
+import simulation.SimulationManager;
+import simulation.utils.Grid;
 import simulation.utils.Range;
 import simulation.utils.Type;
-import simulation.utils.Value;
-import simulation.world.World;
+import simulation.world.WorldDef;
 import simulation.world.detail.entity.Entity;
 import simulation.world.detail.environmentvariables.EnvironmentVariable;
 import simulation.world.detail.rule.Activation;
@@ -20,36 +21,44 @@ import simulation.world.detail.rule.action.condition.*;
 
 import simulation.utils.expression.CondExpression;
 
-import javax.swing.*;
-import java.beans.Expression;
 import java.util.ArrayList;
 import java.util.List;
 
+
 public class WorldProxy {
-    private FIleHandler fileHandler;
     private PRDWorld prdWorld;
     private List<Entity> entities;
     private List<EnvironmentVariable> envVars;
+    private List<Action> actions;
 
     public WorldProxy(String path) {
         FIleHandler fileHandler = new FIleHandler(path);
         this.prdWorld = fileHandler.getPrdWorld();
+        SimulationManager.getInstance().setThreadQueue(getThreadsNum());
+        actions = new ArrayList<>();
     }
 
-    public World getWorld() {
-        World world = new World();
+    public WorldDef getWorld() {
         this.envVars = getEnvironmentVariableList();
         this.entities = getEntityList();
-        world.setEnvironmentVars(this.envVars);
-        world.setEntities(this.entities);
-        world.setRules(getRuleList(world.getEntities().get(0)));  //Fixme: for ex2 well have more than 1 entity
-        world.setTerminationConds(getTerminationList());
-        return world;
+        WorldDef worldDef = new WorldDef(this.envVars, this.entities, getGrid(), this.actions);
+        worldDef.setRules(getRuleList());
+        worldDef.setTerminationConds(getTerminationList());
+        return worldDef;
+    }
+
+    private int getThreadsNum() {
+        return prdWorld.getPRDThreadCount();
+    }
+
+    private Grid getGrid() {
+        PRDWorld.PRDGrid prdGrid = prdWorld.getPRDGrid();
+        return new Grid(prdGrid.getRows(), prdGrid.getColumns());
     }
 
     private List<EnvironmentVariable> getEnvironmentVariableList() {
         List<EnvironmentVariable> environmentVariables = new ArrayList<EnvironmentVariable>();
-        PRDEvironment prdEnvironments = prdWorld.getPRDEvironment();
+        PRDEnvironment  prdEnvironments = prdWorld.getPRDEnvironment();
 
         for (PRDEnvProperty prdEnvProperty : prdEnvironments.getPRDEnvProperty()) {
             PRDRange prdRange = prdEnvProperty.getPRDRange();
@@ -75,7 +84,6 @@ public class WorldProxy {
         for (PRDEntity prdEntity : prdEntities.getPRDEntity()) {
             entities.add(new Entity(
                     prdEntity.getName(),
-                    prdEntity.getPRDPopulation(),
                     getEntityProperties(prdEntity.getPRDProperties())
             ));
 
@@ -84,14 +92,14 @@ public class WorldProxy {
         return entities;
     }
 
-    private List<Rule> getRuleList(Entity entity) {
+    private List<Rule> getRuleList() {
         List<Rule> rules = new ArrayList<Rule>();
         PRDRules prdRules = prdWorld.getPRDRules();
         for (PRDRule prdRule : prdRules.getPRDRule()) {
             //create rule actions
-            List<Action> actions = new ArrayList<Action>();
+            List<Action> actions = new ArrayList<>();
             for (PRDAction prdAction : prdRule.getPRDActions().getPRDAction()) {
-                actions.add(createAction(prdAction, entity));
+                actions.add(createAction(prdAction));
             }
             //create rule activation
             Activation activation = null;
@@ -107,8 +115,9 @@ public class WorldProxy {
     }
 
     private TerminationCond getTerminationList() {
+        boolean isInteractive = false;
         Integer ticks = null, seconds = null;
-        List<Object> termList = prdWorld.getPRDTermination().getPRDByTicksOrPRDBySecond();
+        List<Object> termList = prdWorld.getPRDTermination().getPRDBySecondOrPRDByTicks();
         for (Object prdBySecond : termList) {
             if (prdBySecond.getClass() == PRDByTicks.class) {
                 ticks = ((PRDByTicks) (prdBySecond)).getCount();
@@ -116,7 +125,10 @@ public class WorldProxy {
                 seconds = ((PRDBySecond) (prdBySecond)).getCount();
             }
         }
-        return new TerminationCond(ticks, seconds);
+        if (prdWorld.getPRDTermination().getPRDByUser() != null) {
+            isInteractive = true;
+        }
+        return new TerminationCond(ticks, seconds, isInteractive);
     }
 
     private List<EntityProperty> getEntityProperties(PRDProperties prdProperties) {
@@ -141,7 +153,67 @@ public class WorldProxy {
         return properties;
     }
 
-    private Action createAction(PRDAction prdAction, Entity entity) {
+    private Action createAction(PRDAction prdAction) {
+        Action action;
+        if (prdAction.getType().equals(ActionType.REPLACE.toString())) {
+            action = createReplaceAction(prdAction);
+        } else if (prdAction.getType().equals(ActionType.PROXIMITY.toString())) {
+            action = createProximityAction(prdAction);
+        } else {
+            action = createSimpleAction(prdAction);
+        }
+        actions.add(action);
+        return action;
+    }
+
+    private Action createReplaceAction(PRDAction prdAction) {
+        Entity killEntity = null;
+        Entity replaceEntity = null;
+        for (Entity currEntity : this.entities) {
+            if (currEntity.getName().equals(prdAction.getKill())) {
+                killEntity = currEntity;
+            }
+            if (currEntity.getName().equals(prdAction.getCreate())) {
+                replaceEntity = currEntity;
+            }
+        }
+        if (killEntity == null || replaceEntity == null) {
+            throw new RuntimeException("Unknown entity name");
+        }
+
+        return new Replace(killEntity, replaceEntity, prdAction.getMode().equals("scratch"));
+    }
+
+    private Action createProximityAction(PRDAction prdAction) {
+        Entity sourceEntity = null;
+        Entity targetEntity = null;
+        for (Entity currEntity : this.entities) {
+            if (currEntity.getName().equals(prdAction.getPRDBetween().getSourceEntity())) {
+                sourceEntity = currEntity;
+            }
+            if (currEntity.getName().equals(prdAction.getPRDBetween().getTargetEntity())) {
+                targetEntity = currEntity;
+            }
+        }
+        if (sourceEntity == null || targetEntity == null) {
+            throw new RuntimeException("Unknown entity name");
+        }
+
+        List<Action> subActions = new ArrayList<>();
+        for (PRDAction subAction : prdAction.getPRDActions().getPRDAction()) {
+            subActions.add(createAction(subAction));
+        }
+        return new Proximity(sourceEntity, targetEntity, new CondExpression(prdAction.getPRDEnvDepth().getOf(), this.envVars, this.entities), subActions);
+    }
+
+    private Action createSimpleAction(PRDAction prdAction) {
+        Entity entity = null;
+        for (Entity currEntity : this.entities) {
+            if (currEntity.getName().equals(prdAction.getEntity())) {
+                entity = currEntity;
+            }
+        }
+
         switch (ActionType.fromString(prdAction.getType())) {
             case INCREASE:
                 return new Increase(entity, prdAction.getProperty(), new CondExpression(prdAction.getBy(), envVars, entities));
@@ -159,6 +231,7 @@ public class WorldProxy {
                 throw new RuntimeException("Unknown action type");
         }
     }
+
 
     private Calculation createCalculation(PRDAction prdAction, Entity entity) {
         Calculation calc = null;
@@ -187,27 +260,25 @@ public class WorldProxy {
             elseActions = getThenOrElseActions(prdAction.getPRDElse().getPRDAction(), entity);
         }
         //get condition
-        Condition condition = getCondList(prdAction.getPRDCondition(), entity, envVars);
+        Condition condition = getCondList(prdAction.getPRDCondition(), entity);
         condition.setThenActions(thenActions);
         condition.setElseActions(elseActions);
         return condition;
     }
 
-    private Condition getCondList(PRDCondition prdCond, Entity entity, List<EnvironmentVariable> envVars) {
+    private Condition getCondList(PRDCondition prdCond, Entity entity) {
         if (prdCond.getSingularity().equals("single")) {
-            return new SimpleCondition(entity,
-                    prdCond.getProperty(),
+            return new SimpleCondition(
+                    entity,
+                    new CondExpression(prdCond.getProperty(), envVars, entities),
                     CondOp.fromString(prdCond.getOperator()),
                     new CondExpression(prdCond.getValue(), envVars, entities));
         } else if (prdCond.getSingularity().equals("multiple")) {
             List<ICond> conditions = new ArrayList<ICond>();
             for (PRDCondition condition : prdCond.getPRDCondition()) {
-                conditions.add(getCondList(condition, entity, envVars));
+                conditions.add(getCondList(condition, entity));
             }
-            return new ComplexCondition(conditions,
-                    prdCond.getLogical(),
-                    entity,
-                    prdCond.getProperty());
+            return new ComplexCondition(conditions, entity, prdCond.getLogical());
         } else {
             throw new RuntimeException("Unknown condition type" + prdCond.getSingularity());
         }
@@ -217,7 +288,7 @@ public class WorldProxy {
         List<Action> result = null;
         result = new ArrayList<Action>();
         for (PRDAction thenOrrElseAction : thenOrrElseActions) {
-            result.add(createAction(thenOrrElseAction, entity));
+            result.add(createAction(thenOrrElseAction));
         }
         return result;
     }

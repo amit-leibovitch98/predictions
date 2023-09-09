@@ -20,11 +20,20 @@ public abstract class Calculation extends Action {
 
     public abstract void calculate(EntityInstance entityInstance);
 
-    public void doAction(EntityInstance entityInstance) {
+    protected float getArgInFloat(EntityInstance entityInstance, CondExpression arg) {
+        if (arg.resolveExpression(entityInstance) instanceof Integer) {
+            return ((int) arg.resolveExpression(entityInstance));
+        } else {
+            return (float) (arg.resolveExpression(entityInstance));
+        }
+    }
+
+    public boolean doAction(EntityInstance entityInstance) {
         calculate(entityInstance);
+        return true;
     }
     @Override
-    public void doAction(EntityInstance sourceEntityInstance, EntityInstance targetEntityInstance) {
+    public boolean doAction(EntityInstance sourceEntityInstance, EntityInstance targetEntityInstance) {
         throw new UnsupportedOperationException("Set action doesn't support doAction with two entity instances");
     }
 

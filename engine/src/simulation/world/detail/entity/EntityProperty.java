@@ -2,7 +2,6 @@ package simulation.world.detail.entity;
 
 import simulation.utils.Range;
 import simulation.utils.Type;
-import simulation.utils.Value;
 
 import java.util.*;
 
@@ -57,8 +56,10 @@ public class EntityProperty {
 
     public Object getRandomInitValue() {
         switch (type) {
+            case DECIMAL:
+                return range.getRandomValue(Type.DECIMAL);
             case FLOAT:
-                return range.getRandomValue();
+                return range.getRandomValue(Type.FLOAT);
             case BOOLEAN:
                 return getRandomBooleanValue();
             case STRING:

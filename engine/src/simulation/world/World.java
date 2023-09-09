@@ -95,10 +95,20 @@ public class World extends WorldDef {
 
     public String countAliveOfEntity(Entity entity) {
         int alive = 0;
-        for (EntityInstance entityInstance : primeryEntityInstances) {
-            if (entityInstance.isAlive()) {
-                alive++;
+        if(entity.getName().equals(primeryEntityInstances.get(0).getName())) {
+            for (EntityInstance entityInstance : primeryEntityInstances) {
+                if (entityInstance.isAlive()) {
+                    alive++;
+                }
             }
+        } else if(entity.getName().equals(seconderyEntityInstances.get(0).getName())) {
+            for (EntityInstance entityInstance : seconderyEntityInstances) {
+                if (entityInstance.isAlive()) {
+                    alive++;
+                }
+            }
+        } else {
+            throw new RuntimeException("Entity " + entity.getName() + " not found");
         }
         return String.valueOf(alive);
     }

@@ -16,11 +16,15 @@ public class Increase extends Action {
     }
 
     @Override
-    public void doAction(EntityInstance entityInstance) {
-        increase(entityInstance);
+    public boolean doAction(EntityInstance sourceEntityInstance, EntityInstance targetEntityInstance) {
+        throw new UnsupportedOperationException("Set action doesn't support doAction with two entity instances");
+    }
+    public boolean doAction(EntityInstance entityInstance) {
+        return increase(entityInstance);
     }
 
-    private void increase(EntityInstance entityInstance) {
+    private boolean increase(EntityInstance entityInstance) {
+        boolean res = true;
         Range propRange = entityInstance.getProperty(propertyName).getRange();
         Object newValue = null;
         Object byValue = by.resolveExpression(entityInstance);
@@ -35,6 +39,7 @@ public class Increase extends Action {
             }
             if(propRange == null || (int) newValue <= propRange.getTo()) {
                 newValue = Math.round(entityInstance.getProperty(propertyName).getRange().getTo());
+                res = false; //value didn't change
             }
         } else if (entityInstance.getProperty(propertyName).getType() == Type.FLOAT) {
             if(byValue instanceof Integer) {
@@ -46,9 +51,11 @@ public class Increase extends Action {
             }
             if(propRange == null || (float) newValue <= propRange.getTo()) {
                 newValue = entityInstance.getProperty(propertyName).getRange().getTo();
+                res = false; //value didn't change
             }
         }
         entityInstance.setPropertyVal(propertyName, newValue);
+        return res;
     }
 
 }

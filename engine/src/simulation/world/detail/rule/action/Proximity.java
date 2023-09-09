@@ -22,25 +22,31 @@ public class Proximity extends Action {
         this.actions = actions;
     }
     @Override
-    public void doAction(EntityInstance sourceEntityInstance, EntityInstance targetEntityInstance) {
+    public boolean doAction(EntityInstance sourceEntityInstance, EntityInstance targetEntityInstance) {
         if(!Objects.equals(sourceEntityInstance.getName(), sourceEntity.getName())
                 || !Objects.equals(targetEntityInstance.getName(), targetEntity.getName())){
             throw new IllegalArgumentException("sourceEntityInstance or targetEntityInstance is not of the right type");
         } else {
-            //TODO: check if the circleRadius shuoold be calculated from the sourceEntityInstance or the targetEntityInstance
-            if(sourceEntityInstance.getLocation().getCircle(targetEntityInstance.getLocation()) <= (int) circleRadius.resolveExpression(sourceEntityInstance)) {
+            //TODO: check if the circleRadius should be calculated from the sourceEntityInstance or the targetEntityInstance
+            if(sourceEntityInstance.getLocation().getCircle(targetEntityInstance.getLocation()) <= (float) circleRadius.resolveExpression(sourceEntityInstance)) {
                 for(Action action : actions){
                     if(Objects.equals(action.getEntity().getName(), sourceEntity.getName())){
                         action.doAction(sourceEntityInstance);
                     } else if (Objects.equals(action.getEntity().getName(), targetEntity.getName())){
                         action.doAction(targetEntityInstance);
+                    } else {
+                        throw new IllegalArgumentException("The action doesn't except this entity: " + action.getEntity().getName());
                     }
                 }
+                return true;
+            } else {
+                return false;
             }
         }
+
     }
     @Override
-    public void doAction(EntityInstance entityInstance) {
+    public boolean doAction(EntityInstance entityInstance) {
         throw new UnsupportedOperationException("Set action doesn't support doAction with two entity instances");
     }
 }

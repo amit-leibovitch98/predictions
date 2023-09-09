@@ -5,6 +5,8 @@ import simulation.world.detail.entity.Entity;
 import simulation.world.detail.entity.EntityInstance;
 
 public interface IAction {
-    void doAction(EntityInstance entityInstance);
-    void doAction(EntityInstance sourceEntityInstance, EntityInstance targetEntityInstance);
+    boolean doAction(EntityInstance entityInstance);
+    boolean doAction(EntityInstance sourceEntityInstance, EntityInstance targetEntityInstance);
+
+    //boolean checkEntity(EntityInstance entityInstance);
 }

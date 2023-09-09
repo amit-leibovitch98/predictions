@@ -4,14 +4,16 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public enum Type {
+    DECIMAL,
     FLOAT,
     BOOLEAN,
     STRING;
 
     public static Type fromString(String type) {
         switch (type) {
-            case "float":
             case "decimal":
+                return DECIMAL;
+            case "float":
                 return FLOAT;
             case "boolean":
                 return BOOLEAN;
@@ -22,9 +24,15 @@ public enum Type {
         }
     }
 
+    public static boolean isBoolean(String simpleExpressionVale) {
+        return simpleExpressionVale.equals("true") || simpleExpressionVale.equals("false");
+    }
+
     @Override
     public String toString() {
-       if (this == FLOAT) {
+        if (this == DECIMAL) {
+            return "decimal";
+        } else if (this == FLOAT) {
             return "float";
         } else if (this == BOOLEAN) {
             return "boolean";
