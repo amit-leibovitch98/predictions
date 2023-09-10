@@ -1,12 +1,11 @@
 package component.main;
 
 import component.errormodal.ErrorModalController;
-import component.result.entity.ResultByEntityController;
-import component.result.histogram.ResultByHistogramController;
-import javafx.beans.binding.Bindings;
+import component.result.tab.ResultTabController;
+import component.result.tab.entity.ResultByEntityController;
+import component.result.tab.histogram.ResultByHistogramController;
 import javafx.beans.property.*;
-import javafx.beans.value.ObservableValue;
-import javafx.concurrent.Task;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
@@ -24,54 +23,66 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import logic.Logic;
 import simulation.Simulation;
+import simulation.SimulationDC;
 import simulation.SimulationManager;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.Objects;
 
 public class MainController {
+    @FXML
+    private Label QueueManagerLabel;
+    @FXML
+    private Button clearB;
     @FXML
     private Label componentDetailLabel;
     @FXML
     private TreeView<String> componentsTree;
     @FXML
+    private Tab detailsTab;
+    @FXML
     private FlowPane entitiesPopulationsInputs;
+    @FXML
+    private FlowPane envVarsInputs;
     @FXML
     private Tab newExecTab;
     @FXML
     private Label pathLabel;
     @FXML
-    private Label progressPrecantegeLabel;
-    @FXML
-    private ListView<String> simulationGuidsList;
+    private Button pauseB;
     @FXML
     private ListView<String> queueList;
     @FXML
-    private Label threadsNumLabel;
+    private Button rerunB;
+
     @FXML
     private Tab resultsTab;
     @FXML
-    private FlowPane envVarsInputs;
+    private Button resumeB;
     @FXML
-    private Pane resultsPane;
-    @FXML
-    private RadioButton proptyHistogramRB;
-    @FXML
-    private RadioButton entityPopulationRB;
-    @FXML
-    private Button rerunB;
-    @FXML
-    private StringProperty selectedSimulationGUID;
+    private ToggleGroup showRusltBy;
     @FXML
     private HBox simulationContreollers;
+    @FXML
+    private Label simulationDetailsLabel;
+    @FXML
+    private TabPane simulationsTabsPane;
+    @FXML
+    private Button startB;
+    @FXML
+    private Button stopB;
+    @FXML
+    private Label threadsNumLabel;
+    @FXML
+    private Button uploadFileB;
+
+    private StringProperty selectedSimulationGUID;
     private StringProperty path;
     private StringProperty componentDetail;
     private BooleanProperty isFileUploaded;
     private Logic logic;
     private Stage primaryStage;
-    private StringProperty progressPrecantege;
     private BooleanProperty isSimulationRunning;
     private IntegerProperty maxThreadsNum;
 
@@ -80,7 +91,6 @@ public class MainController {
         this.isFileUploaded = new SimpleBooleanProperty();
         this.componentDetail = new SimpleStringProperty();
         this.componentDetailLabel = new Label();
-        this.progressPrecantege = new SimpleStringProperty();
         this.queueList = new ListView<>();
         this.selectedSimulationGUID = new SimpleStringProperty();
         this.isSimulationRunning = new SimpleBooleanProperty();
@@ -91,34 +101,11 @@ public class MainController {
         this.pathLabel.textProperty().bind(path);
         this.componentDetailLabel.textProperty().bind(componentDetail);
         this.newExecTab.disableProperty().bind(isFileUploaded.not());
-        this.resultsTab.disableProperty().bind(SimulationManager.getInstance().getSimulations().emptyProperty());
-        this.proptyHistogramRB.disableProperty().bind(simulationGuidsList.getSelectionModel().selectedItemProperty().isNull());
-        this.entityPopulationRB.disableProperty().bind(simulationGuidsList.getSelectionModel().selectedItemProperty().isNull());
+        this.resultsTab.setDisable(true);
         this.simulationContreollers.disableProperty().bind(isSimulationRunning);
         this.threadsNumLabel.textProperty().bind(this.maxThreadsNum.asString());
+        this.simulationsTabsPane.getTabs().clear();
         //TODO: implement start/pause/resume button and bind their disable property to worldDef 's isInteractive
-        //set results tab when the first simulation is added
-        SimulationManager.getInstance().getSimulations().emptyProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue != oldValue) {
-                updateSimulationResultsTab();
-            }
-        });
-        //change result tab when selecting a new simulation
-        simulationGuidsList.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            if (!Objects.equals(newValue, oldValue)) {
-                selectedSimulationGUID.set(newValue);
-                try {
-                    if(entityPopulationRB.isSelected()) {
-                        updateResultByEntityComponent();
-                    } else if(proptyHistogramRB.isSelected()) {
-                        updateResultByHistogramComponent();
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    System.out.println(e.getMessage());
-                }
-            }
-        });
     }
 
     public void setPrimaryStage(Stage primaryStage) {
@@ -132,6 +119,8 @@ public class MainController {
     public void setMaxThreadsNum(int maxThreadsNum) {
         this.maxThreadsNum.set(maxThreadsNum);
     }
+
+
 
     @FXML
     private void uploadFileB(ActionEvent event) {
@@ -199,15 +188,16 @@ public class MainController {
     @FXML
     void startSimulation(ActionEvent event) {
         isSimulationRunning.set(true);
+        resultsTab.setDisable(false);
         try {
-            logic.startSimulation(
+            SimulationDC currSimulationDC = logic.startSimulation(
                     logic.retrieveEntitiesPopulationsInputs(entitiesPopulationsInputs),
                     logic.retriveEnvVarsInputs(envVarsInputs)
             );
+            updateSimulationResultsTab(currSimulationDC);
         } catch (IllegalArgumentException e) {
             raiseErrorModal(e.getMessage());
         }
-        isSimulationRunning.set(false); //fixme: this is probably not good
     }
 
     private void raiseErrorModal(String massege) {
@@ -233,71 +223,28 @@ public class MainController {
         }
     }
 
-    @FXML
-    void rerunSimulation(ActionEvent event) {
-        logic.rerunSimulation(selectedSimulationGUID.getValue());
-    }
-
-    private void updateSimulationResultsTab() {
-        simulationGuidsList.setItems(SimulationManager.getInstance().getSimulationGuids());
-    }
-
-    @FXML
-    void showResultByEntity(ActionEvent event) throws IOException {
-        updateResultByEntityComponent();
-    }
-
-    private void updateResultByEntityComponent() throws IOException {
-        resultsPane.getChildren().clear();
-        FXMLLoader loader = new FXMLLoader();
-        URL url = getClass().getResource("/component/result/entity/resultByEntity.fxml");
-        loader.setLocation(url);
-        Node byEntityResult = loader.load();
-        ResultByEntityController resultByEntityController = loader.getController();
-        resultByEntityController.getSimulationGuid().bind(selectedSimulationGUID);
-        logic.setEntityResultComponent(resultByEntityController);
-        resultByEntityController.setLogic(logic);
-        resultsPane.getChildren().add(byEntityResult);
-    }
-
-    @FXML
-    void ShowResultByHistogram(ActionEvent event) throws IOException {
-        updateResultByHistogramComponent();
-    }
-
-    private void updateResultByHistogramComponent() throws IOException {
-        resultsPane.getChildren().clear();
-        FXMLLoader loader = new FXMLLoader();
-        URL url = getClass().getResource("/component/result/histogram/resultByHistogram.fxml");
-        loader.setLocation(url);
-        Node byHistogramResult = loader.load();
-        ResultByHistogramController resultByHistogramController = loader.getController();
-        resultByHistogramController.getSimulationGuid().bind(selectedSimulationGUID);
-        logic.setHistogramResultComponent(resultByHistogramController);
-        resultByHistogramController.setLogic(logic);
-        resultsPane.getChildren().add(byHistogramResult);
-
-    }
-
     public void setLogic(Logic logic) {
         this.logic = logic;
     }
 
-    @FXML
-    void pauseSimulation(ActionEvent event) {
-        System.out.println("pause");
-        //implement
+
+    private void updateSimulationResultsTab(SimulationDC currSimulationDC) {
+        try {
+            FXMLLoader loader = new FXMLLoader();
+            URL url = getClass().getResource("/component/result/tab/resultTab.fxml");
+            loader.setLocation(url);
+            Node root = loader.load();
+            ResultTabController resultTabController = loader.getController();
+            resultTabController.getSimulationGuid().bind(selectedSimulationGUID);
+            resultTabController.setLogic(logic);
+            resultTabController.set(currSimulationDC.getSimulation());
+            Tab tab = new Tab(currSimulationDC.getSimulation().getGuid());
+            tab.setContent(root);
+            simulationsTabsPane.getTabs().add(tab);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
-    @FXML
-    void resumeSimulation(ActionEvent event) {
-        System.out.println("resume");
-        //implement
-    }
 
-    @FXML
-    void stopSimulation(ActionEvent event) {
-        System.out.println("stop");
-        //implement
-    }
 }

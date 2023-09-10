@@ -2,8 +2,10 @@ package simulation.world;
 
 import simulation.Simulation;
 import simulation.utils.Grid;
+import simulation.utils.Type;
 import simulation.world.detail.entity.Entity;
 import simulation.world.detail.entity.EntityInstance;
+import simulation.world.detail.entity.EntityProperty;
 import simulation.world.detail.rule.Rule;
 import simulation.world.detail.TerminationCond;
 import simulation.world.detail.environmentvariables.EnvironmentVariable;
@@ -93,7 +95,7 @@ public class World extends WorldDef {
     }
 
 
-    public String countAliveOfEntity(Entity entity) {
+    public int countAliveOfEntity(Entity entity) {
         int alive = 0;
         if(entity.getName().equals(primeryEntityInstances.get(0).getName())) {
             for (EntityInstance entityInstance : primeryEntityInstances) {
@@ -110,7 +112,7 @@ public class World extends WorldDef {
         } else {
             throw new RuntimeException("Entity " + entity.getName() + " not found");
         }
-        return String.valueOf(alive);
+        return alive;
     }
 
     public Entity getEntityByName(String entityName) {
@@ -140,4 +142,35 @@ public class World extends WorldDef {
             throw new RuntimeException("Entity " + entityName + " not found");
         }
     }
+
+    public float getAverageProperty(Simulation simulation, Entity entity, EntityProperty prop) {
+        int count;
+        float sum = 0;
+        if(entity.getName().equals(primeryEntityInstances.get(0).getName())) {
+            sum = getSum(prop, sum, primeryEntityInstances);
+        } else if(entity.getName().equals(seconderyEntityInstances.get(0).getName())) {
+            sum = getSum(prop, sum, seconderyEntityInstances);
+        } else {
+            throw new RuntimeException("Entity " + entity.getName() + " not found");
+        }
+        count = countAliveOfEntity(entity);
+        return sum / count;
+    }
+
+    private float getSum(EntityProperty prop, float sum, List<EntityInstance> seconderyEntityInstances) {
+        for(EntityInstance entityInstance: seconderyEntityInstances) {
+            try {
+                if (prop.getType() == Type.DECIMAL) {
+                    sum += (int) entityInstance.getPropertyVal(prop.getName()) * 1.0f;
+                } else if (prop.getType() == Type.FLOAT) {
+                    sum += (float) entityInstance.getPropertyVal(prop.getName());
+                }
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+            }
+        }
+        return sum;
+    }
+
+
 }

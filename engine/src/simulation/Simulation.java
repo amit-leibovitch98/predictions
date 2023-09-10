@@ -1,8 +1,11 @@
 package simulation;
 
 
+import javafx.application.Platform;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import simulation.utils.expression.CondExpression;
 import simulation.world.World;
 import simulation.world.detail.entity.Entity;
@@ -15,6 +18,7 @@ import java.util.Map;
 import java.util.UUID;
 
 public class Simulation implements Runnable {
+    private StringProperty massege;
     private World world;
     private IntegerProperty tick;
     private final String guid;
@@ -22,12 +26,14 @@ public class Simulation implements Runnable {
     private Map<String, Object> retrivedEnvVarsValues;
 
     public Simulation(World world) {
+        this.massege = new SimpleStringProperty("Queueing...");
         this.world = world;
         this.guid = UUID.randomUUID().toString().substring(0, 8);
         this.tick = new SimpleIntegerProperty(0);
     }
 
     public void init() {
+        this.massege.setValue("Retrieving data...");
         if (retrivedEntitiesPopulation == null || retrivedEnvVarsValues == null) {
             throw new IllegalStateException("can't init- retrievedEntitiesPopulation or retrievedEnvVarsValues is null");
         }
@@ -44,6 +50,7 @@ public class Simulation implements Runnable {
         //update condExpressions
         CondExpression.updateEnvVars(world.getEnvironmentVars());
         //create entity instances
+        this.massege.setValue("Initializing population...");
         world.initPopulation(this);
         world.updateActions(world);
     }
@@ -66,6 +73,7 @@ public class Simulation implements Runnable {
             maxTicks = 100; //fixme: fix while condition
         }
         while (tick.getValue() < maxTicks /*&& elapsedTimeSecs < maxTime*/) {
+            this.massege.setValue("Running... (" + tick.getValue() + " ticks)");
             moveAllInstances();
             moveOneTick(world.getPrimeryEntityInstances());
             moveOneTick(world.getSeconderyEntityInstances());
@@ -118,5 +126,9 @@ public class Simulation implements Runnable {
     public void setRetrivedData(Map<String, Integer> entitiesPopulation, Map<String, Object> envVarsVals) {
         this.retrivedEntitiesPopulation = entitiesPopulation;
         this.retrivedEnvVarsValues = envVarsVals;
+    }
+
+    protected StringProperty getMassege() {
+        return massege;
     }
 }

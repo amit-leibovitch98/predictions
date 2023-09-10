@@ -11,7 +11,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 
 
-<GridPane xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="component.result.entity.ResultByEntityController">
+<GridPane xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="component.result.tab.entity.ResultByEntityController">
    <columnConstraints>
       <ColumnConstraints hgrow="NEVER" minWidth="5.0" prefWidth="5.0" />
       <ColumnConstraints hgrow="ALWAYS" />

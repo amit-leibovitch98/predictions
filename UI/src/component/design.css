@@ -13,9 +13,9 @@
     -fx-text-fill: DARKGREY;
 }
 
-#progressPrecantegeLabel {
+#simulationDetailsLabel {
     -fx-font-size: 20px;
-    -fx-text-fill: #012b69;
+    -fx-text-fill: #2980b9;
 }
 
 /* Style buttons */

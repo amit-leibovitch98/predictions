@@ -1,4 +1,4 @@
-package component.result.entity;
+package component.result.tab.entity;
 
 import component.result.ResultComponent;
 import javafx.beans.property.StringProperty;

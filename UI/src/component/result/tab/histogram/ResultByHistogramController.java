@@ -1,4 +1,4 @@
-package component.result.histogram;
+package component.result.tab.histogram;
 
 import component.result.ResultComponent;
 import javafx.fxml.FXML;

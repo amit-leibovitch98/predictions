@@ -3,8 +3,8 @@ package logic;
 import component.entitypopulationinput.EntityPopulationInputController;
 import component.envarinput.EnvVarInputController;
 import component.main.MainController;
-import component.result.entity.ResultByEntityController;
-import component.result.histogram.ResultByHistogramController;
+import component.result.tab.entity.ResultByEntityController;
+import component.result.tab.histogram.ResultByHistogramController;
 import facade.EngineFacade;
 import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
@@ -17,6 +17,8 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
+import simulation.Simulation;
+import simulation.SimulationDC;
 import simulation.SimulationManager;
 import simulation.world.detail.ISimulationComponent;
 import simulation.world.detail.entity.Entity;
@@ -25,11 +27,9 @@ import simulation.world.detail.rule.Rule;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 public class Logic {
     private MainController mainController;
@@ -42,7 +42,7 @@ public class Logic {
 
     public void readFile(String path) {
         this.engine.readFile(path);
-        mainController.setMaxThreadsNum(SimulationManager.getInstance().getThreadQueue().getMaxThearsNum());
+        mainController.setMaxThreadsNum(SimulationManager.getInstance().getSimulationExecutionManager().getTherPoolSize());
     }
 
     public void updateTreeView(TreeView<String> componentsTree) {
@@ -128,8 +128,8 @@ public class Logic {
         return null;
     }
 
-    public void startSimulation(Map<String, Integer> entitiesPopulation, Map<String, Object> envVarsVals) {
-        engine.startSimulation(entitiesPopulation, envVarsVals);
+    public SimulationDC startSimulation(Map<String, Integer> entitiesPopulation, Map<String, Object> envVarsVals) {
+        return engine.startSimulation(entitiesPopulation, envVarsVals);
     }
 
     public Map<String, Integer> retrieveEntitiesPopulationsInputs(FlowPane entitiesPopulationsInputs) {

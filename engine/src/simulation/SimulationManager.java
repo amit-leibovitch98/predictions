@@ -5,8 +5,9 @@ import javafx.beans.property.ListProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import simulation.utils.Type;
 import simulation.world.detail.entity.Entity;
-import threads.ThreadQueue;
+import simulation.world.detail.entity.EntityProperty;
 
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -19,9 +20,10 @@ public class SimulationManager extends Observable {
     private static SimulationManager instance;
     private static SimpleListProperty<Simulation> simulations;
     private static ObservableList<String> simulationGuids;
-    private ThreadQueue threadQueue;
+    private SimulationExecutionManager simulationExecutionManager;
 
     private SimulationManager() {
+        this.simulationExecutionManager = new SimulationExecutionManager();
         this.simulations = new SimpleListProperty<>(FXCollections.observableArrayList());
         this.simulationGuids = new SimpleListProperty<>(FXCollections.observableArrayList());
     }
@@ -33,16 +35,12 @@ public class SimulationManager extends Observable {
         return instance;
     }
 
-    public void setThreadQueue(int threadQueueSize) {
-        this.threadQueue = new ThreadQueue(threadQueueSize);
-    }
-
-    public ThreadQueue getThreadQueue() {
-        return this.threadQueue;
+    public SimulationExecutionManager getSimulationExecutionManager() {
+        return simulationExecutionManager;
     }
 
     public void saveResults(Simulation simulation) {
-        Lock lock = threadQueue.getLock();
+        Lock lock = simulationExecutionManager.getLock();
         lock.lock();
         simulations.add(simulation);
         Platform.runLater(() -> {
@@ -68,14 +66,21 @@ public class SimulationManager extends Observable {
 
     public String getSimulationResultByEntities(String guid, String entityName) {
         Simulation simulation = getSimulationByGuid(guid);
+        StringBuilder result = new StringBuilder();
         for (Entity entity : simulation.getWorld().getEntities()) {
             if (entity.getName().equals(entityName)) {
-                return "Population at the begining: " + entity.getPopulation() + "\n" +
-                        "Population at the end: " + simulation.getWorld().countAliveOfEntity(entity);
+                for(EntityProperty prop: entity.getProperties()) {
+                    if(prop.getType() == Type.DECIMAL || prop.getType() == Type.FLOAT) {
+                        result.append("Average of property").append(prop.getName()).append(": ").append(simulation.getWorld().getAverageProperty(simulation, entity, prop)).append("\n");
+                    }
+                }
+                result.append("Population at the beginning: ").append(entity.getPopulation()).append("\n");
+                result.append("Population at the end: ").append(simulation.getWorld().countAliveOfEntity(entity)).append("\n");
             }
         }
         return null;
     }
+
 
     public Map<Object, Integer> getSimulationResultByHistogram(String guid, String entityName, String propertyName) {
         Simulation simulation = getSimulationByGuid(guid);

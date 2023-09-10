@@ -34,7 +34,7 @@ public class WorldProxy {
     public WorldProxy(String path) {
         FIleHandler fileHandler = new FIleHandler(path);
         this.prdWorld = fileHandler.getPrdWorld();
-        SimulationManager.getInstance().setThreadQueue(getThreadsNum());
+        SimulationManager.getInstance().getSimulationExecutionManager().setThreadQueue(getThreadsNum());
         actions = new ArrayList<>();
     }
 

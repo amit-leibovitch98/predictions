@@ -4,6 +4,7 @@ package facade;
 
 import file.WorldProxy;
 import simulation.Simulation;
+import simulation.SimulationDC;
 import simulation.SimulationManager;
 import simulation.utils.Grid;
 import simulation.world.World;
@@ -58,14 +59,14 @@ public class EngineFacade {
 
     }
 
-    public void startSimulation(Map<String, Integer> entitiesPopulation, Map<String, Object> envVarsVals) {
+    public SimulationDC startSimulation(Map<String, Integer> entitiesPopulation, Map<String, Object> envVarsVals) {
         Simulation currSimulation = new Simulation(this.worldDef.createWorld());
         currSimulation.setRetrivedData(entitiesPopulation, envVarsVals);
-        SimulationManager.getInstance().getThreadQueue().addTask(currSimulation);
+        return SimulationManager.getInstance().getSimulationExecutionManager().addSimulation(currSimulation);
     }
 
-    public void rerunSimulation(String guid) {
-        SimulationManager.getInstance().getThreadQueue().addTask(SimulationManager.getInstance().getSimulationByGuid(guid));
+    public SimulationDC rerunSimulation(String guid) {
+        return SimulationManager.getInstance().getSimulationExecutionManager().addSimulation(SimulationManager.getInstance().getSimulationByGuid(guid));
     }
 
     public List<EnvironmentVariable> getEnvironmentVariables() {

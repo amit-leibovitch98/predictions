@@ -17,6 +17,8 @@ public class EntityInstance extends Entity {
     private Map<EntityProperty, Object> propertiesWithVals;
     private Map<EntityProperty, Integer> propertiesWithTicks;
     private Location location;
+    private int consistencySum;
+    private int consistencyCount;
 
     public EntityInstance(Entity entity, IntegerProperty tick, Grid grid) {
         super(entity.getName(), entity.getProperties());
@@ -107,6 +109,8 @@ public class EntityInstance extends Entity {
                     break;
             }
             propertiesWithTicks.put(getProperty(propertyName), tick.get());
+            consistencyCount++;
+            consistencySum += tick.get();
         } catch (NumberFormatException e) {
             throw new IllegalArgumentException("Invalid value for " + getProperty(propertyName).getType() + " type: " + value);
         }
@@ -124,5 +128,9 @@ public class EntityInstance extends Entity {
 
     public void move(Grid grid) {
         this.location = grid.move(this);
+    }
+
+    public float getConsistency() {
+        return (float) consistencySum / consistencyCount;
     }
 }
