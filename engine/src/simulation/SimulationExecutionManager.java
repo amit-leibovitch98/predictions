@@ -7,12 +7,10 @@ import java.util.Map;
 import java.util.concurrent.locks.Lock;
 
 public class SimulationExecutionManager {
-    private final SimulationManager simulationManager;
     private ThreadQueue threadQueue;
     private Map<String, SimulationDC> simulationDCs;
 
     public SimulationExecutionManager() {
-        this.simulationManager = SimulationManager.getInstance();
         this.simulationDCs = new HashMap<>();
     }
     public void setThreadQueue(int threadQueueSize) {

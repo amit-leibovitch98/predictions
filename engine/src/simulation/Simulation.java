@@ -83,6 +83,14 @@ public class Simulation implements Runnable {
         }
     }
 
+    public int getPrimeryEntityInitPopulation() {
+        return retrivedEntitiesPopulation.get(this.getWorld().getEntities().get(0).getName());
+    }
+
+    public int getSecendaryEntityInitPopulation() {
+        return retrivedEntitiesPopulation.get(this.getWorld().getEntities().get(1).getName());
+    }
+
     private void moveAllInstances() {
         for (EntityInstance currEntityInstance : this.world.getPrimeryEntityInstances()) {
             currEntityInstance.move(world.getGrid());

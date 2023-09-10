@@ -1,0 +1,44 @@
+/* Add your CSS styles here */
+
+/* Styles for the Button */
+.button {
+    -fx-font-size: 14px;
+    -fx-background-color: #4CAF50; /* Green background color */
+    -fx-text-fill: white; /* White text color */
+}
+
+/* Styles for the RadioButton */
+.radio-button {
+    -fx-font-size: 14px;
+    -fx-text-fill: #333; /* Dark gray text color */
+}
+
+/* Styles for the TableView */
+.table-view {
+    -fx-font-size: 14px;
+}
+
+/* Styles for the TableColumn */
+.table-column {
+    -fx-font-size: 14px;
+}
+
+/* Styles for the ScrollPane */
+.scroll-pane {
+    -fx-background-color: #f0f0f0; /* Light gray background color */
+}
+
+/* Styles for the VBox */
+.vbox {
+    -fx-spacing: 10px; /* Spacing between children */
+}
+
+/* Styles for the HBox */
+.hbox {
+    -fx-spacing: 10px; /* Spacing between children */
+}
+
+/* Styles for the Pane */
+.pane {
+    -fx-background-color: #fff; /* White background color */
+}

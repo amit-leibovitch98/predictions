@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.geometry.Point3D?>
-<?import javafx.geometry.Rectangle2D?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
@@ -10,7 +8,6 @@
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TreeView?>
-<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
@@ -19,7 +16,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="650.0" prefWidth="1000.0" stylesheets="@../design.css" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="component.main.MainController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="650.0" prefWidth="1000.0" stylesheets="@../design.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="component.main.MainController">
    <top>
       <GridPane BorderPane.alignment="CENTER">
         <columnConstraints>
@@ -107,106 +104,32 @@
                            </columnConstraints>
                            <rowConstraints>
                               <RowConstraints minHeight="10.0" prefHeight="10.0" vgrow="NEVER" />
-                              <RowConstraints minHeight="40.0" prefHeight="40.0" vgrow="NEVER" />
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="ALWAYS" />
                               <RowConstraints minHeight="5.0" prefHeight="5.0" vgrow="NEVER" />
                               <RowConstraints minHeight="60.0" prefHeight="60.0" vgrow="NEVER" />
                               <RowConstraints minHeight="10.0" prefHeight="10.0" vgrow="NEVER" />
                            </rowConstraints>
                            <children>
-                              <Button fx:id="clearB" maxHeight="1.7976931348623157E308" minWidth="80.0" mnemonicParsing="false" onAction="#clearInputs" prefWidth="80.0" text="Clear" GridPane.columnIndex="1" GridPane.rowIndex="4" GridPane.valignment="CENTER">
+                              <Button fx:id="clearB" maxHeight="1.7976931348623157E308" minWidth="80.0" mnemonicParsing="false" onAction="#clearInputs" prefWidth="80.0" text="Clear" GridPane.columnIndex="1" GridPane.rowIndex="3" GridPane.valignment="CENTER">
                                  <GridPane.margin>
                                     <Insets />
                                  </GridPane.margin>
                               </Button>
-                              <Button fx:id="startB" maxHeight="1.7976931348623157E308" maxWidth="80.0" minWidth="80.0" mnemonicParsing="false" onAction="#startSimulation" text="Start" GridPane.columnIndex="5" GridPane.halignment="RIGHT" GridPane.rowIndex="4" GridPane.valignment="CENTER">
+                              <Button fx:id="startB" maxHeight="1.7976931348623157E308" maxWidth="80.0" minWidth="80.0" mnemonicParsing="false" onAction="#startSimulation" text="Start" GridPane.columnIndex="5" GridPane.halignment="RIGHT" GridPane.rowIndex="3" GridPane.valignment="CENTER">
                                  <GridPane.margin>
                                     <Insets />
                                  </GridPane.margin>
                               </Button>
-                              <ScrollPane GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="2">
+                              <ScrollPane GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="1">
                                  <content>
                                     <FlowPane fx:id="entitiesPopulationsInputs" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
                                  </content>
                               </ScrollPane>
-                              <ScrollPane GridPane.columnIndex="4" GridPane.columnSpan="2" GridPane.rowIndex="2">
+                              <ScrollPane GridPane.columnIndex="4" GridPane.columnSpan="2" GridPane.rowIndex="1">
                                  <content>
                                     <FlowPane fx:id="envVarsInputs" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
                                  </content>
                               </ScrollPane>
-                              <HBox fx:id="simulationContreollers" prefHeight="100.0" prefWidth="200.0" spacing="8.0" GridPane.columnIndex="1" GridPane.rowIndex="1" GridPane.valignment="CENTER">
-                                 <children>
-                                    <Button fx:id="pauseB" maxHeight="20.0" maxWidth="20.0" minHeight="20.0" minWidth="20.0" mnemonicParsing="false" onAction="#pauseSimulation" prefHeight="20.0" prefWidth="20.0" text="pause" HBox.hgrow="NEVER">
-                                       <graphic>
-                                          <ImageView fitHeight="19.0" fitWidth="209.0" pickOnBounds="true" preserveRatio="true">
-                                             <viewport>
-                                                <Rectangle2D />
-                                             </viewport>
-                                             <rotationAxis>
-                                                <Point3D />
-                                             </rotationAxis>
-<!--                                             <image>-->
-<!--                                                <Image url="/resources/pause.png" />-->
-<!--                                             </image>-->
-                                          </ImageView>
-                                       </graphic>
-                                       <padding>
-                                          <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
-                                       </padding>
-                                       <HBox.margin>
-                                          <Insets />
-                                       </HBox.margin>
-                                    </Button>
-                                    <Button fx:id="resumeB" maxHeight="20.0" maxWidth="20.0" minHeight="20.0" minWidth="20.0" mnemonicParsing="false" onAction="#resumeSimulation" prefHeight="20.0" prefWidth="20.0" text="resume">
-                                       <graphic>
-                                          <ImageView fitHeight="15.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                             <viewport>
-                                                <Rectangle2D />
-                                             </viewport>
-                                             <rotationAxis>
-                                                <Point3D />
-                                             </rotationAxis>
-<!--                                             <image>-->
-<!--                                                <Image url="@../../resources/resume.png" />-->
-<!--                                             </image>-->
-                                          </ImageView>
-                                       </graphic>
-                                       <padding>
-                                          <Insets bottom="1.0" left="3.0" right="1.0" top="1.0" />
-                                       </padding>
-                                       <HBox.margin>
-                                          <Insets />
-                                       </HBox.margin>
-                                    </Button>
-                                    <Button fx:id="stopB" maxHeight="20.0" maxWidth="20.0" minHeight="20.0" minWidth="20.0" mnemonicParsing="false" onAction="#stopSimulation" prefHeight="20.0" prefWidth="20.0" text="stop">
-                                       <graphic>
-                                          <ImageView fitHeight="11.0" fitWidth="12.0" pickOnBounds="true" preserveRatio="true">
-<!--                                             <image>-->
-<!--                                                <Image url="@/resources/stop.png" />-->
-<!--                                             </image>-->
-                                             <viewport>
-                                                <Rectangle2D />
-                                             </viewport>
-                                             <rotationAxis>
-                                                <Point3D />
-                                             </rotationAxis>
-                                          </ImageView>
-                                       </graphic>
-                                       <padding>
-                                          <Insets bottom="1.0" left="5.0" right="1.0" top="1.0" />
-                                       </padding>
-                                       <HBox.margin>
-                                          <Insets />
-                                       </HBox.margin>
-                                    </Button>
-                                 </children>
-                                 <GridPane.margin>
-                                    <Insets />
-                                 </GridPane.margin>
-                                 <padding>
-                                    <Insets top="10.0" />
-                                 </padding>
-                              </HBox>
                            </children>
                         </GridPane>
                      </children>

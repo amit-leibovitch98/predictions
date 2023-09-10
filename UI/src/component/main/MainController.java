@@ -50,8 +50,6 @@ public class MainController {
     @FXML
     private Label pathLabel;
     @FXML
-    private Button pauseB;
-    @FXML
     private ListView<String> queueList;
     @FXML
     private Button rerunB;
@@ -59,19 +57,13 @@ public class MainController {
     @FXML
     private Tab resultsTab;
     @FXML
-    private Button resumeB;
-    @FXML
     private ToggleGroup showRusltBy;
-    @FXML
-    private HBox simulationContreollers;
     @FXML
     private Label simulationDetailsLabel;
     @FXML
     private TabPane simulationsTabsPane;
     @FXML
     private Button startB;
-    @FXML
-    private Button stopB;
     @FXML
     private Label threadsNumLabel;
     @FXML
@@ -102,7 +94,6 @@ public class MainController {
         this.componentDetailLabel.textProperty().bind(componentDetail);
         this.newExecTab.disableProperty().bind(isFileUploaded.not());
         this.resultsTab.setDisable(true);
-        this.simulationContreollers.disableProperty().bind(isSimulationRunning);
         this.threadsNumLabel.textProperty().bind(this.maxThreadsNum.asString());
         this.simulationsTabsPane.getTabs().clear();
         //TODO: implement start/pause/resume button and bind their disable property to worldDef 's isInteractive
@@ -237,7 +228,7 @@ public class MainController {
             ResultTabController resultTabController = loader.getController();
             resultTabController.getSimulationGuid().bind(selectedSimulationGUID);
             resultTabController.setLogic(logic);
-            resultTabController.set(currSimulationDC.getSimulation());
+            resultTabController.set(currSimulationDC);
             Tab tab = new Tab(currSimulationDC.getSimulation().getGuid());
             tab.setContent(root);
             simulationsTabsPane.getTabs().add(tab);

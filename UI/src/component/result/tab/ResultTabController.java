@@ -2,9 +2,8 @@ package component.result.tab;
 
 import component.result.tab.entity.ResultByEntityController;
 import component.result.tab.histogram.ResultByHistogramController;
-import javafx.beans.property.Property;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -15,10 +14,13 @@ import javafx.scene.Node;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.Pane;
 import logic.Logic;
 import simulation.Simulation;
+import simulation.SimulationDC;
 
+import javax.xml.ws.Binding;
 import java.io.IOException;
 import java.net.URL;
 
@@ -26,6 +28,8 @@ public class ResultTabController {
     private final int PRIMARY_ENTITY_COL = 0;
     private final int SECONDARY_ENTITY_COL = 1;
 
+    @FXML
+    private ToggleGroup showRusltBy;
     @FXML
     private RadioButton propertyConsistencyRB;
     @FXML
@@ -35,36 +39,31 @@ public class ResultTabController {
     @FXML
     private Pane resultsPane;
     @FXML
-    private TableView<StringProperty> entitiesTable;
+    private TableView<IntegerProperty> entitiesTable;
 
     private Logic logic;
     private StringProperty selectedSimulationGUID;
-    private StringProperty primeryEntityCount;
-    private StringProperty seconderyEntityCount;
+    private IntegerProperty primeryEntityCount;
+    private IntegerProperty seconderyEntityCount;
+    private SimulationDC simulationCD;
 
     public ResultTabController() {
         this.selectedSimulationGUID = new SimpleStringProperty();
-        this.primeryEntityCount = new SimpleStringProperty();
-        this.seconderyEntityCount = new SimpleStringProperty();
+        this.primeryEntityCount = new SimpleIntegerProperty();
+        this.seconderyEntityCount = new SimpleIntegerProperty();
     }
 
-    @FXML
-    public void simulationSelected(Event event) throws IOException {
-        if (logic == null) {
-            return;
-        }
-        try {
-            if (entityPopulationRB.isSelected()) {
-                updateResultByEntityComponent();
-            } else if (proptyHistogramRB.isSelected()) {
-                updateResultByHistogramComponent();
-            } else if (propertyConsistencyRB.isSelected()) {
-                //implement
+    public void initialize() {
+        this.entityPopulationRB.setDisable(true);
+        this.entityPopulationRB.setDisable(true);
+        this.propertyConsistencyRB.setDisable(true);
+        this.simulationCD.getMassege().addListener((observable, oldValue, newValue)->{
+            if(newValue.contains("finished")) {
+                this.entityPopulationRB.setDisable(true);
+                this.entityPopulationRB.setDisable(true);
+                this.propertyConsistencyRB.setDisable(true);
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.out.println(e.getMessage());
-        }
+        });
     }
 
     @FXML
@@ -111,7 +110,6 @@ public class ResultTabController {
         logic.setHistogramResultComponent(resultByHistogramController);
         resultByHistogramController.setLogic(logic);
         resultsPane.getChildren().add(byHistogramResult);
-
     }
 
     public void setLogic(Logic logic) {
@@ -128,14 +126,17 @@ public class ResultTabController {
     }
 
 
-    public void set(Simulation simulation) {
+    public void set(SimulationDC simulationDC) {
+        this.simulationCD = simulationDC;
+        Simulation simulation = simulationDC.getSimulation();
         String primeryEntityName = simulation.getWorld().getPrimeryEntityInstances().get(0).getName();
         String seconderyEntityName = simulation.getWorld().getSeconderyEntityInstances().get(0).getName();
-        ObservableList<StringProperty> data = FXCollections.observableArrayList();
-        entitiesTable.getColumns().get(PRIMARY_ENTITY_COL).setText(primeryEntityName);
-        entitiesTable.getColumns().get(SECONDARY_ENTITY_COL).setText(seconderyEntityName);
-        primeryEntityCount.bind(simulation.getPrimeryEntityCount().asString());
-        seconderyEntityCount.bind(simulation.getSeconderyEntityCount().asString());
+
+        ObservableList<IntegerProperty> data = FXCollections.observableArrayList();
+        this.entitiesTable.getColumns().get(PRIMARY_ENTITY_COL).setText(primeryEntityName);
+        this.entitiesTable.getColumns().get(SECONDARY_ENTITY_COL).setText(seconderyEntityName);
+        primeryEntityCount.bind(simulationDC.getPrimeryEntityCount());
+        seconderyEntityCount.bind(simulationDC.getSeconderyEntityCount());
         data.add(primeryEntityCount);
         data.add(seconderyEntityCount);
         entitiesTable.getItems().addAll(data);
