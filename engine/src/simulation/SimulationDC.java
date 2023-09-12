@@ -5,25 +5,21 @@ import javafx.beans.Observable;
 import javafx.beans.property.*;
 
 public class SimulationDC {
-    private StringProperty massege;
     private final Simulation simulation;
-    private IntegerProperty primeryEntityCount;
-    private IntegerProperty seconderyEntityCount;
+    private int primeryEntityCount;
+    private int seconderyEntityCount;
     private IntegerProperty tick;
 
     public SimulationDC(Simulation simulation) {
-        this.primeryEntityCount = new SimpleIntegerProperty();
-        this.seconderyEntityCount = new SimpleIntegerProperty();
         this.simulation = simulation;
-        this.massege = this.simulation.getMassege();
         this.tick = simulation.getTick();
-        this.primeryEntityCount.setValue(simulation.getPrimeryEntityInitPopulation());
-        this.seconderyEntityCount.setValue((simulation.getSecendaryEntityInitPopulation()));
+        this.primeryEntityCount = simulation.getPrimeryEntityInitPopulation();
+        this.seconderyEntityCount = (simulation.getSecendaryEntityInitPopulation());
         this.tick.addListener((observable, oldValue, newValue) -> {
             Platform.runLater(
                     () -> {
-                        this.primeryEntityCount.setValue(simulation.getWorld().countAliveOfEntity(simulation.getWorld().getEntities().get(0)));
-                        this.seconderyEntityCount.setValue(simulation.getWorld().countAliveOfEntity(simulation.getWorld().getEntities().get(1)));
+                        this.primeryEntityCount = simulation.getWorld().countAliveOfEntity(simulation.getWorld().getEntities().get(0));
+                        this.seconderyEntityCount = simulation.getWorld().countAliveOfEntity(simulation.getWorld().getEntities().get(1));
                     }
             );
         });
@@ -33,16 +29,16 @@ public class SimulationDC {
         return simulation;
     }
 
-    public IntegerProperty getPrimeryEntityCount() {
+    public int getPrimeryEntityCount() {
         return primeryEntityCount;
     }
 
-    public IntegerProperty getSeconderyEntityCount() {
+    public int getSeconderyEntityCount() {
         return seconderyEntityCount;
     }
 
-    public StringProperty getMassege() {
-        return this.massege;
+    public String getMassege() {
+        return this.simulation.getMassege();
     }
 
     public BooleanProperty getIsRunning() {

@@ -66,7 +66,7 @@ public class EngineFacade {
     }
 
     public SimulationDC rerunSimulation(String guid) {
-        return SimulationManager.getInstance().getSimulationExecutionManager().addSimulation(SimulationManager.getInstance().getSimulationByGuid(guid));
+        return SimulationManager.getInstance().getSimulationExecutionManager().addSimulation(SimulationManager.getInstance().getSimulationByGuid(guid).clone());
     }
 
     public List<EnvironmentVariable> getEnvironmentVariables() {
@@ -75,5 +75,11 @@ public class EngineFacade {
 
     public Grid getGrid() {
         return this.worldDef.getGrid();
+    }
+
+    public void reset() {
+        this.worldDef = null;
+        this.readFileFromPathSuccess = false;
+        SimulationManager.getInstance().getSimulationExecutionManager().reset();
     }
 }

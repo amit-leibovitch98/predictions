@@ -41,20 +41,6 @@ public class ResultsUpdater implements Runnable {
         }
 
         // Execute your update logic after 200ms
-        Platform.runLater(() -> {
-            resultTabController.update(
-                    simulationDC.getMassege().get(),
-                    simulationDC.getPrimeryEntityCount().get(),
-                    simulationDC.getSeconderyEntityCount().get()
-            );
-        });
-    }
-
-    public void setConditionMet() {
-        // Set the condition to true and notify the waiting thread
-        synchronized (lock) {
-            conditionMet = true;
-            lock.notify();
-        }
+        Platform.runLater(() -> resultTabController.update(simulationDC));
     }
 }

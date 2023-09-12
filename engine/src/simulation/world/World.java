@@ -15,7 +15,7 @@ import simulation.world.detail.rule.action.Action;
 import java.util.ArrayList;
 import java.util.List;
 
-public class World extends WorldDef {
+public class World extends WorldDef implements Cloneable{
     private List<EnvironmentVariable> environmentVars;
     private List<Entity> entities;
     private List<EntityInstance> primeryEntityInstances;
@@ -175,4 +175,8 @@ public class World extends WorldDef {
     }
 
 
+    @Override
+    public World clone() {
+       return super.createWorld();
+    }
 }

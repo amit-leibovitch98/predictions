@@ -1,0 +1,16 @@
+.label {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-alignment: center;
+}
+
+#ruleNameLabel, #activationTicksLabel, #activationProbLabel, #actionsNumLabel  {
+    -fx-font-size: 14px;
+    -fx-text-fill: #2980b9;
+    -fx-font-weight: normal;
+    -fx-font-style: italic;
+}
+
+#activationProbTitleLabel, #activationTicksTitleLabel {
+    -fx-font-size: 14px;
+}

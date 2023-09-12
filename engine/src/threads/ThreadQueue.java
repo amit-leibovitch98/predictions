@@ -18,14 +18,14 @@ public class ThreadQueue {
 
     public ThreadQueue(int queueSize) {
         this.maxThearsNum = queueSize;
-        this.tasksList = new ArrayList<Simulation>();
+        this.tasksList = new ArrayList<>();
         this.lock = new ReentrantLock();
         this.threadPool = Executors.newFixedThreadPool(queueSize);
     }
 
     public void addTask(Simulation simulation) {
         tasksList.add(simulation);
-        this.threadPool.execute(simulation);
+        this.threadPool.submit(simulation);
     }
 
     public Lock getLock() {
@@ -38,5 +38,10 @@ public class ThreadQueue {
 
     public int getMaxThearsNum() {
         return maxThearsNum;
+    }
+
+    public void reset() {
+        this.tasksList.clear();
+        this.threadPool = Executors.newFixedThreadPool(maxThearsNum);
     }
 }

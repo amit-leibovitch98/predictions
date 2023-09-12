@@ -13,6 +13,7 @@ import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -61,6 +62,8 @@ public class MainController {
     private Label threadsNumLabel;
     @FXML
     private Button uploadFileB;
+    @FXML
+    private Pane paneComponentDetail;
 
     private StringProperty selectedSimulationGUID;
     private StringProperty path;
@@ -112,10 +115,16 @@ public class MainController {
         try {
             logic.readFile(file.getPath());
         } catch (Exception e) {
-            e.printStackTrace();
+            raiseErrorModal(e.getMessage());
         }
         logic.updateTreeView(componentsTree);
         updateNewExecutionTab();
+    }
+
+    private void reset(){
+        resultsTab.getTabPane().getTabs().clear();
+        resultsTab.setDisable(true);
+        logic.reset();
     }
 
     private void updateNewExecutionTab() {
@@ -124,19 +133,30 @@ public class MainController {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
 
+    public Pane getPaneComponentDetail() {
+        return paneComponentDetail;
     }
 
     @FXML
     void componentTreeItemRequested(MouseEvent event) {
         TreeItem<String> item = componentsTree.getSelectionModel().getSelectedItem();
         if (item != null) {
-            String str = logic.getComponentInfo(item.getValue(), item.getParent().getValue());
-            if (str != null)
-                componentDetail.set(str);
-            else
-                componentDetail.set("Please select a component");
-
+            if (item.getParent().getValue().equals("Rules")) {
+                paneComponentDetail.getChildren().clear();
+                logic.getComponentInfo(item.getValue(), item.getParent().getValue());
+            } else {
+                paneComponentDetail.getChildren().clear();
+                paneComponentDetail.getChildren().add(componentDetailLabel);
+                componentDetailLabel.setAlignment(javafx.geometry.Pos.CENTER);
+                String str = logic.getComponentInfo(item.getValue(), item.getParent().getValue());
+                if (str != null) {
+                    componentDetail.set(str);
+                } else {
+                    componentDetail.set("Please select a component");
+                }
+            }
         }
     }
 
@@ -166,18 +186,10 @@ public class MainController {
         resultsTab.setDisable(false);
         try {
             SimulationDC currSimulationDC = logic.startSimulation(
+                    this.queueList,
                     logic.retrieveEntitiesPopulationsInputs(entitiesPopulationsInputs),
                     logic.retriveEnvVarsInputs(envVarsInputs)
             );
-            queueList.getItems().add(currSimulationDC.getSimulation().getGuid());
-            currSimulationDC.getSimulation().getIsRunning().addListener((observable, oldValue, newValue) -> {
-                if (newValue) {
-                    queueList.getItems().remove(currSimulationDC.getSimulation().getGuid());
-                } else {
-                    queueList.getItems().add(currSimulationDC.getSimulation().getGuid());
-                }
-            });
-            updateSimulationResultsTab(currSimulationDC);
         } catch (IllegalArgumentException e) {
             raiseErrorModal(e.getMessage());
         }
@@ -211,7 +223,7 @@ public class MainController {
     }
 
 
-    private void updateSimulationResultsTab(SimulationDC currSimulationDC) {
+    public void updateSimulationResultsTab(SimulationDC currSimulationDC) {
         try {
             FXMLLoader loader = new FXMLLoader();
             URL url = getClass().getResource("/component/result/tab/resultTab.fxml");

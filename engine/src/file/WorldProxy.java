@@ -53,6 +53,11 @@ public class WorldProxy {
 
     private Grid getGrid() {
         PRDWorld.PRDGrid prdGrid = prdWorld.getPRDGrid();
+        int rows = prdGrid.getRows();
+        int columns = prdGrid.getColumns();
+        if(rows <= 10 || columns <= 10 || rows >= 100 || columns >= 100) {
+            throw new RuntimeException("Grid size must be between 10 and 100");
+        }
         return new Grid(prdGrid.getRows(), prdGrid.getColumns());
     }
 
@@ -177,8 +182,10 @@ public class WorldProxy {
                 replaceEntity = currEntity;
             }
         }
-        if (killEntity == null || replaceEntity == null) {
-            throw new RuntimeException("Unknown entity name");
+        if (killEntity == null) {
+            throw new RuntimeException("Unknown entity name to kill " + prdAction.getKill());
+        } else if (replaceEntity == null) {
+            throw new RuntimeException("Unknown entity name to create " + prdAction.getCreate());
         }
 
         return new Replace(killEntity, replaceEntity, prdAction.getMode().equals("scratch"));
@@ -292,4 +299,5 @@ public class WorldProxy {
         }
         return result;
     }
+
 }

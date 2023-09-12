@@ -53,6 +53,10 @@ public class ResultTabController {
     private Button resumeB;
     @FXML
     private Button stopB;
+    @FXML
+    private Label simCurrTime;
+    @FXML
+    private Label simCurrTick;
 
     private Logic logic;
     private String selectedSimulationGUID;
@@ -134,16 +138,16 @@ public class ResultTabController {
 
     @FXML
     void rerunSimulation(ActionEvent event) {
-        logic.rerunSimulation(selectedSimulationGUID);
+        SimulationDC simulationDC = logic.rerunSimulation(selectedSimulationGUID);
     }
 
     public void setSimulation(SimulationDC simulationDC) {
         this.simulationDC = simulationDC;
         this.selectedSimulationGUID = simulationDC.getSimulation().getGuid();
 
-        this.simulationStatusLabel.setText((this.simulationDC.getMassege().get()));
-        primeryEntityCount = simulationDC.getPrimeryEntityCount().get();
-        seconderyEntityCount = simulationDC.getSeconderyEntityCount().get();
+        this.simulationStatusLabel.setText(this.simulationDC.getMassege());
+        primeryEntityCount = simulationDC.getPrimeryEntityCount();
+        seconderyEntityCount = simulationDC.getSeconderyEntityCount();
         Pair<Integer, Integer> rowData = new Pair<>(primeryEntityCount, seconderyEntityCount);
         entitiesTable.getItems().add(rowData);
 
@@ -154,11 +158,19 @@ public class ResultTabController {
                 this.stopB.setDisable(false);
                 setRadioButtonDisable(true);
             } else {
-                if(this.simulationDC.getMassege().getValue().contains("Finished")) {
+                if(this.simulationDC.getMassege().contains("Finished") || this.simulationDC.getMassege().contains("Stopped")) {
                     setRadioButtonDisable(false);
+                    Platform.runLater(() -> {
+                        try {
+                            updateResultByEntityComponent();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    });
                 }
             }
         });
+        primeryCountCol.setText(this.simulationDC.getSimulation().getWorld().getEntities().get(0).getName());
         secenderyCountCol.setText(this.simulationDC.getSimulation().getWorld().getEntities().get(1).getName());
         setSechedualPull();
     }
@@ -167,13 +179,7 @@ public class ResultTabController {
         ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
         // Schedule the task to run every 200ms with an initial delay of 0ms
         executor.scheduleAtFixedRate(() -> {
-            Platform.runLater(() -> {
-                update(
-                        simulationDC.getMassege().get(),
-                        simulationDC.getPrimeryEntityCount().get(),
-                        simulationDC.getSeconderyEntityCount().get()
-                );
-            });
+            Platform.runLater(() -> update(simulationDC));
         }, 0, 200, TimeUnit.MILLISECONDS);
         this.puller = executor;
     }
@@ -202,10 +208,7 @@ public class ResultTabController {
         this.resumeB.setDisable(true);
         this.stopB.setDisable(true);
         this.puller.shutdown();
-        update(
-                simulationDC.getMassege().get(),
-                simulationDC.getPrimeryEntityCount().get(),
-                simulationDC.getSeconderyEntityCount().get());
+        update(simulationDC);
     }
 
     private void setRadioButtonDisable(boolean disable) {
@@ -214,11 +217,12 @@ public class ResultTabController {
         this.propertyConsistencyRB.setDisable(disable);
     }
 
-    public void update(String massege, int primCount, int secCount) {
-        this.simulationStatusLabel.setText(massege);
-        Pair<Integer, Integer> rowData = new Pair<>(primCount, secCount);
+    public void update(SimulationDC simulationDC) {
+        this.simulationStatusLabel.setText(simulationDC.getMassege());
+        Pair<Integer, Integer> rowData = new Pair<>(simulationDC.getPrimeryEntityCount(), simulationDC.getSeconderyEntityCount());
+        simCurrTime.setText(simulationDC.getSimulation().getcurrTime().toString());
+        simCurrTick.setText(simulationDC.getSimulation().getTick().getValue().toString());
         entitiesTable.getItems().clear();
         entitiesTable.getItems().add(rowData);
     }
-
 }

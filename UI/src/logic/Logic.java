@@ -7,17 +7,16 @@ import component.result.tab.ResultTabController;
 import component.result.tab.consistency.ResultByConsistencyController;
 import component.result.tab.entity.ResultByEntityController;
 import component.result.tab.histogram.ResultByHistogramController;
+import component.rule.RuleController;
 import facade.EngineFacade;
+import javafx.application.Platform;
 import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
-import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeView;
+import javafx.scene.control.*;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
 import javafx.util.Pair;
@@ -43,6 +42,7 @@ public class Logic {
     private MainController mainController;
     private EngineFacade engine;
     private ResultTabController resultTabController;
+    private ListView<String> queueList;
 
     public Logic(MainController mainController) {
         this.engine = new EngineFacade();
@@ -123,7 +123,8 @@ public class Logic {
             List<Rule> rules = this.engine.getRules();
             for (Rule rule : rules) {
                 if (rule.getName().equals(componentName)) {
-                    return rule.getInfo();
+                    loadRuleComponent(rule);
+                    return null;
                 }
             }
         } else {
@@ -137,8 +138,29 @@ public class Logic {
         return null;
     }
 
-    public SimulationDC startSimulation(Map<String, Integer> entitiesPopulation, Map<String, Object> envVarsVals) {
-        return engine.startSimulation(entitiesPopulation, envVarsVals);
+    private void loadRuleComponent(Rule rule) {
+        FXMLLoader loader = new FXMLLoader();
+        URL url = getClass().getResource("/component/rule/rule.fxml");
+        loader.setLocation(url);
+        try {
+            Node ruleNode = loader.load();
+            RuleController ruleController = loader.getController();
+            ruleController.setRule(rule);
+            mainController.getPaneComponentDetail().getChildren().clear();
+            mainController.getPaneComponentDetail().getChildren().add(ruleNode);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public SimulationDC startSimulation(ListView<String> queueList, Map<String, Integer> entitiesPopulation, Map<String, Object> envVarsVals) {
+        if (this.queueList != null) {
+            this.queueList = queueList;
+        }
+        SimulationDC simulationDC = engine.startSimulation(entitiesPopulation, envVarsVals);
+        queueList.getItems().add(simulationDC.getSimulation().getGuid());
+        mainController.updateSimulationResultsTab(simulationDC);
+        return simulationDC;
     }
 
     public Map<String, Integer> retrieveEntitiesPopulationsInputs(FlowPane entitiesPopulationsInputs) {
@@ -233,13 +255,13 @@ public class Logic {
         return envVarsMap;
     }
 
-    public void updateEntitiesAndEnvVars(FlowPane entitiesPopulationsInputs, FlowPane envVarsInputs) throws
-            IOException {
+    public void updateEntitiesAndEnvVars(FlowPane entitiesPopulationsInputs, FlowPane envVarsInputs) throws IOException {
         addEntityPopulationComponents(entitiesPopulationsInputs);
         addEnvVarsComponents(envVarsInputs);
     }
 
     private void addEntityPopulationComponents(FlowPane entitiesPopulationsInputs) throws IOException {
+        entitiesPopulationsInputs.getChildren().clear();
         for (Entity entity : this.engine.getEntities()) {
             FXMLLoader loader = new FXMLLoader();
             URL url = getClass().getResource("/component/entitypopulationinput/entityPopulationInput.fxml");
@@ -252,6 +274,7 @@ public class Logic {
     }
 
     private void addEnvVarsComponents(FlowPane envVarsInputs) throws IOException {
+        envVarsInputs.getChildren().clear();
         for (EnvironmentVariable envVar : this.engine.getEnvironmentVariables()) {
             FXMLLoader loader = new FXMLLoader();
             URL url = getClass().getResource("/component/envarinput/envVarInput.fxml");
@@ -291,8 +314,11 @@ public class Logic {
         this.resultTabController = resultTabController;
     }
 
-    public void rerunSimulation(String guid) {
-        engine.rerunSimulation(guid);
+    public SimulationDC rerunSimulation(String guid) {
+        SimulationDC simulationDC = engine.rerunSimulation(guid);
+        queueList.getItems().add(simulationDC.getSimulation().getGuid());
+        mainController.updateSimulationResultsTab(simulationDC);
+        return simulationDC;
     }
 
     public String getPropertyConsistency(String simulationGuid, String entityName, String propertyName) {
@@ -301,7 +327,7 @@ public class Logic {
         Entity entity;
         World world = SimulationManager.getInstance().getSimulationByGuid(simulationGuid).getWorld();
 
-        if(entityName.equals(world.getEntities().get(0).getName())) {
+        if (entityName.equals(world.getEntities().get(0).getName())) {
             entity = world.getEntities().get(0);
             entityInstances = world.getPrimeryEntityInstances();
         } else if (entityName.equals(world.getEntities().get(1).getName())) {
@@ -311,13 +337,18 @@ public class Logic {
             throw new IllegalArgumentException("Entity name is not valid");
         }
 
-        for(EntityInstance entityInstance : entityInstances) {
-            if(!entityInstance.isAlive()) continue;;
+        for (EntityInstance entityInstance : entityInstances) {
+            if (!entityInstance.isAlive()) continue;
+            ;
             sum += entityInstance.getConsistency(propertyName);
         }
 
         float avg = sum / world.countAliveOfEntity(entity);
         return "The consistency \nof " + entityName + " entity\n" + propertyName + " property is: \n" + avg;
 
+    }
+
+    public void reset() {
+        engine.reset();
     }
 }

@@ -1,8 +1,10 @@
 package simulation;
 
+import javafx.collections.ObservableList;
 import threads.ThreadQueue;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.locks.Lock;
 
@@ -42,5 +44,10 @@ public class SimulationExecutionManager {
 
     public void stopSimulation(String selectedSimulationGUID) {
         simulationDCs.get(selectedSimulationGUID).getSimulation().stopSimulation();
+    }
+
+    public void reset() {
+        simulationDCs.clear();
+        threadQueue.reset();
     }
 }

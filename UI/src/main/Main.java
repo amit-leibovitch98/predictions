@@ -22,7 +22,7 @@ public class Main extends Application {
         //Parent load = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/component/main/mainUI.fxml")));
         URL url = getClass().getResource("/component/main/mainUI.fxml");
         loader.setLocation(url);
-        BorderPane root = loader.load();
+        Parent root = loader.load();
 
         MainController mainController = loader.getController();
         Logic logic = new Logic(mainController);

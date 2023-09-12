@@ -82,6 +82,18 @@
                         <Label fx:id="simulationStatusLabel" text="Label" />
                     </children>
                 </HBox>
+            <HBox spacing="10.0">
+               <children>
+                  <Label text="Ticks:" />
+                  <Label fx:id="simCurrTick" text="Label" />
+               </children>
+            </HBox>
+            <HBox spacing="10.0">
+               <children>
+                  <Label text="Time:" />
+                  <Label fx:id="simCurrTime" text="Label" />
+               </children>
+            </HBox>
                 <HBox spacing="10.0">
                     <children>
                         <Label text="Entities count:" />

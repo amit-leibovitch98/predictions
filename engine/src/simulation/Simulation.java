@@ -14,8 +14,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-public class Simulation implements Runnable {
-    private StringProperty massege;
+public class Simulation implements Runnable, Cloneable {
+    private final Object pauseLock = new Object();
+    private String massege;
     private World world;
     private IntegerProperty tick;
     private final String guid;
@@ -24,21 +25,22 @@ public class Simulation implements Runnable {
     private BooleanProperty isRunning;
     private boolean isPaused;
     private boolean isStopped;
+    private float currTime;
 
     public Simulation(World world) {
         this.isStopped = false;
         this.isPaused = false;
         this.isRunning = new SimpleBooleanProperty();
         Platform.runLater(() -> this.isRunning.setValue(false));
-        this.massege = new SimpleStringProperty();
-        Platform.runLater(() -> this.massege.setValue("Queueing..."));
+        this.massege = "Queueing...";
         this.world = world;
         this.guid = UUID.randomUUID().toString().substring(0, 8);
         this.tick = new SimpleIntegerProperty(0);
+        this.currTime = 0;
     }
 
     public void init() {
-        Platform.runLater(() -> this.massege.setValue("Retrieving data..."));
+        this.massege = "Retrieving data...";
 
         if (retrivedEntitiesPopulation == null || retrivedEnvVarsValues == null) {
             throw new IllegalStateException("can't init- retrievedEntitiesPopulation or retrievedEnvVarsValues is null");
@@ -56,67 +58,45 @@ public class Simulation implements Runnable {
         //update condExpressions
         CondExpression.updateEnvVars(world.getEnvironmentVars());
         //create entity instances
-        Platform.runLater(() -> this.massege.setValue("Initializing population..."));
+        this.massege = "Initializing population...";
         world.initPopulation(this);
         world.updateActions(world);
-        //todelete
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
     }
 
     @Override
     public void run() {
         Platform.runLater(() -> this.isRunning.setValue(true));
         start();
-        Platform.runLater(() -> this.massege.setValue("Saving results..."));
+        this.massege = "Saving results...";
         SimulationManager.getInstance().saveResults(this);
-        Platform.runLater(() -> this.massege.setValue("Finished!"));
-        isRunning.setValue(false);
+        this.massege = "Finished!";
+        Platform.runLater(() -> this.isRunning.setValue(false));
     }
 
     public void start() {
         init();
-        int maxTicks, maxTime;
         long startTimeNano = System.nanoTime(), elapsedTimeNano = 0;
         float elapsedTimeSecs = 0;
-        try {
-            maxTicks = world.getTerminationConds().getByTicks();
-            maxTime = world.getTerminationConds().getByTime();
-        } catch (Exception e) {
-            maxTicks = 100; //todelete
-        }
-        while (tick.getValue() < maxTicks /*&& elapsedTimeSecs < maxTime*/) {
-            synchronized (SimulationManager.getInstance().getSimulationExecutionManager().getLock()) {
-                while (isPaused) {
+        while (checkIfSimulationIsFinished(elapsedTimeSecs, tick.getValue())) {
+            synchronized (pauseLock) {
+                if (isPaused) {
                     try {
-                        SimulationManager.getInstance().getSimulationExecutionManager().getLock().wait();
+                        pauseLock.wait();
                     } catch (InterruptedException e) {
                         Thread.currentThread().interrupt();
-                        return;
                     }
-                }
-                if (isStopped) {
-                    break;
+                    continue;
                 }
             }
-            Platform.runLater(() -> this.massege.setValue("Running... (" + tick.getValue() + " ticks)"));
+            this.massege = "Running...";
             moveAllInstances();
             moveOneTick(world.getPrimeryEntityInstances());
             moveOneTick(world.getSeconderyEntityInstances());
             tick.setValue(tick.getValue() + 1);
             elapsedTimeNano = System.nanoTime() - startTimeNano;
             elapsedTimeSecs = elapsedTimeNano / 1000000000f;
-            //todelete
-            try {
-                Thread.sleep(200);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            this.currTime = elapsedTimeSecs;
         }
-        System.out.println("Simulation finished");
     }
 
     public int getPrimeryEntityInitPopulation() {
@@ -156,6 +136,18 @@ public class Simulation implements Runnable {
         }
     }
 
+    private boolean checkIfSimulationIsFinished(float currTime, int tick) {
+        if (this.world.getTerminationConds().getByTime() != null && this.world.getTerminationConds().getByTime() >= currTime) {
+            return true;
+        } else if (this.world.getTerminationConds().getByTicks() != null && this.world.getTerminationConds().getByTicks() >= tick) {
+            return true;
+        } else if (this.world.getTerminationConds().isInteractive() && !this.isStopped) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     public IntegerProperty getTick() {
         return tick;
     }
@@ -173,7 +165,7 @@ public class Simulation implements Runnable {
         this.retrivedEnvVarsValues = envVarsVals;
     }
 
-    protected StringProperty getMassege() {
+    protected String getMassege() {
         return massege;
     }
 
@@ -183,21 +175,31 @@ public class Simulation implements Runnable {
 
     public synchronized void pauseSimulation() {
         isPaused = true;
-        Platform.runLater(() -> this.massege.setValue("Paused (in tick " + tick.getValue() + ")"));
+        this.massege = "Paused";
     }
 
     public synchronized void resumeSimulation() {
         isPaused = false;
-        Platform.runLater(() -> this.massege.setValue("Running... (" + tick.getValue() + " ticks)"));
-        synchronized (SimulationManager.getInstance().getSimulationExecutionManager().getLock()) {
-            SimulationManager.getInstance().getSimulationExecutionManager().getLock().notify(); // Notify the thread to resume
+        this.massege = "Running...";
+        synchronized (pauseLock) {
+            pauseLock.notifyAll();
         }
     }
 
-
     public synchronized void stopSimulation() {
+        this.massege = "Stopped";
         Platform.runLater(() -> this.isRunning.setValue(false));
-        Platform.runLater(() -> this.massege.setValue("Stopped (in tick " + tick.getValue() + ")"));
         isStopped = true;
+    }
+
+    @Override
+    public Simulation clone() {
+        Simulation simulation = new Simulation(world.clone());
+        simulation.setRetrivedData(retrivedEntitiesPopulation, retrivedEnvVarsValues);
+        return simulation;
+    }
+
+    public Float getcurrTime() {
+        return currTime;
     }
 }
