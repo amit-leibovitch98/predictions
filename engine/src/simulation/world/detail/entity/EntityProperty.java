@@ -85,16 +85,21 @@ public class EntityProperty {
     }
 
     public Map<Object, Integer> getHistogram(List<EntityInstance> entityInstances) {
-        Map<Object, Integer> hostogram= new HashMap<>();
+        Map<Object, Integer> histogram= new HashMap<>();
+        if(this.type == Type.BOOLEAN) {
+            histogram.put(true, 0);
+            histogram.put(false, 0);
+        }
         for (EntityInstance entityInstance : entityInstances) {
+            if(!entityInstance.isAlive()) continue;
             Object value = entityInstance.getPropertyVal(name);
-            if (hostogram.containsKey(value)) {
-                hostogram.put(value, hostogram.get(value) + 1);
+            if (histogram.containsKey(value)) {
+                histogram.put(value, histogram.get(value) + 1);
             } else {
-                hostogram.put(value, 1);
+                histogram.put(value, 1);
             }
         }
-        return hostogram;
+        return histogram;
     }
 
     public String getInfo() {

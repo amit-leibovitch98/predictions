@@ -32,7 +32,15 @@ public class SimulationExecutionManager {
         return threadQueue.getMaxThearsNum();
     }
 
-    public SimulationDC getSimulationDC(String guid) {
-        return simulationDCs.get(guid);
+    public void pauseSimulation(String selectedSimulationGUID) {
+        simulationDCs.get(selectedSimulationGUID).getSimulation().pauseSimulation();
+    }
+
+    public void resumeSimulation(String selectedSimulationGUID) {
+        simulationDCs.get(selectedSimulationGUID).getSimulation().resumeSimulation();
+    }
+
+    public void stopSimulation(String selectedSimulationGUID) {
+        simulationDCs.get(selectedSimulationGUID).getSimulation().stopSimulation();
     }
 }

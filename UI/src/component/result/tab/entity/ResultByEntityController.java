@@ -21,14 +21,15 @@ public class ResultByEntityController extends ResultComponent {
         super();
     }
 
-    public void initialize() {
-        entitiesList.getSelectionModel().selectFirst();
-    }
-
     public void setEntitiesList() {
-        for (Entity entity : SimulationManager.getInstance().getSimulationByGuid(simulationGuid.getValue()).getWorld().getEntities()) {
+        for (Entity entity : SimulationManager.getInstance().getSimulationByGuid(simulationGuid).getWorld().getEntities()) {
             entitiesList.getItems().add(entity.getName());
         }
+    }
+
+    public void selectFirst(){
+        entitiesList.getSelectionModel().selectFirst();
+        updateEntityDetails();
     }
 
     @FXML
@@ -39,7 +40,7 @@ public class ResultByEntityController extends ResultComponent {
     public void updateEntityDetails() {
         entityDetailsLabel.setText(
                 SimulationManager.getInstance().getSimulationResultByEntities(
-                        simulationGuid.getValue(),
+                        simulationGuid,
                         entitiesList.getSelectionModel().getSelectedItem()
                 )
         );    }

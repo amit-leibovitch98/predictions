@@ -94,17 +94,18 @@ public class World extends WorldDef {
         return seconderyEntityInstances;
     }
 
-
     public int countAliveOfEntity(Entity entity) {
         int alive = 0;
-        if(entity.getName().equals(primeryEntityInstances.get(0).getName())) {
-            for (EntityInstance entityInstance : primeryEntityInstances) {
+        if (entity.getName().equals(primeryEntityInstances.get(0).getName())) {
+            List<EntityInstance> primeryEntityInstancesCpy = new ArrayList<>(primeryEntityInstances);
+            for (EntityInstance entityInstance : primeryEntityInstancesCpy) {
                 if (entityInstance.isAlive()) {
                     alive++;
                 }
             }
-        } else if(entity.getName().equals(seconderyEntityInstances.get(0).getName())) {
-            for (EntityInstance entityInstance : seconderyEntityInstances) {
+        } else if (entity.getName().equals(seconderyEntityInstances.get(0).getName())) {
+            List<EntityInstance> seconderyEntityInstancesCpy = new ArrayList<>(seconderyEntityInstances);
+            for (EntityInstance entityInstance : seconderyEntityInstancesCpy) {
                 if (entityInstance.isAlive()) {
                     alive++;
                 }
@@ -143,12 +144,12 @@ public class World extends WorldDef {
         }
     }
 
-    public float getAverageProperty(Simulation simulation, Entity entity, EntityProperty prop) {
+    public float getAverageProperty(Entity entity, EntityProperty prop) {
         int count;
         float sum = 0;
-        if(entity.getName().equals(primeryEntityInstances.get(0).getName())) {
+        if (entity.getName().equals(primeryEntityInstances.get(0).getName())) {
             sum = getSum(prop, sum, primeryEntityInstances);
-        } else if(entity.getName().equals(seconderyEntityInstances.get(0).getName())) {
+        } else if (entity.getName().equals(seconderyEntityInstances.get(0).getName())) {
             sum = getSum(prop, sum, seconderyEntityInstances);
         } else {
             throw new RuntimeException("Entity " + entity.getName() + " not found");
@@ -157,8 +158,9 @@ public class World extends WorldDef {
         return sum / count;
     }
 
-    private float getSum(EntityProperty prop, float sum, List<EntityInstance> seconderyEntityInstances) {
-        for(EntityInstance entityInstance: seconderyEntityInstances) {
+    private float getSum(EntityProperty prop, float sum, List<EntityInstance> EntityInstances) {
+        for (EntityInstance entityInstance : EntityInstances) {
+            if (!entityInstance.isAlive()) continue;
             try {
                 if (prop.getType() == Type.DECIMAL) {
                     sum += (int) entityInstance.getPropertyVal(prop.getName()) * 1.0f;

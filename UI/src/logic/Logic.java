@@ -3,12 +3,15 @@ package logic;
 import component.entitypopulationinput.EntityPopulationInputController;
 import component.envarinput.EnvVarInputController;
 import component.main.MainController;
+import component.result.tab.ResultTabController;
+import component.result.tab.consistency.ResultByConsistencyController;
 import component.result.tab.entity.ResultByEntityController;
 import component.result.tab.histogram.ResultByHistogramController;
 import facade.EngineFacade;
 import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
@@ -17,11 +20,14 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
+import javafx.util.Pair;
 import simulation.Simulation;
 import simulation.SimulationDC;
 import simulation.SimulationManager;
+import simulation.world.World;
 import simulation.world.detail.ISimulationComponent;
 import simulation.world.detail.entity.Entity;
+import simulation.world.detail.entity.EntityInstance;
 import simulation.world.detail.environmentvariables.EnvironmentVariable;
 import simulation.world.detail.rule.Rule;
 
@@ -31,9 +37,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static java.lang.Thread.sleep;
+
 public class Logic {
     private MainController mainController;
     private EngineFacade engine;
+    private ResultTabController resultTabController;
 
     public Logic(MainController mainController) {
         this.engine = new EngineFacade();
@@ -256,6 +265,10 @@ public class Logic {
         }
     }
 
+    public void setConsistencyResultComponent(ResultByConsistencyController resultByConsistencyController) {
+        resultByConsistencyController.setEntitiesProperties();
+    }
+
     public void setEntityResultComponent(ResultByEntityController resultByEntityController) {
         resultByEntityController.setEntitiesList();
     }
@@ -274,7 +287,37 @@ public class Logic {
         return res;
     }
 
+    public void setResultTabController(ResultTabController resultTabController) {
+        this.resultTabController = resultTabController;
+    }
+
     public void rerunSimulation(String guid) {
         engine.rerunSimulation(guid);
+    }
+
+    public String getPropertyConsistency(String simulationGuid, String entityName, String propertyName) {
+        float sum = 0;
+        List<EntityInstance> entityInstances;
+        Entity entity;
+        World world = SimulationManager.getInstance().getSimulationByGuid(simulationGuid).getWorld();
+
+        if(entityName.equals(world.getEntities().get(0).getName())) {
+            entity = world.getEntities().get(0);
+            entityInstances = world.getPrimeryEntityInstances();
+        } else if (entityName.equals(world.getEntities().get(1).getName())) {
+            entityInstances = world.getSeconderyEntityInstances();
+            entity = world.getEntities().get(1);
+        } else {
+            throw new IllegalArgumentException("Entity name is not valid");
+        }
+
+        for(EntityInstance entityInstance : entityInstances) {
+            if(!entityInstance.isAlive()) continue;;
+            sum += entityInstance.getConsistency(propertyName);
+        }
+
+        float avg = sum / world.countAliveOfEntity(entity);
+        return "The consistency \nof " + entityName + " entity\n" + propertyName + " property is: \n" + avg;
+
     }
 }

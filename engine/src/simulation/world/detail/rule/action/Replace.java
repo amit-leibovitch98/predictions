@@ -39,7 +39,7 @@ public class Replace extends Action {
                 for (EntityProperty property : entityInstance.getProperties()) {
                     try {
                         replacedEntity.setPropertyVal(
-                                property.getName(), entityInstance.getPropertyVal(property.getName())
+                                property.getName(), entityInstance.getPropertyVal(property.getName()), true
                                 //if property doesn't exist, nothing happens
                         );
                     } catch (IllegalArgumentException e) {

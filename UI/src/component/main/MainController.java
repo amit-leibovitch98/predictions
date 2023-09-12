@@ -2,10 +2,7 @@ package component.main;
 
 import component.errormodal.ErrorModalController;
 import component.result.tab.ResultTabController;
-import component.result.tab.entity.ResultByEntityController;
-import component.result.tab.histogram.ResultByHistogramController;
 import javafx.beans.property.*;
-import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
@@ -16,15 +13,11 @@ import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import logic.Logic;
-import simulation.Simulation;
 import simulation.SimulationDC;
-import simulation.SimulationManager;
 
 import java.io.File;
 import java.io.IOException;
@@ -75,7 +68,6 @@ public class MainController {
     private BooleanProperty isFileUploaded;
     private Logic logic;
     private Stage primaryStage;
-    private BooleanProperty isSimulationRunning;
     private IntegerProperty maxThreadsNum;
 
     public MainController() {
@@ -85,7 +77,6 @@ public class MainController {
         this.componentDetailLabel = new Label();
         this.queueList = new ListView<>();
         this.selectedSimulationGUID = new SimpleStringProperty();
-        this.isSimulationRunning = new SimpleBooleanProperty();
         this.maxThreadsNum = new SimpleIntegerProperty();
     }
 
@@ -103,15 +94,9 @@ public class MainController {
         this.primaryStage = primaryStage;
     }
 
-    public void setSimulationStatus(boolean status) {
-        this.isSimulationRunning.set(status);
-    }
-
     public void setMaxThreadsNum(int maxThreadsNum) {
         this.maxThreadsNum.set(maxThreadsNum);
     }
-
-
 
     @FXML
     private void uploadFileB(ActionEvent event) {
@@ -178,13 +163,20 @@ public class MainController {
 
     @FXML
     void startSimulation(ActionEvent event) {
-        isSimulationRunning.set(true);
         resultsTab.setDisable(false);
         try {
             SimulationDC currSimulationDC = logic.startSimulation(
                     logic.retrieveEntitiesPopulationsInputs(entitiesPopulationsInputs),
                     logic.retriveEnvVarsInputs(envVarsInputs)
             );
+            queueList.getItems().add(currSimulationDC.getSimulation().getGuid());
+            currSimulationDC.getSimulation().getIsRunning().addListener((observable, oldValue, newValue) -> {
+                if (newValue) {
+                    queueList.getItems().remove(currSimulationDC.getSimulation().getGuid());
+                } else {
+                    queueList.getItems().add(currSimulationDC.getSimulation().getGuid());
+                }
+            });
             updateSimulationResultsTab(currSimulationDC);
         } catch (IllegalArgumentException e) {
             raiseErrorModal(e.getMessage());
@@ -226,12 +218,13 @@ public class MainController {
             loader.setLocation(url);
             Node root = loader.load();
             ResultTabController resultTabController = loader.getController();
-            resultTabController.getSimulationGuid().bind(selectedSimulationGUID);
             resultTabController.setLogic(logic);
-            resultTabController.set(currSimulationDC);
+            resultTabController.setSimulation(currSimulationDC);
             Tab tab = new Tab(currSimulationDC.getSimulation().getGuid());
             tab.setContent(root);
             simulationsTabsPane.getTabs().add(tab);
+            resultsTab.getTabPane().getSelectionModel().select(resultsTab);
+            simulationsTabsPane.getSelectionModel().select(tab);
         } catch (IOException e) {
             e.printStackTrace();
         }

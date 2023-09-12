@@ -54,7 +54,7 @@ public class Increase extends Action {
                 res = false; //value didn't change
             }
         }
-        entityInstance.setPropertyVal(propertyName, newValue);
+        entityInstance.setPropertyVal(propertyName, newValue, false);
         return res;
     }
 

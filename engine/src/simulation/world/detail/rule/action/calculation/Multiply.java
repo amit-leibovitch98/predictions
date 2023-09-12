@@ -30,9 +30,9 @@ public class Multiply extends Calculation {
             }
             float value = arg1 * arg2;
             if (resultProp.getType() == Type.DECIMAL) {
-                entityInstance.setPropertyVal(resultProp.getName(), Math.round(value));
+                entityInstance.setPropertyVal(resultProp.getName(), Math.round(value), false);
             } else {
-                entityInstance.setPropertyVal(resultProp.getName(), value);
+                entityInstance.setPropertyVal(resultProp.getName(), value, false);
             }
         } catch (Exception e) {
             e.printStackTrace();

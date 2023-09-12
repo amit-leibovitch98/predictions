@@ -8,6 +8,8 @@
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
@@ -16,10 +18,10 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<GridPane stylesheets="@resultsTab.css" BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="component.result.tab.ResultTabController">
+<GridPane stylesheets="@resultsTab.css" BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="component.result.tab.ResultTabController">
     <columnConstraints>
         <ColumnConstraints hgrow="NEVER" minWidth="10.0" prefWidth="10.0" />
-        <ColumnConstraints hgrow="SOMETIMES" minWidth="180.0" />
+        <ColumnConstraints hgrow="SOMETIMES" minWidth="220.0" />
         <ColumnConstraints hgrow="NEVER" minWidth="15.0" prefWidth="15.0" />
         <ColumnConstraints hgrow="SOMETIMES" minWidth="100.0" prefWidth="100.0" />
         <ColumnConstraints hgrow="ALWAYS" minWidth="200.0" prefWidth="200.0" />
@@ -31,7 +33,7 @@
         <RowConstraints vgrow="NEVER" />
         <RowConstraints minHeight="20.0" prefHeight="20.0" vgrow="NEVER" />
       <RowConstraints minHeight="30.0" prefHeight="30.0" vgrow="NEVER" />
-        <RowConstraints minHeight="300.0" vgrow="ALWAYS" />
+        <RowConstraints minHeight="200.0" vgrow="ALWAYS" />
         <RowConstraints vgrow="NEVER" />
         <RowConstraints minHeight="5.0" prefHeight="5.0" vgrow="NEVER" />
         <RowConstraints vgrow="NEVER" />
@@ -58,7 +60,7 @@
                         <Insets />
                     </HBox.margin>
                 </RadioButton>
-                <RadioButton fx:id="propertyConsistencyRB" mnemonicParsing="false" onAction="#showResultByConsistency" text="Property Consistency" />
+                <RadioButton fx:id="propertyConsistencyRB" mnemonicParsing="false" onAction="#showResultByConsistency" text="Property Consistency" toggleGroup="$showRusltBy" />
             </children>
             <GridPane.margin>
                 <Insets />
@@ -67,17 +69,17 @@
                 <Insets top="5.0" />
             </padding>
         </HBox>
-        <ScrollPane GridPane.columnIndex="3" GridPane.columnSpan="3" GridPane.rowIndex="4">
+        <ScrollPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnIndex="3" GridPane.columnSpan="3" GridPane.rowIndex="4">
             <content>
                 <Pane fx:id="resultsPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" stylesheets="/component/result/resultComponent.css" />
             </content>
         </ScrollPane>
-        <VBox prefHeight="200.0" prefWidth="100.0" spacing="10.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
+        <VBox prefHeight="200.0" spacing="10.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
             <children>
                 <HBox spacing="10.0">
                     <children>
-                        <Label text="Simulation status:" />
-                        <Label text="Label" />
+                        <Label text="Simulation Status:" />
+                        <Label fx:id="simulationStatusLabel" text="Label" />
                     </children>
                 </HBox>
                 <HBox spacing="10.0">
@@ -85,10 +87,10 @@
                         <Label text="Entities count:" />
                     </children>
                 </HBox>
-                <TableView fx:id="entitiesTable" maxHeight="100.0">
+                <TableView fx:id="entitiesTable" maxHeight="70.0" maxWidth="180.0" prefHeight="70.0" prefWidth="180.0">
                     <columns>
-                        <TableColumn maxWidth="-1.0" minWidth="75.0" prefWidth="-1.0" text="primery" />
-                        <TableColumn maxWidth="1.7976931348623157E308" minWidth="75.0" prefWidth="-1.0" text="secendery entity" />
+                        <TableColumn fx:id="primeryCountCol" maxWidth="-1.0" minWidth="75.0" prefWidth="-1.0" text="primery" />
+                        <TableColumn fx:id="secenderyCountCol" maxWidth="1.7976931348623157E308" minWidth="75.0" prefWidth="-1.0" text="secendery entity" />
                     </columns>
                 </TableView>
             </children>
@@ -103,9 +105,30 @@
       <HBox prefHeight="100.0" prefWidth="200.0" />
       <HBox spacing="10.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
          <children>
-            <Button fx:id="pauseB" maxHeight="25.0" maxWidth="25.0" minHeight="25.0" minWidth="25.0" mnemonicParsing="false" onAction="#pauseSimulation" prefHeight="25.0" prefWidth="25.0" />
-            <Button fx:id="resumeB" maxHeight="25.0" maxWidth="25.0" minHeight="25.0" minWidth="25.0" mnemonicParsing="false" onAction="#resumeSimulation" prefHeight="25.0" prefWidth="25.0" />
-            <Button fx:id="stopB" maxHeight="25.0" maxWidth="25.0" minHeight="25.0" minWidth="25.0" mnemonicParsing="false" onAction="#stopSimulation" prefHeight="25.0" prefWidth="25.0" />
+            <Button fx:id="pauseB" maxHeight="25.0" maxWidth="25.0" minHeight="25.0" minWidth="25.0" mnemonicParsing="false" onAction="#pauseSimulation" prefHeight="25.0" prefWidth="25.0">
+               <graphic>
+                  <ImageView fitHeight="29.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../../../resources/pause.png" />
+                     </image>
+                  </ImageView>
+               </graphic></Button>
+            <Button fx:id="resumeB" maxHeight="25.0" maxWidth="25.0" minHeight="25.0" minWidth="25.0" mnemonicParsing="false" onAction="#resumeSimulation" prefHeight="25.0" prefWidth="25.0">
+               <graphic>
+                  <ImageView fitHeight="21.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../../../resources/resume.png" />
+                     </image>
+                  </ImageView>
+               </graphic></Button>
+            <Button fx:id="stopB" maxHeight="25.0" maxWidth="25.0" minHeight="25.0" minWidth="25.0" mnemonicParsing="false" onAction="#stopSimulation" prefHeight="25.0" prefWidth="25.0">
+               <graphic>
+                  <ImageView fitHeight="17.0" fitWidth="15.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../../../resources/stop.png" />
+                     </image>
+                  </ImageView>
+               </graphic></Button>
          </children>
          <padding>
             <Insets top="5.0" />

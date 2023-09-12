@@ -1,32 +1,33 @@
 package component.result.tab;
 
+import component.result.ResultsUpdater;
+import component.result.tab.consistency.ResultByConsistencyController;
 import component.result.tab.entity.ResultByEntityController;
 import component.result.tab.histogram.ResultByHistogramController;
-import javafx.beans.binding.Bindings;
+import javafx.application.Platform;
 import javafx.beans.property.*;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
-import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.Pane;
+import javafx.util.Pair;
 import logic.Logic;
 import simulation.Simulation;
 import simulation.SimulationDC;
+import simulation.SimulationExecutionManager;
+import simulation.SimulationManager;
 
-import javax.xml.ws.Binding;
 import java.io.IOException;
 import java.net.URL;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class ResultTabController {
-    private final int PRIMARY_ENTITY_COL = 0;
-    private final int SECONDARY_ENTITY_COL = 1;
 
     @FXML
     private ToggleGroup showRusltBy;
@@ -37,33 +38,39 @@ public class ResultTabController {
     @FXML
     private RadioButton entityPopulationRB;
     @FXML
+    private Label simulationStatusLabel;
+    @FXML
     private Pane resultsPane;
     @FXML
-    private TableView<IntegerProperty> entitiesTable;
+    private TableView<Pair<Integer, Integer>> entitiesTable;
+    @FXML
+    private TableColumn<Pair<IntegerProperty, IntegerProperty>, Integer> primeryCountCol;
+    @FXML
+    private TableColumn<Pair<IntegerProperty, IntegerProperty>, Integer> secenderyCountCol;
+    @FXML
+    private Button pauseB;
+    @FXML
+    private Button resumeB;
+    @FXML
+    private Button stopB;
 
     private Logic logic;
-    private StringProperty selectedSimulationGUID;
-    private IntegerProperty primeryEntityCount;
-    private IntegerProperty seconderyEntityCount;
-    private SimulationDC simulationCD;
-
+    private String selectedSimulationGUID;
+    private int primeryEntityCount;
+    private int seconderyEntityCount;
+    private SimulationDC simulationDC;
+    private ScheduledExecutorService puller;
     public ResultTabController() {
-        this.selectedSimulationGUID = new SimpleStringProperty();
-        this.primeryEntityCount = new SimpleIntegerProperty();
-        this.seconderyEntityCount = new SimpleIntegerProperty();
+
     }
 
     public void initialize() {
         this.entityPopulationRB.setDisable(true);
-        this.entityPopulationRB.setDisable(true);
+        this.proptyHistogramRB.setDisable(true);
         this.propertyConsistencyRB.setDisable(true);
-        this.simulationCD.getMassege().addListener((observable, oldValue, newValue)->{
-            if(newValue.contains("finished")) {
-                this.entityPopulationRB.setDisable(true);
-                this.entityPopulationRB.setDisable(true);
-                this.propertyConsistencyRB.setDisable(true);
-            }
-        });
+
+        primeryCountCol.setCellValueFactory(new PropertyValueFactory<>("key")); // Use "key" for the first value
+        secenderyCountCol.setCellValueFactory(new PropertyValueFactory<>("value")); // Use "value" for the second value
     }
 
     @FXML
@@ -72,8 +79,16 @@ public class ResultTabController {
     }
 
     private void updateResultByConsistency() throws IOException {
-        //implement
-        System.out.println("consistency");
+        resultsPane.getChildren().clear();
+        FXMLLoader loader = new FXMLLoader();
+        URL url = getClass().getResource("/component/result/tab/consistency/resultByConsistency.fxml");
+        loader.setLocation(url);
+        Node byConsistencyResult = loader.load();
+        ResultByConsistencyController resultByConsistencyController = loader.getController();
+        resultByConsistencyController.setSimulationGuid(selectedSimulationGUID);
+        logic.setConsistencyResultComponent(resultByConsistencyController);
+        resultByConsistencyController.setLogic(logic);
+        resultsPane.getChildren().add(byConsistencyResult);
     }
 
     @FXML
@@ -88,10 +103,11 @@ public class ResultTabController {
         loader.setLocation(url);
         Node byEntityResult = loader.load();
         ResultByEntityController resultByEntityController = loader.getController();
-        resultByEntityController.getSimulationGuid().bind(selectedSimulationGUID);
+        resultByEntityController.setSimulationGuid(selectedSimulationGUID);
         logic.setEntityResultComponent(resultByEntityController);
         resultByEntityController.setLogic(logic);
         resultsPane.getChildren().add(byEntityResult);
+        resultByEntityController.selectFirst();
     }
 
     @FXML
@@ -106,7 +122,7 @@ public class ResultTabController {
         loader.setLocation(url);
         Node byHistogramResult = loader.load();
         ResultByHistogramController resultByHistogramController = loader.getController();
-        resultByHistogramController.getSimulationGuid().bind(selectedSimulationGUID);
+        resultByHistogramController.setSimulationGuid(selectedSimulationGUID);
         logic.setHistogramResultComponent(resultByHistogramController);
         resultByHistogramController.setLogic(logic);
         resultsPane.getChildren().add(byHistogramResult);
@@ -118,55 +134,91 @@ public class ResultTabController {
 
     @FXML
     void rerunSimulation(ActionEvent event) {
-        logic.rerunSimulation(selectedSimulationGUID.getValue());
+        logic.rerunSimulation(selectedSimulationGUID);
     }
 
-    public StringProperty getSimulationGuid() {
-        return selectedSimulationGUID;
+    public void setSimulation(SimulationDC simulationDC) {
+        this.simulationDC = simulationDC;
+        this.selectedSimulationGUID = simulationDC.getSimulation().getGuid();
+
+        this.simulationStatusLabel.setText((this.simulationDC.getMassege().get()));
+        primeryEntityCount = simulationDC.getPrimeryEntityCount().get();
+        seconderyEntityCount = simulationDC.getSeconderyEntityCount().get();
+        Pair<Integer, Integer> rowData = new Pair<>(primeryEntityCount, seconderyEntityCount);
+        entitiesTable.getItems().add(rowData);
+
+        this.simulationDC.getIsRunning().addListener((observable, oldValue, running) -> {
+            if (running) {
+                this.pauseB.setDisable(false);
+                this.resumeB.setDisable(false);
+                this.stopB.setDisable(false);
+                setRadioButtonDisable(true);
+            } else {
+                if(this.simulationDC.getMassege().getValue().contains("Finished")) {
+                    setRadioButtonDisable(false);
+                }
+            }
+        });
+        secenderyCountCol.setText(this.simulationDC.getSimulation().getWorld().getEntities().get(1).getName());
+        setSechedualPull();
     }
 
-
-    public void set(SimulationDC simulationDC) {
-        this.simulationCD = simulationDC;
-        Simulation simulation = simulationDC.getSimulation();
-        String primeryEntityName = simulation.getWorld().getPrimeryEntityInstances().get(0).getName();
-        String seconderyEntityName = simulation.getWorld().getSeconderyEntityInstances().get(0).getName();
-
-        ObservableList<IntegerProperty> data = FXCollections.observableArrayList();
-        this.entitiesTable.getColumns().get(PRIMARY_ENTITY_COL).setText(primeryEntityName);
-        this.entitiesTable.getColumns().get(SECONDARY_ENTITY_COL).setText(seconderyEntityName);
-        primeryEntityCount.bind(simulationDC.getPrimeryEntityCount());
-        seconderyEntityCount.bind(simulationDC.getSeconderyEntityCount());
-        data.add(primeryEntityCount);
-        data.add(seconderyEntityCount);
-        entitiesTable.getItems().addAll(data);
-    }
-
-    public void simulationResultsComponents() {
-        try {
-            //updateResultByConsistency();
-            updateResultByEntityComponent();
-            updateResultByHistogramComponent();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    private void setSechedualPull() {
+        ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
+        // Schedule the task to run every 200ms with an initial delay of 0ms
+        executor.scheduleAtFixedRate(() -> {
+            Platform.runLater(() -> {
+                update(
+                        simulationDC.getMassege().get(),
+                        simulationDC.getPrimeryEntityCount().get(),
+                        simulationDC.getSeconderyEntityCount().get()
+                );
+            });
+        }, 0, 200, TimeUnit.MILLISECONDS);
+        this.puller = executor;
     }
 
     @FXML
     void pauseSimulation(ActionEvent event) {
-        System.out.println("pause");
-        //implement
+        this.pauseB.setDisable(true);
+        this.resumeB.setDisable(false);
+        this.stopB.setDisable(false);
+        SimulationManager.getInstance().getSimulationExecutionManager().pauseSimulation(selectedSimulationGUID);
     }
 
     @FXML
     void resumeSimulation(ActionEvent event) {
-        System.out.println("resume");
-        //implement
+        this.pauseB.setDisable(false);
+        this.resumeB.setDisable(true);
+        this.stopB.setDisable(false);
+        SimulationManager.getInstance().getSimulationExecutionManager().resumeSimulation(selectedSimulationGUID);
+
     }
 
     @FXML
     void stopSimulation(ActionEvent event) {
-        System.out.println("stop");
-        //implement
+        SimulationManager.getInstance().getSimulationExecutionManager().stopSimulation(selectedSimulationGUID);
+        this.pauseB.setDisable(true);
+        this.resumeB.setDisable(true);
+        this.stopB.setDisable(true);
+        this.puller.shutdown();
+        update(
+                simulationDC.getMassege().get(),
+                simulationDC.getPrimeryEntityCount().get(),
+                simulationDC.getSeconderyEntityCount().get());
     }
+
+    private void setRadioButtonDisable(boolean disable) {
+        this.entityPopulationRB.setDisable(disable);
+        this.proptyHistogramRB.setDisable(disable);
+        this.propertyConsistencyRB.setDisable(disable);
+    }
+
+    public void update(String massege, int primCount, int secCount) {
+        this.simulationStatusLabel.setText(massege);
+        Pair<Integer, Integer> rowData = new Pair<>(primCount, secCount);
+        entitiesTable.getItems().clear();
+        entitiesTable.getItems().add(rowData);
+    }
+
 }

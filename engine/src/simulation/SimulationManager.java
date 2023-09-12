@@ -71,14 +71,15 @@ public class SimulationManager extends Observable {
             if (entity.getName().equals(entityName)) {
                 for(EntityProperty prop: entity.getProperties()) {
                     if(prop.getType() == Type.DECIMAL || prop.getType() == Type.FLOAT) {
-                        result.append("Average of property").append(prop.getName()).append(": ").append(simulation.getWorld().getAverageProperty(simulation, entity, prop)).append("\n");
+                        result.append("Average of property: ").append(prop.getName()).append(": ")
+                                .append(String.format("%.2f", simulation.getWorld().getAverageProperty(entity, prop))).append("\n");
                     }
                 }
-                result.append("Population at the beginning: ").append(entity.getPopulation()).append("\n");
+                result.append("\nPopulation at the beginning: ").append(entity.getPopulation()).append("\n");
                 result.append("Population at the end: ").append(simulation.getWorld().countAliveOfEntity(entity)).append("\n");
             }
         }
-        return null;
+        return result.toString();
     }
 
 

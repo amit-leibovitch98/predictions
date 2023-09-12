@@ -1,7 +1,8 @@
-package component.result.tab.histogram;
+package component.result.tab.consistency;
 
 import component.result.ResultComponent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
@@ -13,15 +14,15 @@ import javafx.scene.input.MouseEvent;
 
 import java.util.List;
 
-public class ResultByHistogramController extends ResultComponent {
+public class ResultByConsistencyController extends ResultComponent {
 
     @FXML
     private TreeView<String> entityPropertyTree;
 
     @FXML
-    private ListView<String> propertyHistogramList;
+    private Label consistancyLabel;
 
-    public ResultByHistogramController() {
+    public ResultByConsistencyController() {
         super();
     }
 
@@ -43,15 +44,14 @@ public class ResultByHistogramController extends ResultComponent {
     }
 
     @FXML
-    void showPropertyHistogram(MouseEvent event) {
-        propertyHistogramList.getItems().clear();
+    void showPropertyConsistency(MouseEvent event) {
         if (entityPropertyTree.getSelectionModel().getSelectedItem().getParent() == null ||
                 entityPropertyTree.getSelectionModel().getSelectedItem().getParent() == entityPropertyTree.getRoot()) {
-            propertyHistogramList.getItems().add("Please select a property");
+            consistancyLabel.setText("Please select a property");
         } else {
             String entityName = entityPropertyTree.getSelectionModel().getSelectedItem().getParent().getValue();
             String propertyName = entityPropertyTree.getSelectionModel().getSelectedItem().getValue();
-            propertyHistogramList.setItems(logic.getPropertyHistogram(simulationGuid, entityName, propertyName));
+            consistancyLabel.setText(logic.getPropertyConsistency(simulationGuid, entityName, propertyName));
         }
     }
 }

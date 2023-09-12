@@ -6,15 +6,19 @@ import javafx.beans.property.StringProperty;
 import logic.Logic;
 
 public abstract class ResultComponent {
-    protected StringProperty simulationGuid;
+    protected String simulationGuid;
     protected Logic logic;
 
-    public StringProperty getSimulationGuid() {
+    public String getSimulationGuid() {
         return simulationGuid;
     }
 
+    public void setSimulationGuid(String simulationGuid) {
+        this.simulationGuid = simulationGuid;
+    }
+
     public ResultComponent() {
-        this.simulationGuid = new SimpleStringProperty();
+
     }
     public void setLogic(Logic logic) {
         this.logic = logic;

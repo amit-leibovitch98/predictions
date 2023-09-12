@@ -15,7 +15,7 @@ public class Set extends Action {
     }
     @Override
     public boolean doAction(EntityInstance entityInstance) {
-        entityInstance.setPropertyVal(propertyName, value);
+        entityInstance.setPropertyVal(propertyName, value, false);
         return true;
     }
     @Override

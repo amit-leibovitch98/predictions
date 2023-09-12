@@ -7,6 +7,7 @@ import simulation.utils.Location;
 import simulation.utils.expression.CondExpression;
 
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,7 +16,7 @@ public class EntityInstance extends Entity {
     private IntegerProperty tick;
     boolean isAlive = true;
     private Map<EntityProperty, Object> propertiesWithVals;
-    private Map<EntityProperty, Integer> propertiesWithTicks;
+    private List<EntityPropertyTicks> propertiesWithTicks;
     private Location location;
     private int consistencySum;
     private int consistencyCount;
@@ -29,14 +30,14 @@ public class EntityInstance extends Entity {
     private void initInstanceValues(List<EntityProperty> properties, Grid grid) {
         this.tick = new SimpleIntegerProperty();
         this.propertiesWithVals = new HashMap<>();
-        this.propertiesWithTicks = new HashMap<>();
+        this.propertiesWithTicks = new ArrayList<>();
         for (EntityProperty property : properties) {
             Object initialValue = property.getInitialValue();
             if (initialValue == null) {
                 initialValue = property.getRandomInitValue();
             }
             this.propertiesWithVals.put(property, initialValue);
-            this.propertiesWithTicks.put(property, 0);
+            this.propertiesWithTicks.add(new EntityPropertyTicks(property));
         }
         this.location = grid.getEmptyRandLoc();
         grid.putEntityInLoc(this, location);
@@ -70,15 +71,11 @@ public class EntityInstance extends Entity {
     }
 
     public Integer getPropertyLastUpdatedTick(String propertyName) {
-        for (EntityProperty property : propertiesWithVals.keySet()) {
-            if (property.getName().equals(propertyName)) {
-                return propertiesWithTicks.get(property);
-            }
-        }
-        return null;
+        return getProperyWithTickByName(propertyName).getLastUpdateTick();
     }
 
-    public void setPropertyVal(String propertyName, Object value) {
+    public void setPropertyVal(String propertyName, Object value, boolean initVal) {
+        Object oldVal = getPropertyVal(propertyName);
         if (this.getProperty(propertyName) == null) {
             throw new IllegalArgumentException("Property " + propertyName + " does not exist");
         }
@@ -108,9 +105,9 @@ public class EntityInstance extends Entity {
                     value = value.toString();
                     break;
             }
-            propertiesWithTicks.put(getProperty(propertyName), tick.get());
-            consistencyCount++;
-            consistencySum += tick.get();
+            if(!initVal && !oldVal.equals(value)) {
+                getProperyWithTickByName(propertyName).updateValChanged(tick.get());
+            }
         } catch (NumberFormatException e) {
             throw new IllegalArgumentException("Invalid value for " + getProperty(propertyName).getType() + " type: " + value);
         }
@@ -130,7 +127,16 @@ public class EntityInstance extends Entity {
         this.location = grid.move(this);
     }
 
-    public float getConsistency() {
-        return (float) consistencySum / consistencyCount;
+    public float getConsistency(String propertyName) {
+        return getProperyWithTickByName(propertyName).getPropertyConsistency();
+    }
+
+    private EntityPropertyTicks getProperyWithTickByName(String propertyName) {
+        for (EntityPropertyTicks entityPropertyTicks : propertiesWithTicks) {
+            if (entityPropertyTicks.getEntityProperty().getName().equals(propertyName)) {
+                return entityPropertyTicks;
+            }
+        }
+        throw new IllegalArgumentException("Property " + propertyName + " does not exist");
     }
 }

@@ -1,10 +1,8 @@
 package simulation;
 
 import javafx.application.Platform;
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+import javafx.beans.Observable;
+import javafx.beans.property.*;
 
 public class SimulationDC {
     private StringProperty massege;
@@ -12,16 +10,15 @@ public class SimulationDC {
     private IntegerProperty primeryEntityCount;
     private IntegerProperty seconderyEntityCount;
     private IntegerProperty tick;
+
     public SimulationDC(Simulation simulation) {
         this.primeryEntityCount = new SimpleIntegerProperty();
         this.seconderyEntityCount = new SimpleIntegerProperty();
-        this.massege = simulation.getMassege();
         this.simulation = simulation;
+        this.massege = this.simulation.getMassege();
         this.tick = simulation.getTick();
-        Platform.runLater(() -> {
-            this.primeryEntityCount.setValue(simulation.getPrimeryEntityInitPopulation());
-            this.seconderyEntityCount.setValue((simulation.getSecendaryEntityInitPopulation()));
-        });
+        this.primeryEntityCount.setValue(simulation.getPrimeryEntityInitPopulation());
+        this.seconderyEntityCount.setValue((simulation.getSecendaryEntityInitPopulation()));
         this.tick.addListener((observable, oldValue, newValue) -> {
             Platform.runLater(
                     () -> {
@@ -48,4 +45,7 @@ public class SimulationDC {
         return this.massege;
     }
 
+    public BooleanProperty getIsRunning() {
+        return simulation.getIsRunning();
+    }
 }
