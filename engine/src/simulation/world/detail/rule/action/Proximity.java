@@ -1,7 +1,6 @@
 package simulation.world.detail.rule.action;
 
 import simulation.utils.expression.CondExpression;
-import simulation.world.World;
 import simulation.world.detail.entity.Entity;
 import simulation.world.detail.entity.EntityInstance;
 
@@ -30,12 +29,12 @@ public class Proximity extends Action {
             //TODO: check if the circleRadius should be calculated from the sourceEntityInstance or the targetEntityInstance
             if(sourceEntityInstance.getLocation().getCircle(targetEntityInstance.getLocation()) <= (float) circleRadius.resolveExpression(sourceEntityInstance)) {
                 for(Action action : actions){
-                    if(Objects.equals(action.getEntity().getName(), sourceEntity.getName())){
+                    if(Objects.equals(action.getPrimeryEntity().getName(), sourceEntity.getName())){
                         action.doAction(sourceEntityInstance);
-                    } else if (Objects.equals(action.getEntity().getName(), targetEntity.getName())){
+                    } else if (Objects.equals(action.getPrimeryEntity().getName(), targetEntity.getName())){
                         action.doAction(targetEntityInstance);
                     } else {
-                        throw new IllegalArgumentException("The action doesn't except this entity: " + action.getEntity().getName());
+                        throw new IllegalArgumentException("The action doesn't except this entity: " + action.getPrimeryEntity().getName());
                     }
                 }
                 return true;

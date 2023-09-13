@@ -5,13 +5,19 @@ import simulation.utils.Type;
 import simulation.utils.expression.CondExpression;
 import simulation.world.detail.entity.Entity;
 import simulation.world.detail.entity.EntityInstance;
+import simulation.world.detail.rule.action.condition.Condition;
 
 
 public class Increase extends Action {
     private CondExpression by;
 
-    public Increase(Entity entity, String propertyName, CondExpression by) {
-        super(entity, propertyName);
+    public Increase(Entity primeryentity, String propertyName, CondExpression by) {
+        super(primeryentity, propertyName);
+        this.by = by;
+    }
+
+    public Increase(Entity primeryentity, Entity secondaryentity, int selectionCount, Condition selectionCond, String propertyName, CondExpression by) {
+        super(primeryentity, secondaryentity, selectionCount, selectionCond, propertyName);
         this.by = by;
     }
 
@@ -43,7 +49,7 @@ public class Increase extends Action {
             }
         } else if (entityInstance.getProperty(propertyName).getType() == Type.FLOAT) {
             if(byValue instanceof Integer) {
-                newValue = (float) ptopValue + (float) byValue;
+                newValue = (float) ptopValue + (int) byValue;
             } else if (byValue instanceof Float) {
                 newValue = (float) ptopValue + (float) byValue;
             } else {

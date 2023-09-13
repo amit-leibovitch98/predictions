@@ -11,7 +11,7 @@ public class Replace extends Action {
     private boolean isFromScratch;
 
     public Replace(Entity entityToKill, Entity entityToCreate, boolean isFromScratch) {
-        super(entityToKill, null);
+        super(entityToKill,  null);
         this.entityToKill = entityToKill;
         this.entityToCreate = entityToCreate;
         this.isFromScratch = isFromScratch;

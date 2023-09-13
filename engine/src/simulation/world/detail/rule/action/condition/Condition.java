@@ -11,8 +11,14 @@ public abstract class Condition extends Action implements ICond {
     List<Action> thenAction;
     List<Action> elseAction;
 
-    public Condition(Entity entity, String propertyName) {
-        super(entity, propertyName);}
+    public Condition(Entity primeryentity, String propertyName) {
+        super(primeryentity, propertyName);
+    }
+
+    public Condition(Entity primeryentity, Entity secondaryentity, int selectionCount, Condition selectionCond, String propertyName) {
+        super(primeryentity, secondaryentity, selectionCount, selectionCond, propertyName);
+    }
+
     public void setThenActions(List<Action> thenAction) {
         this.thenAction = thenAction;
     }

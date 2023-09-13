@@ -14,12 +14,20 @@ public class SimpleCondition extends Condition implements ICond {
     CondExpression value;
     CondExpression property;
 
-    public SimpleCondition(Entity entity, CondExpression property, CondOp operator, CondExpression value) {
-        super(entity, null);
+    public SimpleCondition(Entity primeryentity, CondExpression property, CondOp operator, CondExpression value) {
+        super(primeryentity, null);
         this.operator = operator;
         this.value = value;
         this.property = property;
     }
+
+    public SimpleCondition(Entity primeryentity, Entity secenderyEntity, int selectionCount, Condition selectionCond, CondExpression property, CondOp operator, CondExpression value) {
+        super(primeryentity, secenderyEntity, selectionCount, selectionCond, null);
+        this.operator = operator;
+        this.value = value;
+        this.property = property;
+    }
+
     @Override
     public boolean doAction(EntityInstance entityInstance) {
         return evaluateCond(entityInstance);
@@ -52,7 +60,7 @@ public class SimpleCondition extends Condition implements ICond {
                     return false;
                 }
             case LESSER_THAN:
-                if (compare(property.resolveExpression(entityInstance) ,entityInstance.getPropertyVal(propertyName))) {
+                if (compare(property.resolveExpression(entityInstance) ,entityInstance.getPropertyVal(this.property.resolveExpression(entityInstance).toString()))) {
                     super.activateThen(entityInstance);
                     return true;
                 } else {

@@ -209,6 +209,12 @@ public class ResultTabController {
         this.stopB.setDisable(true);
         this.puller.shutdown();
         update(simulationDC);
+        setRadioButtonDisable(false);
+        try {
+            updateResultByEntityComponent();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void setRadioButtonDisable(boolean disable) {

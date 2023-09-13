@@ -5,12 +5,20 @@ import simulation.utils.Type;
 import simulation.utils.expression.CondExpression;
 import simulation.world.detail.entity.Entity;
 import simulation.world.detail.entity.EntityInstance;
+import simulation.world.detail.rule.action.condition.Condition;
+
+import java.util.List;
 
 public class Decrease extends Action {
     private CondExpression by;
 
-    public Decrease(Entity entity, String propertyName, CondExpression by) {
-        super(entity, propertyName);
+    public Decrease(Entity primeryentity, String propertyName, CondExpression by) {
+        super(primeryentity, propertyName);
+        this.by = by;
+    }
+
+    public Decrease(Entity primeryentity, Entity secondaryentity, int selectionCount, Condition selectionCond, String propertyName, CondExpression by) {
+        super(primeryentity, secondaryentity, selectionCount, selectionCond, propertyName);
         this.by = by;
     }
 
@@ -33,7 +41,7 @@ public class Decrease extends Action {
             } else if (byValue instanceof Float) {
                 newValue = (int) ptopValue - Math.round((float) byValue);
             } else {
-                throw new IllegalArgumentException("Cannot increase decimal property by non-number value");
+                throw new IllegalArgumentException("Cannot decrease decimal property by non-number value");
             }
             if(propRange == null || (int) newValue >= propRange.getFrom()) {
                 newValue = Math.round(entityInstance.getProperty(propertyName).getRange().getTo());

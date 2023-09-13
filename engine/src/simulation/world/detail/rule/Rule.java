@@ -6,7 +6,6 @@ import simulation.world.detail.rule.action.Action;
 import simulation.world.detail.rule.action.Proximity;
 import simulation.world.detail.rule.action.Replace;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class Rule implements ISimulationComponent {
@@ -39,7 +38,7 @@ public class Rule implements ISimulationComponent {
             float activationOdd = (float) Math.random();
             if (activationOdd <= activation.getProbability()) {
                 for (Action action : actions) {
-                    if (action.getEntity() == null || action.getEntity().getName().equals(primeryEntityInstance.getName())) {
+                    if (action.getPrimeryEntity() == null || action.getPrimeryEntity().getName().equals(primeryEntityInstance.getName())) {
                         try {
                             if (action instanceof Replace || action instanceof Proximity) {
                                 for (EntityInstance secoderyEntityInstance : secoderyEntityInstances) {
@@ -50,6 +49,15 @@ public class Rule implements ISimulationComponent {
                                     }
                                 }
                             } else {
+                                if(action.getSecenderyEntities() != null) {
+                                    for (EntityInstance secoderyEntityInstance : secoderyEntityInstances) {
+                                        if(secoderyEntityInstance.isAlive()) {
+                                            if (action.doAction(secoderyEntityInstance)) { //action has actually been done
+                                                break;
+                                            }
+                                        }
+                                    }
+                                }
                                 action.doAction(primeryEntityInstance);
                             }
                         } catch (Exception e) {
