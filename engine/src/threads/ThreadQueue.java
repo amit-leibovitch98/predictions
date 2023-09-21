@@ -28,16 +28,12 @@ public class ThreadQueue {
         this.threadPool.execute(simulation);
     }
 
-    public void stop() {
-        this.threadPool.shutdown();
-    }
-
     public int getMaxThearsNum() {
         return maxThearsNum;
     }
 
     public void reset() {
         this.tasksList.clear();
-        this.threadPool = Executors.newFixedThreadPool(maxThearsNum);
+        this.threadPool.shutdown();
     }
 }

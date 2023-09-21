@@ -194,6 +194,11 @@ public class Simulation implements Runnable, Cloneable {
 
     @Override
     public Simulation clone() {
+        try {
+            super.clone();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
         Simulation simulation = new Simulation(world.clone());
         simulation.setRetrivedData(retrivedEntitiesPopulation, retrivedEnvVarsValues);
         return simulation;
