@@ -64,7 +64,21 @@ public abstract class Action implements IAction {
                 }
                 if (entityInstances.size() == selectionCount) break;
             }
+        } else if (secenderyEntity.getName().equals(world.getSeconderyEntityInstances().get(0).getName())) {
+            if (selectionCount > world.countAliveOfEntity(world.getEntities().get(1))) {
+                selectionCount = world.countAliveOfEntity(world.getEntities().get(1));
+            }
+            for (int i = 0; i <= selectionCount; i++) {
+                Random random = new Random();
+                int randomNumber = random.nextInt(selectionCount);
+                entityInstance = world.getSeconderyEntityInstances().get(randomNumber);
+                if (entityInstance.isAlive() && slectionCond.evaluateCond(entityInstance)) {
+                    entityInstances.add(entityInstance);
+                }
+                if (entityInstances.size() == selectionCount) break;
+            }
         }
+        return entityInstances;
     }
 
     public abstract boolean doAction(EntityInstance entityInstance);

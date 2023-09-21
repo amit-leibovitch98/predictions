@@ -17,7 +17,7 @@ public class Kill extends Action{
 
     @Override
     public boolean doAction(EntityInstance sourceEntityInstance, EntityInstance targetEntityInstance) {
-        throw new UnsupportedOperationException("Set action doesn't support doAction with two entity instances");
+        throw new UnsupportedOperationException("Kill action doesn't support doAction with two entity instances");
     }
     @Override
     public boolean doAction(EntityInstance entityInstance) {

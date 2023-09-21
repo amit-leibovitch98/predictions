@@ -124,8 +124,7 @@ public class Simulation implements Runnable, Cloneable {
                         try {
                             rule.activateRule(primeryEntityInstance, tick.getValue(), world.getSeconderyEntityInstances());
                         } catch (Exception e) {
-                            System.out.println("Rule " + rule.getName() + " failed to activate: " + e.getMessage() + " --> Simulation failed.");
-                            e.printStackTrace();
+                            System.out.println("Rule " + rule.getName() + " failed to activate: " + e.getMessage() + " --> Simulation failed on tick " + tick.getValue() + ".");
                             System.exit(1);
                         }
                     }

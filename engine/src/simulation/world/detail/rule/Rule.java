@@ -49,15 +49,6 @@ public class Rule implements ISimulationComponent {
                                     }
                                 }
                             } else {
-                                if(action.getSecenderyEntities() != null) {
-                                    for (EntityInstance secoderyEntityInstance : secoderyEntityInstances) {
-                                        if(secoderyEntityInstance.isAlive()) {
-                                            if (action.doAction(secoderyEntityInstance)) { //action has actually been done
-                                                break;
-                                            }
-                                        }
-                                    }
-                                }
                                 action.doAction(primeryEntityInstance);
                             }
                         } catch (Exception e) {

@@ -11,14 +11,22 @@ public class Replace extends Action {
     private boolean isFromScratch;
 
     public Replace(Entity entityToKill, Entity entityToCreate, boolean isFromScratch) {
-        super(entityToKill,  null);
+        super(entityToKill, null);
         this.entityToKill = entityToKill;
         this.entityToCreate = entityToCreate;
         this.isFromScratch = isFromScratch;
     }
+
     @Override
     public boolean doAction(EntityInstance sourceEntityInstance, EntityInstance targetEntityInstance) {
-        throw new UnsupportedOperationException("Set action doesn't support doAction with two entity instances");
+        if (sourceEntityInstance.getName().equals(this.entityToKill.getName())) {
+            replace(sourceEntityInstance);
+        } else if (targetEntityInstance.getName().equals(this.entityToKill.getName())) {
+            replace(targetEntityInstance);
+        } else {
+            throw new IllegalArgumentException("sourceEntityInstance or targetEntityInstance is not of the right type");
+        }
+        return true;
     }
 
     public boolean doAction(EntityInstance entityInstance) {
@@ -31,25 +39,21 @@ public class Replace extends Action {
     }
 
     private void replace(EntityInstance entityInstance) {
-        if(entityInstance.getName().equals(this.entityToKill.getName())) {
-            entityInstance.kill(world.getGrid());
-            EntityInstance replacedEntity = new EntityInstance(entityToCreate, entityInstance.getTick(), this.world.getGrid());
-            world.getEntityInstancesByName(replacedEntity.getName()).add(replacedEntity);
-            if (!isFromScratch) {
-                for (EntityProperty property : entityInstance.getProperties()) {
-                    try {
-                        replacedEntity.setPropertyVal(
-                                property.getName(), entityInstance.getPropertyVal(property.getName()), true
-                                //if property doesn't exist, nothing happens
-                        );
-                    } catch (IllegalArgumentException e) {
-                        continue;
-                    }
-
+        entityInstance.kill(world.getGrid());
+        EntityInstance replacedEntity = new EntityInstance(entityToCreate, entityInstance.getTick(), this.world.getGrid());
+        world.getEntityInstancesByName(replacedEntity.getName()).add(replacedEntity);
+        if (!isFromScratch) {
+            for (EntityProperty property : entityInstance.getProperties()) {
+                try {
+                    replacedEntity.setPropertyVal(
+                            property.getName(), entityInstance.getPropertyVal(property.getName()), true
+                            //if property doesn't exist, nothing happens
+                    );
+                } catch (IllegalArgumentException e) {
+                    continue;
                 }
+
             }
-        } else {
-            throw new IllegalStateException("Trying to replace the wrong entity" + entityInstance.getName() + " instead of " + this.entityToKill.getName());
         }
     }
 }

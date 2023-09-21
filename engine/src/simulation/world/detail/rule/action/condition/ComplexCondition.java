@@ -23,7 +23,17 @@ public class ComplexCondition extends Condition implements ICond {
         this.logicOp = ConditionLogicOp.fromString(logicOp);
     }
 
-    public boolean evaluateCond(EntityInstance entityInstance){
+    public boolean evaluateCond(EntityInstance entityInstance, EntityInstance secondaryEntityInstance) {
+        if(logicOp == ConditionLogicOp.AND){
+            return evaluateAnd(entityInstance, secondaryEntityInstance);
+        } else if(logicOp == ConditionLogicOp.OR){
+            return evaluateOr(entityInstance, secondaryEntityInstance);
+        } else {
+            throw new IllegalArgumentException("Unknown expression type: " + logicOp);
+        }
+    }
+
+    public boolean evaluateCond(EntityInstance entityInstance) {
         if(logicOp == ConditionLogicOp.AND){
             return evaluateAnd(entityInstance);
         } else if(logicOp == ConditionLogicOp.OR){
@@ -31,6 +41,22 @@ public class ComplexCondition extends Condition implements ICond {
         } else {
             throw new IllegalArgumentException("Unknown expression type: " + logicOp);
         }
+    }
+
+    private boolean evaluateAnd(EntityInstance entityInstance, EntityInstance secondaryEntityInstance){
+        boolean result = true;
+        for(ICond cond : subConditions){
+            result = result && cond.evaluateCond(entityInstance, secondaryEntityInstance);
+        }
+        return result;
+    }
+
+    private boolean evaluateOr(EntityInstance entityInstance, EntityInstance secondaryEntityInstance) {
+        boolean result = false;
+        for(ICond cond : subConditions){
+            result = result || cond.evaluateCond(entityInstance, secondaryEntityInstance);
+        }
+        return result;
     }
 
     private boolean evaluateAnd(EntityInstance entityInstance){
@@ -48,6 +74,4 @@ public class ComplexCondition extends Condition implements ICond {
         }
         return result;
     }
-
-
 }

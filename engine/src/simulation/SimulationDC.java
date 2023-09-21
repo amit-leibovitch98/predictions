@@ -3,14 +3,21 @@ package simulation;
 import javafx.application.Platform;
 import javafx.beans.Observable;
 import javafx.beans.property.*;
+import javafx.util.Pair;
+
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class SimulationDC {
     private final Simulation simulation;
     private int primeryEntityCount;
     private int seconderyEntityCount;
     private IntegerProperty tick;
+    private Map<Integer, Pair<Integer, Integer>> populationOnEachTick;
 
     public SimulationDC(Simulation simulation) {
+        this.populationOnEachTick = new LinkedHashMap<>();
         this.simulation = simulation;
         this.tick = simulation.getTick();
         this.primeryEntityCount = simulation.getPrimeryEntityInitPopulation();
@@ -22,6 +29,7 @@ public class SimulationDC {
                         this.seconderyEntityCount = simulation.getWorld().countAliveOfEntity(simulation.getWorld().getEntities().get(1));
                     }
             );
+            this.populationOnEachTick.put((int) newValue, new Pair<>(this.primeryEntityCount, this.seconderyEntityCount));
         });
     }
 
@@ -43,5 +51,9 @@ public class SimulationDC {
 
     public BooleanProperty getIsRunning() {
         return simulation.getIsRunning();
+    }
+
+    public Map<Integer,Pair<Integer, Integer>> getPopulationTickMap() {
+        return this.populationOnEachTick;
     }
 }

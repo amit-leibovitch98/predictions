@@ -6,6 +6,7 @@ import simulation.world.detail.entity.EntityInstance;
 import simulation.world.detail.rule.action.condition.Condition;
 
 import java.beans.Expression;
+import java.util.List;
 
 public class Set extends Action {
     private final CondExpression value;
@@ -25,8 +26,17 @@ public class Set extends Action {
         entityInstance.setPropertyVal(propertyName, value, false);
         return true;
     }
+
     @Override
-    public boolean doAction(EntityInstance sourceEntityInstance, EntityInstance targetEntityInstance) {
-        throw new UnsupportedOperationException("Set action doesn't support doAction with two entity instances");
+    public boolean doAction(EntityInstance primeryInstance, EntityInstance secendaryInstance) {
+        if (primeryInstance.getProperty(propertyName) != null) {
+            primeryInstance.setPropertyVal(propertyName, value, false);
+            return true;
+        } else if (secendaryInstance.getProperty(propertyName) != null) {
+            secendaryInstance.setPropertyVal(propertyName, value, false);
+            return true;
+        } else {
+            return false;
+        }
     }
 }

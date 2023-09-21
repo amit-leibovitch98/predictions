@@ -30,9 +30,9 @@ public class Proximity extends Action {
             if(sourceEntityInstance.getLocation().getCircle(targetEntityInstance.getLocation()) <= (float) circleRadius.resolveExpression(sourceEntityInstance)) {
                 for(Action action : actions){
                     if(Objects.equals(action.getPrimeryEntity().getName(), sourceEntity.getName())){
-                        action.doAction(sourceEntityInstance);
+                        action.doAction(sourceEntityInstance, targetEntityInstance);
                     } else if (Objects.equals(action.getPrimeryEntity().getName(), targetEntity.getName())){
-                        action.doAction(targetEntityInstance);
+                        action.doAction(targetEntityInstance, sourceEntityInstance);
                     } else {
                         throw new IllegalArgumentException("The action doesn't except this entity: " + action.getPrimeryEntity().getName());
                     }
@@ -46,6 +46,6 @@ public class Proximity extends Action {
     }
     @Override
     public boolean doAction(EntityInstance entityInstance) {
-        throw new UnsupportedOperationException("Set action doesn't support doAction with two entity instances");
+        throw new UnsupportedOperationException("Proximity action doesn't support doAction with two entity instances");
     }
 }

@@ -33,6 +33,11 @@ public class SimpleCondition extends Condition implements ICond {
         return evaluateCond(entityInstance);
     }
 
+    @Override
+    public boolean doAction(EntityInstance entityInstance, EntityInstance secondaryEntityInstance) {
+        return evaluateCond(entityInstance);
+    }
+
     public boolean evaluateCond(EntityInstance entityInstance) {
         switch (operator) {
             case EQUALS:
@@ -72,6 +77,44 @@ public class SimpleCondition extends Condition implements ICond {
         }
     }
 
+    public boolean evaluateCond(EntityInstance entityInstance, EntityInstance secondaryEntityInstance) {
+        switch (operator) {
+            case EQUALS:
+                if (property.resolveExpression(entityInstance) == value.resolveExpression(entityInstance)) {
+                    super.activateThen(entityInstance, secondaryEntityInstance);
+                    return true;
+                } else {
+                    super.activateElse(entityInstance, secondaryEntityInstance);
+                    return false;
+                }
+            case NOT_EQUALS:
+                if (property.resolveExpression(entityInstance) != value.resolveExpression(entityInstance)) {
+                    super.activateThen(entityInstance, secondaryEntityInstance);
+                    return true;
+                } else {
+                    super.activateElse(entityInstance, secondaryEntityInstance);
+                    return false;
+                }
+            case BIGGER_THAN:
+                if (compare(property.resolveExpression(entityInstance), value.resolveExpression(entityInstance))) {
+                    super.activateThen(entityInstance, secondaryEntityInstance);
+                    return true;
+                } else {
+                    super.activateElse(entityInstance, secondaryEntityInstance);
+                    return false;
+                }
+            case LESSER_THAN:
+                if (compare(property.resolveExpression(entityInstance) ,entityInstance.getPropertyVal(this.property.resolveExpression(entityInstance).toString()))) {
+                    super.activateThen(entityInstance, secondaryEntityInstance);
+                    return true;
+                } else {
+                    super.activateElse(entityInstance, secondaryEntityInstance);
+                    return false;
+                }
+            default:
+                throw new IllegalArgumentException("Unknown expression type: " + operator);
+        }
+    }
 
     private boolean compare(Object num1, Object num2) {
         try {

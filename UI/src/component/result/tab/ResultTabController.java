@@ -1,19 +1,26 @@
 package component.result.tab;
 
+import component.errormodal.ErrorModalController;
 import component.result.ResultsUpdater;
 import component.result.tab.consistency.ResultByConsistencyController;
 import component.result.tab.entity.ResultByEntityController;
+import component.result.tab.graph.PopulationGraphController;
 import component.result.tab.histogram.ResultByHistogramController;
 import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.Pane;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import javafx.util.Pair;
 import logic.Logic;
 import simulation.Simulation;
@@ -57,13 +64,17 @@ public class ResultTabController {
     private Label simCurrTime;
     @FXML
     private Label simCurrTick;
-
+    @FXML
+    private Button rerunB;
+    @FXML
+    private Button showGraphB;
     private Logic logic;
     private String selectedSimulationGUID;
     private int primeryEntityCount;
     private int seconderyEntityCount;
     private SimulationDC simulationDC;
     private ScheduledExecutorService puller;
+
     public ResultTabController() {
 
     }
@@ -72,6 +83,9 @@ public class ResultTabController {
         this.entityPopulationRB.setDisable(true);
         this.proptyHistogramRB.setDisable(true);
         this.propertyConsistencyRB.setDisable(true);
+        this.resumeB.setDisable(true);
+        this.rerunB.setDisable(true);
+        this.showGraphB.setDisable(true);
 
         primeryCountCol.setCellValueFactory(new PropertyValueFactory<>("key")); // Use "key" for the first value
         secenderyCountCol.setCellValueFactory(new PropertyValueFactory<>("value")); // Use "value" for the second value
@@ -158,7 +172,7 @@ public class ResultTabController {
                 this.stopB.setDisable(false);
                 setRadioButtonDisable(true);
             } else {
-                if(this.simulationDC.getMassege().contains("Finished") || this.simulationDC.getMassege().contains("Stopped")) {
+                if (this.simulationDC.getMassege().contains("Finished") || this.simulationDC.getMassege().contains("Stopped")) {
                     setRadioButtonDisable(false);
                     Platform.runLater(() -> {
                         try {
@@ -204,9 +218,11 @@ public class ResultTabController {
     @FXML
     void stopSimulation(ActionEvent event) {
         SimulationManager.getInstance().getSimulationExecutionManager().stopSimulation(selectedSimulationGUID);
+        this.rerunB.setDisable(false);
         this.pauseB.setDisable(true);
         this.resumeB.setDisable(true);
         this.stopB.setDisable(true);
+        this.showGraphB.setDisable(false);
         this.puller.shutdown();
         update(simulationDC);
         setRadioButtonDisable(false);
@@ -230,5 +246,23 @@ public class ResultTabController {
         simCurrTick.setText(simulationDC.getSimulation().getTick().getValue().toString());
         entitiesTable.getItems().clear();
         entitiesTable.getItems().add(rowData);
+    }
+
+    @FXML
+    public void showGraph(ActionEvent event) throws IOException {
+        FXMLLoader loader = new FXMLLoader();
+        URL url = getClass().getResource("/component/result/tab/graph/graph.fxml");
+        loader.setLocation(url);
+        Parent root = loader.load();
+        PopulationGraphController populationGraphController = loader.getController();
+
+        Stage graphStage = new Stage();
+        graphStage.setAlwaysOnTop(true);
+        populationGraphController.setGraphInputs(simulationDC.getPopulationTickMap());
+        Scene scene = new Scene(root);
+        graphStage.initModality(Modality.APPLICATION_MODAL);
+        graphStage.setResizable(true);
+        graphStage.setScene(scene);
+        graphStage.show();
     }
 }

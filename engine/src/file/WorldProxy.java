@@ -159,16 +159,20 @@ public class WorldProxy {
     }
 
     private Action createAction(PRDAction prdAction) {
-        Action action;
-        if (prdAction.getType().equals(ActionType.REPLACE.toString())) {
-            action = createReplaceAction(prdAction);
-        } else if (prdAction.getType().equals(ActionType.PROXIMITY.toString())) {
-            action = createProximityAction(prdAction);
-        } else {
-            action = createSimpleAction(prdAction);
+        try {
+            Action action;
+            if (prdAction.getType().equals(ActionType.REPLACE.toString())) {
+                action = createReplaceAction(prdAction);
+            } else if (prdAction.getType().equals(ActionType.PROXIMITY.toString())) {
+                action = createProximityAction(prdAction);
+            } else {
+                action = createSimpleAction(prdAction);
+            }
+            actions.add(action);
+            return action;
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to create action: " + e.getMessage());
         }
-        actions.add(action);
-        return action;
     }
 
     private Action createReplaceAction(PRDAction prdAction) {
@@ -335,10 +339,15 @@ public class WorldProxy {
             elseActions = getThenOrElseActions(prdAction.getPRDElse().getPRDAction(), primeryEntity);
         }
         //get condition
-
         Condition condition = getCondList(prdAction.getPRDCondition(), primeryEntity, secendaryEntity);
         condition.setThenActions(thenActions);
         condition.setElseActions(elseActions);
+        if(prdAction.getPRDSecondaryEntity() != null) {
+            condition.setSecenderyEntitySelection(secendaryEntity,
+                    Integer.parseInt(prdAction.getPRDSecondaryEntity().getPRDSelection().getCount()),
+                    getCondList(prdAction.getPRDSecondaryEntity().getPRDSelection().getPRDCondition(), primeryEntity, secendaryEntity));
+        }
+
         return condition;
     }
 

@@ -41,7 +41,15 @@ public abstract class Calculation extends Action {
     }
     @Override
     public boolean doAction(EntityInstance sourceEntityInstance, EntityInstance targetEntityInstance) {
-        throw new UnsupportedOperationException("Set action doesn't support doAction with two entity instances");
+        if(sourceEntityInstance.getName().equals(this.primeryEntity.getName())) {
+            calculate(sourceEntityInstance);
+            return true;
+        } else if (targetEntityInstance.getName().equals(this.primeryEntity.getName())) {
+            calculate(targetEntityInstance);
+            return true;
+        } else {
+            throw new RuntimeException("Calculation action can't be done on this entity");
+        }
     }
 
 }
