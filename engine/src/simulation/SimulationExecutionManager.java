@@ -26,10 +26,6 @@ public class SimulationExecutionManager {
         return simulationDC;
     }
 
-    public Lock getLock() {
-        return threadQueue.getLock();
-    }
-
     public int getTherPoolSize() {
         return threadQueue.getMaxThearsNum();
     }

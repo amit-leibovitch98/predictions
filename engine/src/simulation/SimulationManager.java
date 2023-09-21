@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Observable;
+import java.util.concurrent.Semaphore;
 import java.util.concurrent.locks.Lock;
 
 public class SimulationManager extends Observable {
@@ -21,6 +22,7 @@ public class SimulationManager extends Observable {
     private static SimpleListProperty<Simulation> simulations;
     private static ObservableList<String> simulationGuids;
     private SimulationExecutionManager simulationExecutionManager;
+    private final Semaphore saveLock = new Semaphore(1);
 
     private SimulationManager() {
         this.simulationExecutionManager = new SimulationExecutionManager();
@@ -40,14 +42,13 @@ public class SimulationManager extends Observable {
     }
 
     public void saveResults(Simulation simulation) {
-        Lock lock = simulationExecutionManager.getLock();
-        lock.lock();
-        simulations.add(simulation);
-        Platform.runLater(() -> {
-            // Perform UI updates here, such as adding items to the ListView
-            simulationGuids.add(simulation.getGuid());
-        });
-        lock.unlock();
+        synchronized (saveLock) {
+            simulations.add(simulation);
+            Platform.runLater(() -> {
+                // Perform UI updates here, such as adding items to the ListView
+                simulationGuids.add(simulation.getGuid());
+            });
+        }
     }
 
     public SimpleListProperty<Simulation> getSimulations() {

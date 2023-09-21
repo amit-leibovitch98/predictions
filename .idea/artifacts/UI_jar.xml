@@ -3,6 +3,7 @@
     <output-path>$PROJECT_DIR$/out/artifacts/UI_jar</output-path>
     <root id="archive" name="UI.jar">
       <element id="module-output" name="UI" />
+      <element id="module-output" name="engine" />
     </root>
   </artifact>
 </component>
