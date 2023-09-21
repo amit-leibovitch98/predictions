@@ -4,10 +4,15 @@ import simulation.utils.Type;
 import simulation.utils.expression.CondExpression;
 import simulation.world.detail.entity.Entity;
 import simulation.world.detail.entity.EntityInstance;
+import simulation.world.detail.rule.action.condition.Condition;
 
 public class Divide extends Calculation {
-    public Divide(Entity entity, String resultProp, CondExpression arg1, CondExpression arg2) {
-        super(entity, resultProp, arg1, arg2);
+    public Divide(Entity primeryEntity, String resultProp, CondExpression arg1, CondExpression arg2) {
+        super(primeryEntity, resultProp, arg1, arg2);
+    }
+
+    public Divide(Entity primeryEntity, Entity secenderyEntity, int selectionCount, Condition selectionCond, String resultProp, CondExpression arg1, CondExpression arg2) {
+        super(primeryEntity, secenderyEntity, selectionCount, selectionCond, resultProp, arg1, arg2);
     }
 
     @Override

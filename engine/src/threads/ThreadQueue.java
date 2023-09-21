@@ -25,11 +25,7 @@ public class ThreadQueue {
 
     public void addTask(Simulation simulation) {
         tasksList.add(simulation);
-        this.threadPool.submit(simulation);
-    }
-
-    public Lock getLock() {
-        return this.lock;
+        this.threadPool.execute(simulation);
     }
 
     public void stop() {

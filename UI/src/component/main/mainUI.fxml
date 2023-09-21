@@ -17,150 +17,157 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.RowConstraints?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="650.0" prefWidth="1000.0" stylesheets="@../design.css" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="component.main.MainController">
-   <top>
-      <GridPane BorderPane.alignment="CENTER">
-        <columnConstraints>
-          <ColumnConstraints hgrow="NEVER" minWidth="125.0" prefWidth="125.0" />
-            <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" prefWidth="100.0" />
-          <ColumnConstraints hgrow="NEVER" minWidth="300.0" prefWidth="300.0" />
-        </columnConstraints>
-        <rowConstraints>
-          <RowConstraints minHeight="5.0" prefHeight="5.0" vgrow="NEVER" />
-            <RowConstraints minHeight="25.0" prefHeight="25.0" vgrow="NEVER" />
-          <RowConstraints minHeight="100.0" prefHeight="100.0" vgrow="SOMETIMES" />
-          <RowConstraints minHeight="5.0" prefHeight="5.0" vgrow="NEVER" />
-        </rowConstraints>
-         <children>
-            <HBox GridPane.columnIndex="2" GridPane.rowIndex="1">
+
+<ScrollPane xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="component.main.MainController">
+   <content>
+      <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="650.0" prefWidth="1000.0" stylesheets="@../design.css">
+         <top>
+            <GridPane BorderPane.alignment="CENTER">
+              <columnConstraints>
+                <ColumnConstraints hgrow="NEVER" minWidth="125.0" prefWidth="125.0" />
+                  <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" prefWidth="100.0" />
+                <ColumnConstraints hgrow="NEVER" minWidth="300.0" prefWidth="300.0" />
+              </columnConstraints>
+              <rowConstraints>
+                <RowConstraints minHeight="5.0" prefHeight="5.0" vgrow="NEVER" />
+                  <RowConstraints minHeight="25.0" prefHeight="25.0" vgrow="NEVER" />
+                <RowConstraints minHeight="100.0" prefHeight="100.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="5.0" prefHeight="5.0" vgrow="NEVER" />
+              </rowConstraints>
                <children>
-                  <Label fx:id="QueueManagerLabel" text="Queue Manager:" />
-                  <Label fx:id="threadsNumLabel" text="(&lt;MaxThreads&gt;)">
+                  <HBox GridPane.columnIndex="2" GridPane.rowIndex="1">
+                     <children>
+                        <Label fx:id="QueueManagerLabel" text="Queue Manager:" />
+                        <Label fx:id="threadsNumLabel" text="(&lt;MaxThreads&gt;)">
+                           <padding>
+                              <Insets left="3.0" />
+                           </padding>
+                           <HBox.margin>
+                              <Insets />
+                           </HBox.margin>
+                        </Label>
+                     </children>
                      <padding>
-                        <Insets left="3.0" />
+                        <Insets top="5.0" />
                      </padding>
-                     <HBox.margin>
-                        <Insets />
-                     </HBox.margin>
-                  </Label>
+                  </HBox>
+                  <ListView fx:id="queueList" prefHeight="200.0" prefWidth="500.0" GridPane.columnIndex="2" GridPane.rowIndex="2">
+                     <GridPane.margin>
+                        <Insets right="10.0" />
+                     </GridPane.margin>
+                  </ListView>
+                  <Label fx:id="pathLabel" maxWidth="1.7976931348623157E308" text="&lt;File Path&gt;" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="2" />
+                  <Button fx:id="uploadFileB" minWidth="100.0" mnemonicParsing="false" onAction="#uploadFileB" text="Upload File" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER" />
                </children>
-               <padding>
-                  <Insets top="5.0" />
-               </padding>
-            </HBox>
-            <ListView fx:id="queueList" prefHeight="200.0" prefWidth="500.0" GridPane.columnIndex="2" GridPane.rowIndex="2">
-               <GridPane.margin>
-                  <Insets right="10.0" />
-               </GridPane.margin></ListView>
-            <Label fx:id="pathLabel" maxWidth="1.7976931348623157E308" text="&lt;File Path&gt;" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="2" />
-            <Button fx:id="uploadFileB" minWidth="100.0" mnemonicParsing="false" onAction="#uploadFileB" text="Upload File" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER" />
-         </children>
-      </GridPane>
-   </top>
-   <center>
-      <TabPane prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
-        <tabs>
-          <Tab fx:id="detailsTab" text="Simulation Details">
-            <content>
-              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                     <children>
-                        <GridPane layoutX="133.0" layoutY="111.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                          <columnConstraints>
-                            <ColumnConstraints hgrow="NEVER" minWidth="10.0" prefWidth="10.0" />
-                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                            <ColumnConstraints hgrow="NEVER" minWidth="10.0" prefWidth="10.0" />
-                          </columnConstraints>
-                          <rowConstraints>
-                            <RowConstraints minHeight="10.0" prefHeight="10.0" vgrow="NEVER" />
-                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                            <RowConstraints minHeight="10.0" prefHeight="10.0" vgrow="NEVER" />
-                          </rowConstraints>
+            </GridPane>
+         </top>
+         <center>
+            <TabPane prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
+              <tabs>
+                <Tab fx:id="detailsTab" text="Simulation Details">
+                  <content>
+                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                            <children>
-                              <TreeView fx:id="componentsTree" onMouseClicked="#componentTreeItemRequested" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                              <Pane fx:id="paneComponentDetail" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.rowIndex="1" GridPane.valignment="CENTER">
-                                 <GridPane.margin>
-                                    <Insets />
-                                 </GridPane.margin>
+                              <GridPane layoutX="133.0" layoutY="111.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                <columnConstraints>
+                                  <ColumnConstraints hgrow="NEVER" minWidth="10.0" prefWidth="10.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                  <ColumnConstraints hgrow="NEVER" minWidth="10.0" prefWidth="10.0" />
+                                </columnConstraints>
+                                <rowConstraints>
+                                  <RowConstraints minHeight="10.0" prefHeight="10.0" vgrow="NEVER" />
+                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                  <RowConstraints minHeight="10.0" prefHeight="10.0" vgrow="NEVER" />
+                                </rowConstraints>
                                  <children>
-                                    <Label fx:id="componentDetailLabel" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="&lt;component details&gt;">
-                                       <padding>
-                                          <Insets left="50.0" />
-                                       </padding>
-                                    </Label>
+                                    <TreeView fx:id="componentsTree" onMouseClicked="#componentTreeItemRequested" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                    <Pane fx:id="paneComponentDetail" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.rowIndex="1" GridPane.valignment="CENTER">
+                                       <GridPane.margin>
+                                          <Insets />
+                                       </GridPane.margin>
+                                       <children>
+                                          <Label fx:id="componentDetailLabel" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="&lt;component details&gt;">
+                                             <padding>
+                                                <Insets left="50.0" />
+                                             </padding>
+                                          </Label>
+                                       </children>
+                                    </Pane>
                                  </children>
-                              </Pane>
+                              </GridPane>
                            </children>
-                        </GridPane>
-                     </children>
-                  </AnchorPane>
-            </content>
-          </Tab>
-          <Tab fx:id="newExecTab" text="Start New Execution">
-            <content>
-              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                     <children>
-                        <GridPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                           <columnConstraints>
-                              <ColumnConstraints hgrow="NEVER" minWidth="10.0" prefWidth="10.0" />
-                              <ColumnConstraints hgrow="NEVER" minWidth="80.0" prefWidth="80.0" />
-                              <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" maxWidth="1.7976931348623157E308" minWidth="197.0" prefWidth="410.0" />
-                              <ColumnConstraints halignment="CENTER" hgrow="NEVER" maxWidth="1.7976931348623157E308" minWidth="5.0" prefWidth="5.0" />
-                              <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" maxWidth="1.7976931348623157E308" minWidth="296.0" prefWidth="408.0" />
-                              <ColumnConstraints hgrow="NEVER" maxWidth="190.0" minWidth="80.0" prefWidth="79.0" />
-                              <ColumnConstraints hgrow="NEVER" minWidth="10.0" prefWidth="10.0" />
-                           </columnConstraints>
-                           <rowConstraints>
-                              <RowConstraints minHeight="10.0" prefHeight="10.0" vgrow="NEVER" />
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="ALWAYS" />
-                              <RowConstraints minHeight="5.0" prefHeight="5.0" vgrow="NEVER" />
-                              <RowConstraints minHeight="60.0" prefHeight="60.0" vgrow="NEVER" />
-                              <RowConstraints minHeight="10.0" prefHeight="10.0" vgrow="NEVER" />
-                           </rowConstraints>
+                        </AnchorPane>
+                  </content>
+                </Tab>
+                <Tab fx:id="newExecTab" text="Start New Execution">
+                  <content>
+                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                            <children>
-                              <Button fx:id="clearB" maxHeight="1.7976931348623157E308" minWidth="80.0" mnemonicParsing="false" onAction="#clearInputs" prefWidth="80.0" text="Clear" GridPane.columnIndex="1" GridPane.rowIndex="3" GridPane.valignment="CENTER">
-                                 <GridPane.margin>
-                                    <Insets />
-                                 </GridPane.margin>
-                              </Button>
-                              <Button fx:id="startB" maxHeight="1.7976931348623157E308" maxWidth="80.0" minWidth="80.0" mnemonicParsing="false" onAction="#startSimulation" text="Start" GridPane.columnIndex="5" GridPane.halignment="RIGHT" GridPane.rowIndex="3" GridPane.valignment="CENTER">
-                                 <GridPane.margin>
-                                    <Insets />
-                                 </GridPane.margin>
-                              </Button>
-                              <ScrollPane GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="1">
-                                 <content>
-                                    <FlowPane fx:id="entitiesPopulationsInputs" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
-                                 </content>
-                              </ScrollPane>
-                              <ScrollPane GridPane.columnIndex="4" GridPane.columnSpan="2" GridPane.rowIndex="1">
-                                 <content>
-                                    <FlowPane fx:id="envVarsInputs" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
-                                 </content>
-                              </ScrollPane>
+                              <GridPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                 <columnConstraints>
+                                    <ColumnConstraints hgrow="NEVER" minWidth="10.0" prefWidth="10.0" />
+                                    <ColumnConstraints hgrow="NEVER" minWidth="80.0" prefWidth="80.0" />
+                                    <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" maxWidth="1.7976931348623157E308" minWidth="197.0" prefWidth="410.0" />
+                                    <ColumnConstraints halignment="CENTER" hgrow="NEVER" maxWidth="1.7976931348623157E308" minWidth="5.0" prefWidth="5.0" />
+                                    <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" maxWidth="1.7976931348623157E308" minWidth="296.0" prefWidth="408.0" />
+                                    <ColumnConstraints hgrow="NEVER" maxWidth="190.0" minWidth="80.0" prefWidth="79.0" />
+                                    <ColumnConstraints hgrow="NEVER" minWidth="10.0" prefWidth="10.0" />
+                                 </columnConstraints>
+                                 <rowConstraints>
+                                    <RowConstraints minHeight="10.0" prefHeight="10.0" vgrow="NEVER" />
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="ALWAYS" />
+                                    <RowConstraints minHeight="5.0" prefHeight="5.0" vgrow="NEVER" />
+                                    <RowConstraints minHeight="60.0" prefHeight="60.0" vgrow="NEVER" />
+                                    <RowConstraints minHeight="10.0" prefHeight="10.0" vgrow="NEVER" />
+                                 </rowConstraints>
+                                 <children>
+                                    <Button fx:id="clearB" maxHeight="1.7976931348623157E308" minWidth="80.0" mnemonicParsing="false" onAction="#clearInputs" prefWidth="80.0" text="Clear" GridPane.columnIndex="1" GridPane.rowIndex="3" GridPane.valignment="CENTER">
+                                       <GridPane.margin>
+                                          <Insets />
+                                       </GridPane.margin>
+                                    </Button>
+                                    <Button fx:id="startB" maxHeight="1.7976931348623157E308" maxWidth="80.0" minWidth="80.0" mnemonicParsing="false" onAction="#startSimulation" text="Start" GridPane.columnIndex="5" GridPane.halignment="RIGHT" GridPane.rowIndex="3" GridPane.valignment="CENTER">
+                                       <GridPane.margin>
+                                          <Insets />
+                                       </GridPane.margin>
+                                    </Button>
+                                    <ScrollPane GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="1">
+                                       <content>
+                                          <FlowPane fx:id="entitiesPopulationsInputs" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
+                                       </content>
+                                    </ScrollPane>
+                                    <ScrollPane GridPane.columnIndex="4" GridPane.columnSpan="2" GridPane.rowIndex="1">
+                                       <content>
+                                          <FlowPane fx:id="envVarsInputs" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
+                                       </content>
+                                    </ScrollPane>
+                                 </children>
+                              </GridPane>
                            </children>
-                        </GridPane>
-                     </children>
-                  </AnchorPane>
-            </content>
-          </Tab>
-            <Tab fx:id="resultsTab" text="Results">
-               <content>
-                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                     <children>
-                        <TabPane fx:id="simulationsTabsPane" layoutX="168.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                          <tabs>
-                            <Tab text="Untitled Tab 1">
-                              <content>
-                                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
-                              </content>
-                            </Tab>
-                          </tabs>
-                        </TabPane>
-                     </children></AnchorPane>
-               </content>
-            </Tab>
-        </tabs>
-      </TabPane>
-   </center>
-</BorderPane>
+                        </AnchorPane>
+                  </content>
+                </Tab>
+                  <Tab fx:id="resultsTab" text="Results">
+                     <content>
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                           <children>
+                              <TabPane fx:id="simulationsTabsPane" layoutX="168.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                <tabs>
+                                  <Tab text="Untitled Tab 1">
+                                    <content>
+                                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                                    </content>
+                                  </Tab>
+                                </tabs>
+                              </TabPane>
+                           </children>
+                        </AnchorPane>
+                     </content>
+                  </Tab>
+              </tabs>
+            </TabPane>
+         </center>
+      </BorderPane>
+   </content>
+</ScrollPane>

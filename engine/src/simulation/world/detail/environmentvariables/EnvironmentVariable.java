@@ -64,6 +64,10 @@ public class EnvironmentVariable implements ISimulationComponent {
                 case BOOLEAN:
                     try {
                         if (value != null) {
+                            if(value instanceof Boolean) {
+                                this.value = value;
+                                return;
+                            }
                             if (value.equals("false")) {
                                 this.value = false;
                             } else if (value.equals("true")) {

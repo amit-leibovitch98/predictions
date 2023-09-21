@@ -6,7 +6,7 @@ public enum ExpressionType {
     ENVIROMENT("environment"),
     RANDOM("random"),
     EVALUATE("evaluate"),
-    PRECENTAGE("precentage"),
+    PERCENT("precentage"),
     TICKS("ticks");
 
     private final String name;
@@ -27,8 +27,8 @@ public enum ExpressionType {
                 return RANDOM;
             case "evaluate":
                 return EVALUATE;
-            case "precentage":
-                return PRECENTAGE;
+            case "percent":
+                return PERCENT;
             case "ticks":
                 return TICKS;
             default:

@@ -44,7 +44,7 @@
                 <Insets top="10.0" />
             </GridPane.margin>
         </Button>
-        <HBox prefHeight="100.0" prefWidth="200.0" spacing="15.0" GridPane.columnIndex="3" GridPane.columnSpan="3" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="CENTER">
+        <HBox prefWidth="400.0" spacing="15.0" GridPane.columnIndex="3" GridPane.columnSpan="3" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.rowSpan="2" GridPane.valignment="CENTER">
             <children>
                 <Label text="See results by:" />
                 <RadioButton fx:id="entityPopulationRB" mnemonicParsing="false" onAction="#showResultByEntity" selected="true" text="Entity Population">
@@ -61,9 +61,14 @@
                     </HBox.margin>
                 </RadioButton>
                 <RadioButton fx:id="propertyConsistencyRB" mnemonicParsing="false" onAction="#showResultByConsistency" text="Property Consistency" toggleGroup="$showRusltBy" />
+            <Button fx:id="showGraphB" mnemonicParsing="false" onAction="#showGraph" text="Show Graph">
+               <HBox.margin>
+                  <Insets top="-2.0" />
+               </HBox.margin>
+            </Button>
             </children>
             <GridPane.margin>
-                <Insets />
+                <Insets top="10.0" />
             </GridPane.margin>
             <padding>
                 <Insets top="5.0" />

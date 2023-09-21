@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.chart.LineChart?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="component.result.tab.graph.PopulationGraphController">
+   <center>
+      <ScrollPane BorderPane.alignment="CENTER">
+         <content>
+            <LineChart fx:id="graph" prefHeight="393.0" prefWidth="589.0" title="Population By Tick">
+              <xAxis>
+                <NumberAxis fx:id="ticksAxis" side="BOTTOM" />
+              </xAxis>
+              <yAxis>
+                <NumberAxis fx:id="populationAxis" side="LEFT" />
+              </yAxis>
+            </LineChart>
+         </content>
+      </ScrollPane>
+   </center>
+   <left>
+      <HBox alignment="CENTER" BorderPane.alignment="CENTER_RIGHT" />
+   </left>
+</BorderPane>

@@ -155,6 +155,7 @@ public class World extends WorldDef implements Cloneable{
             throw new RuntimeException("Entity " + entity.getName() + " not found");
         }
         count = countAliveOfEntity(entity);
+        if(count == 0) return 0;
         return sum / count;
     }
 

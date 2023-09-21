@@ -225,6 +225,7 @@ public class Logic {
                     String envVarName = envVarNameLabel.getText();
                     Object envVarValue = envVarValueInput.getText();
                     for (EnvironmentVariable envVar : engine.getEnvironmentVariables()) {
+                        if(!envVar.getName().equals(envVarName)) continue;
                         try {
                             switch (envVar.getType()) {
                                 case DECIMAL:
@@ -241,7 +242,13 @@ public class Logic {
                                     envVarValue = envVarValue.toString();
                                     break;
                                 case BOOLEAN:
-                                    envVarValue = Boolean.parseBoolean(envVarValue.toString());
+                                    if (envVarValue.toString().equals("true")) {
+                                        envVarValue = true;
+                                    } else if (envVarValue.toString().equals("false")) {
+                                        envVarValue = false;
+                                    } else {
+                                        throw new IllegalArgumentException("The value of " + envVarName + " must be a " + envVar.getType());
+                                    }
                                     break;
                             }
                         } catch (NumberFormatException e) {

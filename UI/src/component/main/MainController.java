@@ -103,6 +103,7 @@ public class MainController {
 
     @FXML
     private void uploadFileB(ActionEvent event) {
+        detailsTab.getTabPane().getSelectionModel().select(0);
         FileChooser fileChooser = new FileChooser();
         fileChooser.setSelectedExtensionFilter(new FileChooser.ExtensionFilter("XML files", "*.xml"));
         File file = fileChooser.showOpenDialog(primaryStage);
@@ -116,6 +117,8 @@ public class MainController {
             logic.readFile(file.getPath());
         } catch (Exception e) {
             raiseErrorModal(e.getMessage());
+            reset();
+            return;
         }
         logic.updateTreeView(componentsTree);
         updateNewExecutionTab();

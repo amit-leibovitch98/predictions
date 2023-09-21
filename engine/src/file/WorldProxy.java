@@ -55,7 +55,7 @@ public class WorldProxy {
         PRDWorld.PRDGrid prdGrid = prdWorld.getPRDGrid();
         int rows = prdGrid.getRows();
         int columns = prdGrid.getColumns();
-        if(rows <= 10 || columns <= 10 || rows >= 100 || columns >= 100) {
+        if (rows < 10 || columns < 10 || rows > 100 || columns > 100) {
             throw new RuntimeException("Grid size must be between 10 and 100");
         }
         return new Grid(prdGrid.getRows(), prdGrid.getColumns());
@@ -63,7 +63,7 @@ public class WorldProxy {
 
     private List<EnvironmentVariable> getEnvironmentVariableList() {
         List<EnvironmentVariable> environmentVariables = new ArrayList<EnvironmentVariable>();
-        PRDEnvironment  prdEnvironments = prdWorld.getPRDEnvironment();
+        PRDEnvironment prdEnvironments = prdWorld.getPRDEnvironment();
 
         for (PRDEnvProperty prdEnvProperty : prdEnvironments.getPRDEnvProperty()) {
             PRDRange prdRange = prdEnvProperty.getPRDRange();
@@ -159,16 +159,20 @@ public class WorldProxy {
     }
 
     private Action createAction(PRDAction prdAction) {
-        Action action;
-        if (prdAction.getType().equals(ActionType.REPLACE.toString())) {
-            action = createReplaceAction(prdAction);
-        } else if (prdAction.getType().equals(ActionType.PROXIMITY.toString())) {
-            action = createProximityAction(prdAction);
-        } else {
-            action = createSimpleAction(prdAction);
+        try {
+            Action action;
+            if (prdAction.getType().equals(ActionType.REPLACE.toString())) {
+                action = createReplaceAction(prdAction);
+            } else if (prdAction.getType().equals(ActionType.PROXIMITY.toString())) {
+                action = createProximityAction(prdAction);
+            } else {
+                action = createSimpleAction(prdAction);
+            }
+            actions.add(action);
+            return action;
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to create action: " + e.getMessage());
         }
-        actions.add(action);
-        return action;
     }
 
     private Action createReplaceAction(PRDAction prdAction) {
@@ -213,32 +217,100 @@ public class WorldProxy {
         return new Proximity(sourceEntity, targetEntity, new CondExpression(prdAction.getPRDEnvDepth().getOf(), this.envVars, this.entities), subActions);
     }
 
-    private Action createSimpleAction(PRDAction prdAction) {
-        Entity entity = null;
+    private Action createSimpleActionWithSecendaryEntity(PRDAction prdAction) {
+        Entity primeryEntity = null;
         for (Entity currEntity : this.entities) {
             if (currEntity.getName().equals(prdAction.getEntity())) {
-                entity = currEntity;
+                primeryEntity = currEntity;
             }
         }
 
+        Entity secenderyEntity = null;
+        for (Entity currEntity : this.entities) {
+            if (currEntity.getName().equals(prdAction.getPRDSecondaryEntity().getEntity())) {
+                secenderyEntity = currEntity;
+            }
+        }
+
+        PRDAction.PRDSecondaryEntity.PRDSelection prdSelection = prdAction.getPRDSecondaryEntity().getPRDSelection();
         switch (ActionType.fromString(prdAction.getType())) {
             case INCREASE:
-                return new Increase(entity, prdAction.getProperty(), new CondExpression(prdAction.getBy(), envVars, entities));
+                return new Increase(primeryEntity, secenderyEntity, Integer.parseInt(prdSelection.getCount()),
+                        getCondList(prdSelection.getPRDCondition(), primeryEntity, secenderyEntity),
+                        prdAction.getProperty(),
+                        new CondExpression(prdAction.getBy(), envVars, entities));
             case DECREASE:
-                return new Decrease(entity, prdAction.getProperty(), new CondExpression(prdAction.getBy(), envVars, entities));
+                return new Decrease(primeryEntity, secenderyEntity, Integer.parseInt(prdSelection.getCount()),
+                        createConditions(prdAction, secenderyEntity, primeryEntity, this.envVars),
+                        prdAction.getProperty(),
+                        new CondExpression(prdAction.getBy(), envVars, entities));
             case CALCULATION:
-                return createCalculation(prdAction, entity);
+                return createCalculation(prdAction, primeryEntity, secenderyEntity);
             case CONDITION:
-                return createConditions(prdAction, entity, getEnvironmentVariableList());
+                return createConditions(prdAction, primeryEntity, secenderyEntity, getEnvironmentVariableList());
             case SET:
-                return new Set(entity, prdAction.getProperty(), new CondExpression(prdAction.getValue(), envVars, entities));
+                return new Set(primeryEntity, secenderyEntity, Integer.parseInt(prdSelection.getCount()),
+                        getCondList(prdSelection.getPRDCondition(), primeryEntity, secenderyEntity), prdAction.getProperty(),
+                        new CondExpression(prdAction.getValue(), envVars, entities));
             case KILL:
-                return new Kill(entity);
+                return new Kill(primeryEntity, secenderyEntity, Integer.parseInt(prdSelection.getCount()),
+                        getCondList(prdSelection.getPRDCondition(), primeryEntity, secenderyEntity));
             default:
                 throw new RuntimeException("Unknown action type");
         }
     }
 
+    private Action createSimpleAction(PRDAction prdAction) {
+        if (prdAction.getPRDSecondaryEntity() != null) {
+            return createSimpleActionWithSecendaryEntity(prdAction);
+        }
+
+        Entity primeryEntity = null;
+        for (Entity currEntity : this.entities) {
+            if (currEntity.getName().equals(prdAction.getEntity())) {
+                primeryEntity = currEntity;
+            }
+        }
+
+        switch (ActionType.fromString(prdAction.getType())) {
+            case INCREASE:
+                return new Increase(primeryEntity, prdAction.getProperty(), new CondExpression(prdAction.getBy(), envVars, entities));
+            case DECREASE:
+                return new Decrease(primeryEntity, prdAction.getProperty(), new CondExpression(prdAction.getBy(), envVars, entities));
+            case CALCULATION:
+                return createCalculation(prdAction, primeryEntity);
+            case CONDITION:
+                return createConditions(prdAction, primeryEntity, null, getEnvironmentVariableList());
+            case SET:
+                return new Set(primeryEntity, prdAction.getProperty(), new CondExpression(prdAction.getValue(), envVars, entities));
+            case KILL:
+                return new Kill(primeryEntity);
+            default:
+                throw new RuntimeException("Unknown action type");
+        }
+
+    }
+
+    private Calculation createCalculation(PRDAction prdAction, Entity primeryEntity, Entity secendeyEntity) {
+        PRDAction.PRDSecondaryEntity.PRDSelection prdSelection = prdAction.getPRDSecondaryEntity().getPRDSelection();
+        Calculation calc = null;
+        if (prdAction.getPRDDivide() != null) {
+            calc = new Divide(primeryEntity, secendeyEntity, Integer.parseInt(prdSelection.getCount()),
+                    getCondList(prdSelection.getPRDCondition(), primeryEntity, secendeyEntity),
+                    prdAction.getResultProp(),
+                    new CondExpression(prdAction.getPRDDivide().getArg1(), this.envVars, this.entities),
+                    new CondExpression(prdAction.getPRDDivide().getArg2(), this.envVars, this.entities));
+        } else if (prdAction.getPRDMultiply() != null) {
+            calc = new Multiply(primeryEntity, secendeyEntity, Integer.parseInt(prdSelection.getCount()),
+                    getCondList(prdSelection.getPRDCondition(), primeryEntity, secendeyEntity),
+                    prdAction.getResultProp(),
+                    new CondExpression(prdAction.getPRDMultiply().getArg1(), this.envVars, this.entities),
+                    new CondExpression(prdAction.getPRDMultiply().getArg2(), this.envVars, this.entities));
+        } else {
+            throw new RuntimeException("Unknown calculation type");
+        }
+        return calc;
+    }
 
     private Calculation createCalculation(PRDAction prdAction, Entity entity) {
         Calculation calc = null;
@@ -256,25 +328,37 @@ public class WorldProxy {
         return calc;
     }
 
-    private Condition createConditions(PRDAction prdAction, Entity entity, List<EnvironmentVariable> envVars) {
+    private Condition createConditions(PRDAction prdAction, Entity primeryEntity, Entity secendaryEntity, List<EnvironmentVariable> envVars) {
         List<Action> thenActions = null, elseActions = null;
         //get then
         if (prdAction.getPRDThen() != null) {
-            thenActions = getThenOrElseActions(prdAction.getPRDThen().getPRDAction(), entity);
+            thenActions = getThenOrElseActions(prdAction.getPRDThen().getPRDAction(), primeryEntity);
         }
         //get else
         if (prdAction.getPRDElse() != null) {
-            elseActions = getThenOrElseActions(prdAction.getPRDElse().getPRDAction(), entity);
+            elseActions = getThenOrElseActions(prdAction.getPRDElse().getPRDAction(), primeryEntity);
         }
         //get condition
-        Condition condition = getCondList(prdAction.getPRDCondition(), entity);
+        Condition condition = getCondList(prdAction.getPRDCondition(), primeryEntity, secendaryEntity);
         condition.setThenActions(thenActions);
         condition.setElseActions(elseActions);
+        if(prdAction.getPRDSecondaryEntity() != null) {
+            condition.setSecenderyEntitySelection(secendaryEntity,
+                    Integer.parseInt(prdAction.getPRDSecondaryEntity().getPRDSelection().getCount()),
+                    getCondList(prdAction.getPRDSecondaryEntity().getPRDSelection().getPRDCondition(), primeryEntity, secendaryEntity));
+        }
+
         return condition;
     }
 
-    private Condition getCondList(PRDCondition prdCond, Entity entity) {
+    private Condition getCondList(PRDCondition prdCond, Entity primeryEntity, Entity secenderyEntity) {
         if (prdCond.getSingularity().equals("single")) {
+            Entity entity;
+            if (prdCond.getEntity().equals(primeryEntity.getName())) {
+                entity = primeryEntity;
+            } else {
+                entity = secenderyEntity;
+            }
             return new SimpleCondition(
                     entity,
                     new CondExpression(prdCond.getProperty(), envVars, entities),
@@ -283,9 +367,9 @@ public class WorldProxy {
         } else if (prdCond.getSingularity().equals("multiple")) {
             List<ICond> conditions = new ArrayList<ICond>();
             for (PRDCondition condition : prdCond.getPRDCondition()) {
-                conditions.add(getCondList(condition, entity));
+                conditions.add(getCondList(condition, primeryEntity, secenderyEntity));
             }
-            return new ComplexCondition(conditions, entity, prdCond.getLogical());
+            return new ComplexCondition(conditions, primeryEntity, prdCond.getLogical());
         } else {
             throw new RuntimeException("Unknown condition type" + prdCond.getSingularity());
         }

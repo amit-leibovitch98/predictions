@@ -13,9 +13,12 @@ import simulation.world.detail.rule.Rule;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.Semaphore;
 
 public class Simulation implements Runnable, Cloneable {
-    private final Object pauseLock = new Object();
     private String massege;
     private World world;
     private IntegerProperty tick;
@@ -23,25 +26,27 @@ public class Simulation implements Runnable, Cloneable {
     private Map<String, Integer> retrivedEntitiesPopulation;
     private Map<String, Object> retrivedEnvVarsValues;
     private BooleanProperty isRunning;
-    private boolean isPaused;
-    private boolean isStopped;
+    private AtomicBoolean isPaused;
+    private AtomicBoolean isStopped;
     private float currTime;
+    private final Semaphore pauseLock = new Semaphore(1);
+    private ExecutorService managerThread;
 
     public Simulation(World world) {
-        this.isStopped = false;
-        this.isPaused = false;
+        this.isStopped = new AtomicBoolean(false);
+        this.isPaused = new AtomicBoolean(false);
         this.isRunning = new SimpleBooleanProperty();
-        Platform.runLater(() -> this.isRunning.setValue(false));
+        Platform.runLater(() -> this.isRunning.set(false));
         this.massege = "Queueing...";
         this.world = world;
         this.guid = UUID.randomUUID().toString().substring(0, 8);
         this.tick = new SimpleIntegerProperty(0);
         this.currTime = 0;
+        managerThread = Executors.newSingleThreadExecutor();
     }
 
     public void init() {
         this.massege = "Retrieving data...";
-
         if (retrivedEntitiesPopulation == null || retrivedEnvVarsValues == null) {
             throw new IllegalStateException("can't init- retrievedEntitiesPopulation or retrievedEnvVarsValues is null");
         }
@@ -65,12 +70,12 @@ public class Simulation implements Runnable, Cloneable {
 
     @Override
     public void run() {
-        Platform.runLater(() -> this.isRunning.setValue(true));
-        start();
+        Platform.runLater(() -> this.isRunning.set(true));
+        managerThread.execute(this::start);
         this.massege = "Saving results...";
         SimulationManager.getInstance().saveResults(this);
         this.massege = "Finished!";
-        Platform.runLater(() -> this.isRunning.setValue(false));
+        Platform.runLater(() -> this.isRunning.set(false));
     }
 
     public void start() {
@@ -79,9 +84,9 @@ public class Simulation implements Runnable, Cloneable {
         float elapsedTimeSecs = 0;
         while (checkIfSimulationIsFinished(elapsedTimeSecs, tick.getValue())) {
             synchronized (pauseLock) {
-                if (isPaused) {
+                if (isPaused.get()) {
                     try {
-                        pauseLock.wait();
+                        pauseLock.wait(100);
                     } catch (InterruptedException e) {
                         Thread.currentThread().interrupt();
                     }
@@ -124,8 +129,7 @@ public class Simulation implements Runnable, Cloneable {
                         try {
                             rule.activateRule(primeryEntityInstance, tick.getValue(), world.getSeconderyEntityInstances());
                         } catch (Exception e) {
-                            System.out.println("Rule " + rule.getName() + " failed to activate: " + e.getMessage() + " --> Simulation failed.");
-                            e.printStackTrace();
+                            System.out.println("Rule " + rule.getName() + " failed to activate: " + e.getMessage() + " --> Simulation failed on tick " + tick.getValue() + ".");
                             System.exit(1);
                         }
                     }
@@ -141,7 +145,7 @@ public class Simulation implements Runnable, Cloneable {
             return true;
         } else if (this.world.getTerminationConds().getByTicks() != null && this.world.getTerminationConds().getByTicks() >= tick) {
             return true;
-        } else if (this.world.getTerminationConds().isInteractive() && !this.isStopped) {
+        } else if (this.world.getTerminationConds().isInteractive() && !this.isStopped.get()) {
             return true;
         } else {
             return false;
@@ -174,22 +178,18 @@ public class Simulation implements Runnable, Cloneable {
     }
 
     public synchronized void pauseSimulation() {
-        isPaused = true;
+        isPaused.set(true);
         this.massege = "Paused";
     }
 
     public synchronized void resumeSimulation() {
-        isPaused = false;
-        this.massege = "Running...";
-        synchronized (pauseLock) {
-            pauseLock.notifyAll();
-        }
+        isPaused.set(false);
     }
 
     public synchronized void stopSimulation() {
         this.massege = "Stopped";
         Platform.runLater(() -> this.isRunning.setValue(false));
-        isStopped = true;
+        isStopped.set(true);
     }
 
     @Override
@@ -201,5 +201,9 @@ public class Simulation implements Runnable, Cloneable {
 
     public Float getcurrTime() {
         return currTime;
+    }
+
+    public Semaphore getPauseLock() {
+        return pauseLock;
     }
 }
