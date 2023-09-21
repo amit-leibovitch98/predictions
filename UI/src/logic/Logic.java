@@ -154,7 +154,7 @@ public class Logic {
     }
 
     public SimulationDC startSimulation(ListView<String> queueList, Map<String, Integer> entitiesPopulation, Map<String, Object> envVarsVals) {
-        if (this.queueList != null) {
+        if (this.queueList == null) {
             this.queueList = queueList;
         }
         SimulationDC simulationDC = engine.startSimulation(entitiesPopulation, envVarsVals);
@@ -317,13 +317,9 @@ public class Logic {
         return res;
     }
 
-    public void setResultTabController(ResultTabController resultTabController) {
-        this.resultTabController = resultTabController;
-    }
-
     public SimulationDC rerunSimulation(String guid) {
         SimulationDC simulationDC = engine.rerunSimulation(guid);
-        queueList.getItems().add(simulationDC.getSimulation().getGuid());
+        this.queueList.getItems().add(simulationDC.getSimulation().getGuid());
         mainController.updateSimulationResultsTab(simulationDC);
         return simulationDC;
     }

@@ -46,9 +46,6 @@ public class MainController {
     @FXML
     private ListView<String> queueList;
     @FXML
-    private Button rerunB;
-
-    @FXML
     private Tab resultsTab;
     @FXML
     private ToggleGroup showRusltBy;
@@ -64,6 +61,8 @@ public class MainController {
     private Button uploadFileB;
     @FXML
     private Pane paneComponentDetail;
+    @FXML
+    private TabPane mainTabPane;
 
     private StringProperty selectedSimulationGUID;
     private StringProperty path;
@@ -103,7 +102,10 @@ public class MainController {
 
     @FXML
     private void uploadFileB(ActionEvent event) {
-        detailsTab.getTabPane().getSelectionModel().select(0);
+        if(path.getValue() != null) {
+            mainTabPane.getSelectionModel().select(detailsTab);
+            reset();
+        }
         FileChooser fileChooser = new FileChooser();
         fileChooser.setSelectedExtensionFilter(new FileChooser.ExtensionFilter("XML files", "*.xml"));
         File file = fileChooser.showOpenDialog(primaryStage);
@@ -125,8 +127,12 @@ public class MainController {
     }
 
     private void reset(){
-        resultsTab.getTabPane().getTabs().clear();
-        resultsTab.setDisable(true);
+        if (simulationsTabsPane != null) {
+            simulationsTabsPane.getTabs().clear();
+            resultsTab.setDisable(true);
+        }
+        if (simulationsTabsPane != null) simulationsTabsPane.getTabs().clear();
+        queueList.getItems().clear();
         logic.reset();
     }
 
