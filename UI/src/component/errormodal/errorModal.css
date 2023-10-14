@@ -1,0 +1,22 @@
+/* errorModal.css */
+
+/* Style for the GridPane (the modal container) */
+#errorModal {
+    -fx-background-color: #f2f2f2; /* Light gray background */
+    -fx-border-color: #dcdcdc; /* Border color */
+    -fx-border-width: 1px;
+    -fx-border-radius: 5px;
+    -fx-padding: 10px;
+}
+
+/* Style for the Label displaying the error message */
+#errorMassegeLabel {
+    -fx-font-size: 18px;
+    -fx-alignment: center; /* Center align the text */
+}
+
+/* Style for the OK Button */
+#okB {
+    -fx-font-size: 16px;
+    -fx-pref-width: 100px; /* Set the preferred width */
+}

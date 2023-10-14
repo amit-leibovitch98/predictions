@@ -2,7 +2,6 @@ package simulation.world.detail.entity;
 
 import simulation.utils.Range;
 import simulation.utils.Type;
-import simulation.utils.Value;
 
 import java.util.*;
 
@@ -22,9 +21,6 @@ public class EntityProperty {
     private void initialValue(String initialValue) {
         if (initialValue != null) {
             switch (type) {
-                case DECIMAL:
-                    this.initialValue = Integer.parseInt(initialValue);
-                    break;
                 case FLOAT:
                     this.initialValue = Float.parseFloat(initialValue);
                     break;
@@ -61,9 +57,9 @@ public class EntityProperty {
     public Object getRandomInitValue() {
         switch (type) {
             case DECIMAL:
-                return range.getRandomIntValue();
+                return range.getRandomValue(Type.DECIMAL);
             case FLOAT:
-                return range.getRandomValue();
+                return range.getRandomValue(Type.FLOAT);
             case BOOLEAN:
                 return getRandomBooleanValue();
             case STRING:
@@ -89,15 +85,28 @@ public class EntityProperty {
     }
 
     public Map<Object, Integer> getHistogram(List<EntityInstance> entityInstances) {
-        Map<Object, Integer> hostogram= new HashMap<>();
+        Map<Object, Integer> histogram= new HashMap<>();
+        if(this.type == Type.BOOLEAN) {
+            histogram.put(true, 0);
+            histogram.put(false, 0);
+        }
         for (EntityInstance entityInstance : entityInstances) {
+            if(!entityInstance.isAlive()) continue;
             Object value = entityInstance.getPropertyVal(name);
-            if (hostogram.containsKey(value)) {
-                hostogram.put(value, hostogram.get(value) + 1);
+            if (histogram.containsKey(value)) {
+                histogram.put(value, histogram.get(value) + 1);
             } else {
-                hostogram.put(value, 1);
+                histogram.put(value, 1);
             }
         }
-        return hostogram;
+        return histogram;
+    }
+
+    public String getInfo() {
+        return "Property name: " + name + "\n" +
+                " • Type:" + type.toString() + "\n" +
+                " • Range: " + range.toString() + "\n" +
+                " • Initial value: " + initialValue.toString() + "\n"
+                ;
     }
 }

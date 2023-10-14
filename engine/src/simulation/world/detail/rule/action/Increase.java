@@ -5,50 +5,76 @@ import simulation.utils.Type;
 import simulation.utils.expression.CondExpression;
 import simulation.world.detail.entity.Entity;
 import simulation.world.detail.entity.EntityInstance;
+import simulation.world.detail.rule.action.condition.Condition;
 
 
 public class Increase extends Action {
     private CondExpression by;
 
-    public Increase(Entity entity, String propertyName, CondExpression by) {
-        super(entity, propertyName);
+    public Increase(Entity primeryentity, String propertyName, CondExpression by) {
+        super(primeryentity, propertyName);
+        this.by = by;
+    }
+
+    public Increase(Entity primeryentity, Entity secondaryentity, int selectionCount, Condition selectionCond, String propertyName, CondExpression by) {
+        super(primeryentity, secondaryentity, selectionCount, selectionCond, propertyName);
         this.by = by;
     }
 
     @Override
-    public void doAction(EntityInstance entityInstance) {
-        increase(entityInstance);
+    public boolean doAction(EntityInstance primeryEntityInstance, EntityInstance secendaryEntityInstance) {
+        return increase(primeryEntityInstance, secendaryEntityInstance);
     }
 
-    private void increase(EntityInstance entityInstance) {
+    @Override
+    public boolean doAction(EntityInstance entityInstance) {
+        return increase(entityInstance);
+    }
+
+    private boolean increase(EntityInstance entityInstance) {
         Range propRange = entityInstance.getProperty(propertyName).getRange();
-        Object newValue = null;
         Object byValue = by.resolveExpression(entityInstance);
-        Object ptopValue = entityInstance.getPropertyVal(propertyName);
+        Object propertyVal = entityInstance.getPropertyVal(propertyName);
+        Object oldValue = propertyVal;
+        Object newValue = getNewValue(entityInstance, byValue, propertyVal, propRange);
+        entityInstance.setPropertyVal(propertyName, newValue, false);
+        return oldValue != newValue;
+    }
+
+    private boolean increase(EntityInstance entityInstance, EntityInstance secendaryEntityInstance) {
+        Range propRange = entityInstance.getProperty(propertyName).getRange();
+        Object byValue = by.resolveExpression(entityInstance, secendaryEntityInstance);
+        Object propertyVal = entityInstance.getPropertyVal(propertyName);
+        Object newValue = getNewValue(entityInstance, byValue, propertyVal, propRange);
+        entityInstance.setPropertyVal(propertyName, newValue, false);
+        return propertyVal != newValue;
+    }
+
+    private Object getNewValue(EntityInstance entityInstance, Object byValue, Object propertyValue, Range propRange) {
+        Object newValue = null;
         if (entityInstance.getProperty(propertyName).getType() == Type.DECIMAL) {
             if(byValue instanceof Integer) {
-                newValue = (int) ptopValue + (int) byValue;
+                newValue = (int) propertyValue + (int) byValue;
             } else if (byValue instanceof Float) {
-                newValue = (int) ptopValue + Math.round((float) byValue);
+                newValue = (int) propertyValue + Math.round((float) byValue);
             } else {
                 throw new IllegalArgumentException("Cannot increase decimal property by non-number value");
             }
-            if(propRange == null || (int) newValue <= propRange.getTo()) {
+            if(propRange == null || (float) newValue >= propRange.getTo()) {
                 newValue = Math.round(entityInstance.getProperty(propertyName).getRange().getTo());
             }
         } else if (entityInstance.getProperty(propertyName).getType() == Type.FLOAT) {
             if(byValue instanceof Integer) {
-                newValue = (float) ptopValue + (float) byValue;
+                newValue = (float) propertyValue + (int) byValue;
             } else if (byValue instanceof Float) {
-                newValue = (float) ptopValue + (float) byValue;
+                newValue = (float) propertyValue + (float) byValue;
             } else {
                 throw new IllegalArgumentException("Cannot increase float property by non-number value");
             }
-            if(propRange == null || (float) newValue <= propRange.getTo()) {
+            if(propRange == null || (float) newValue >= propRange.getTo()) {
                 newValue = entityInstance.getProperty(propertyName).getRange().getTo();
             }
         }
-        entityInstance.setPropertyVal(propertyName, newValue);
+        return newValue;
     }
-
 }

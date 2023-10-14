@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+
+<GridPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="270.0" prefWidth="480.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="component.result.tab.entity.ResultByEntityController">
+   <columnConstraints>
+      <ColumnConstraints hgrow="NEVER" minWidth="5.0" prefWidth="5.0" />
+      <ColumnConstraints hgrow="ALWAYS" />
+      <ColumnConstraints hgrow="NEVER" minWidth="5.0" prefWidth="5.0" />
+   </columnConstraints>
+   <rowConstraints>
+      <RowConstraints minHeight="5.0" prefHeight="5.0" vgrow="NEVER" />
+      <RowConstraints minHeight="30.0" prefHeight="30.0" vgrow="NEVER" />
+      <RowConstraints minHeight="10.0" vgrow="NEVER" />
+      <RowConstraints vgrow="ALWAYS" />
+      <RowConstraints minHeight="5.0" prefHeight="5.0" vgrow="NEVER" />
+   </rowConstraints>
+   <children>
+      <SplitPane dividerPositions="0.44481605351170567" minHeight="-Infinity" minWidth="-Infinity" prefHeight="230.0" prefWidth="600.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+        <items>
+            <ScrollPane>
+               <content>
+                <AnchorPane>
+                     <children>
+                        <ListView fx:id="entitiesList" onMouseClicked="#showEntityDetails" prefHeight="228.0" prefWidth="250.0">
+                           <padding>
+                              <Insets bottom="5.0" left="10.0" right="10.0" top="5.0" />
+                           </padding>
+                        </ListView>
+                     </children>
+                  </AnchorPane>
+               </content>
+            </ScrollPane>
+            <ScrollPane prefHeight="148.0" prefWidth="342.0">
+               <content>
+                <AnchorPane>
+                     <children>
+                        <Label fx:id="entityDetailsLabel" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Label">
+                           <padding>
+                              <Insets left="10.0" />
+                           </padding>
+                        </Label>
+                     </children>
+                  </AnchorPane>
+               </content>
+            </ScrollPane>
+        </items>
+      </SplitPane>
+      <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Choose the entitiy that you want to see its result by population avarage, before &amp; after:" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+   </children>
+</GridPane>

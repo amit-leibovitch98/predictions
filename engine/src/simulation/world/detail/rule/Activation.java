@@ -19,7 +19,7 @@ public class Activation {
         this.ticks = 1;
         this.probability = 1f;
     }
-    public float getProbability() {
+    public Float getProbability() {
         return probability;
     }
 

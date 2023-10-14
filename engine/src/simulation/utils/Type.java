@@ -10,17 +10,22 @@ public enum Type {
     STRING;
 
     public static Type fromString(String type) {
-        if (type.equals("decimal")) {
-            return DECIMAL;
-        } else if (type.equals("float")) {
-            return FLOAT;
-        } else if (type.equals("boolean")) {
-            return BOOLEAN;
-        } else if (type.equals("string")) {
-            return STRING;
-        } else {
-            return null;
+        switch (type) {
+            case "decimal":
+                return DECIMAL;
+            case "float":
+                return FLOAT;
+            case "boolean":
+                return BOOLEAN;
+            case "string":
+                return STRING;
+            default:
+                return null;
         }
+    }
+
+    public static boolean isBoolean(String simpleExpressionVale) {
+        return simpleExpressionVale.equals("true") || simpleExpressionVale.equals("false");
     }
 
     @Override

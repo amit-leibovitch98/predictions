@@ -1,5 +1,7 @@
 package simulation.utils;
 
+import java.util.Random;
+
 public class Range {
     private float from;
     private float to;
@@ -9,13 +11,36 @@ public class Range {
         this.to = Float.parseFloat(to.toString());
     }
 
-    public float getFrom() { return from; }
-    public float getTo() { return to; }
-    public void setFrom(int min) { this.from = min; }
-    public void setTo(int max) { this.to = max; }
+    public float getFrom() {
+        return from;
+    }
 
-    public float getRandomValue() {
-        return (float) (Math.random() * (to - from) + from);
+    public float getTo() {
+        return to;
+    }
+
+    public void setFrom(int min) {
+        this.from = min;
+    }
+
+    public void setTo(int max) {
+        this.to = max;
+    }
+
+    public float getRandomValue(Type type) {
+        Random random = new Random();
+
+        if (type == Type.DECIMAL) {
+            return random.nextInt((Math.round(to) - Math.round(from)) + 1) + from;
+        } else if (type == Type.FLOAT) {
+            return from + random.nextFloat() * (to - from);
+        } else {
+            throw new IllegalArgumentException("Type is not supported");
+        }
+    }
+
+    public boolean isInRange(float value) {
+        return value >= from && value <= to;
     }
 
     public int getRandomIntValue() {
@@ -25,6 +50,10 @@ public class Range {
     @Override
     public String toString() {
         return "{" + "from=" + from + ", to=" + to + "}";
+    }
+
+    public boolean isInRange(int value) {
+        return value >= from && value <= to;
     }
 }
 

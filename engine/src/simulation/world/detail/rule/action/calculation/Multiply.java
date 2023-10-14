@@ -1,18 +1,22 @@
 package simulation.world.detail.rule.action.calculation;
 
 import simulation.utils.Type;
-import simulation.utils.Value;
 import simulation.utils.expression.CondExpression;
 import simulation.world.detail.entity.Entity;
 import simulation.world.detail.entity.EntityInstance;
 import simulation.world.detail.rule.action.Action;
+import simulation.world.detail.rule.action.condition.Condition;
 
 import static java.lang.Double.TYPE;
 import static java.lang.Double.parseDouble;
 
 public class Multiply extends Calculation {
-    public Multiply(Entity entity, String resultProp, CondExpression arg1, CondExpression arg2) {
-        super(entity, resultProp, arg1, arg2);
+    public Multiply(Entity primeryEntity, String resultProp, CondExpression arg1, CondExpression arg2) {
+        super(primeryEntity, resultProp, arg1, arg2);
+    }
+
+    public Multiply(Entity primeryEntity, Entity secenderyEntity, int selectionCount, Condition selectionCond, String resultProp, CondExpression arg1, CondExpression arg2) {
+        super(primeryEntity, secenderyEntity, selectionCount, selectionCond, resultProp, arg1, arg2);
     }
 
     @Override
@@ -31,9 +35,9 @@ public class Multiply extends Calculation {
             }
             float value = arg1 * arg2;
             if (resultProp.getType() == Type.DECIMAL) {
-                entityInstance.setPropertyVal(resultProp.getName(), Math.round(value));
+                entityInstance.setPropertyVal(resultProp.getName(), Math.round(value), false);
             } else {
-                entityInstance.setPropertyVal(resultProp.getName(), value);
+                entityInstance.setPropertyVal(resultProp.getName(), value, false);
             }
         } catch (Exception e) {
             e.printStackTrace();

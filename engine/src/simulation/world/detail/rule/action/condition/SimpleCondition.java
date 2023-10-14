@@ -12,21 +12,36 @@ import java.util.List;
 public class SimpleCondition extends Condition implements ICond {
     CondOp operator;
     CondExpression value;
+    CondExpression property;
 
-    public SimpleCondition(Entity entity, String propertyName, CondOp operator, CondExpression value) {
-        super(entity, propertyName);
+    public SimpleCondition(Entity primeryentity, CondExpression property, CondOp operator, CondExpression value) {
+        super(primeryentity, null);
         this.operator = operator;
         this.value = value;
+        this.property = property;
     }
+
+    public SimpleCondition(Entity primeryentity, Entity secenderyEntity, int selectionCount, Condition selectionCond, CondExpression property, CondOp operator, CondExpression value) {
+        super(primeryentity, secenderyEntity, selectionCount, selectionCond, null);
+        this.operator = operator;
+        this.value = value;
+        this.property = property;
+    }
+
     @Override
-    public void doAction(EntityInstance entityInstance) {
-        evaluateCond(entityInstance);
+    public boolean doAction(EntityInstance entityInstance) {
+        return evaluateCond(entityInstance);
+    }
+
+    @Override
+    public boolean doAction(EntityInstance entityInstance, EntityInstance secondaryEntityInstance) {
+        return evaluateCond(entityInstance);
     }
 
     public boolean evaluateCond(EntityInstance entityInstance) {
         switch (operator) {
             case EQUALS:
-                if (entityInstance.getPropertyVal(propertyName) == value.resolveExpression(entityInstance)) {
+                if (property.resolveExpression(entityInstance) == value.resolveExpression(entityInstance)) {
                     super.activateThen(entityInstance);
                     return true;
                 } else {
@@ -34,7 +49,7 @@ public class SimpleCondition extends Condition implements ICond {
                     return false;
                 }
             case NOT_EQUALS:
-                if (entityInstance.getPropertyVal(propertyName) != value.resolveExpression(entityInstance)) {
+                if (property.resolveExpression(entityInstance) != value.resolveExpression(entityInstance)) {
                     super.activateThen(entityInstance);
                     return true;
                 } else {
@@ -42,7 +57,7 @@ public class SimpleCondition extends Condition implements ICond {
                     return false;
                 }
             case BIGGER_THAN:
-                if (compare(entityInstance.getPropertyVal(propertyName), value.resolveExpression(entityInstance))) {
+                if (compare(property.resolveExpression(entityInstance), value.resolveExpression(entityInstance))) {
                     super.activateThen(entityInstance);
                     return true;
                 } else {
@@ -50,7 +65,7 @@ public class SimpleCondition extends Condition implements ICond {
                     return false;
                 }
             case LESSER_THAN:
-                if (compare(value.resolveExpression(entityInstance),entityInstance.getPropertyVal(propertyName))) {
+                if (compare(property.resolveExpression(entityInstance) ,entityInstance.getPropertyVal(this.property.resolveExpression(entityInstance).toString()))) {
                     super.activateThen(entityInstance);
                     return true;
                 } else {
@@ -62,6 +77,44 @@ public class SimpleCondition extends Condition implements ICond {
         }
     }
 
+    public boolean evaluateCond(EntityInstance entityInstance, EntityInstance secondaryEntityInstance) {
+        switch (operator) {
+            case EQUALS:
+                if (property.resolveExpression(entityInstance) == value.resolveExpression(entityInstance)) {
+                    super.activateThen(entityInstance, secondaryEntityInstance);
+                    return true;
+                } else {
+                    super.activateElse(entityInstance, secondaryEntityInstance);
+                    return false;
+                }
+            case NOT_EQUALS:
+                if (property.resolveExpression(entityInstance) != value.resolveExpression(entityInstance)) {
+                    super.activateThen(entityInstance, secondaryEntityInstance);
+                    return true;
+                } else {
+                    super.activateElse(entityInstance, secondaryEntityInstance);
+                    return false;
+                }
+            case BIGGER_THAN:
+                if (compare(property.resolveExpression(entityInstance), value.resolveExpression(entityInstance))) {
+                    super.activateThen(entityInstance, secondaryEntityInstance);
+                    return true;
+                } else {
+                    super.activateElse(entityInstance, secondaryEntityInstance);
+                    return false;
+                }
+            case LESSER_THAN:
+                if (compare(property.resolveExpression(entityInstance) ,entityInstance.getPropertyVal(this.property.resolveExpression(entityInstance).toString()))) {
+                    super.activateThen(entityInstance, secondaryEntityInstance);
+                    return true;
+                } else {
+                    super.activateElse(entityInstance, secondaryEntityInstance);
+                    return false;
+                }
+            default:
+                throw new IllegalArgumentException("Unknown expression type: " + operator);
+        }
+    }
 
     private boolean compare(Object num1, Object num2) {
         try {
